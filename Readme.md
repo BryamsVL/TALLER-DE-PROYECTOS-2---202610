@@ -1,4 +1,4 @@
-# 🗓️ SGOHA — Sistema de Generación Óptima de Horarios Académicos
+# 🗓️Sistema de Generación Óptima de Horarios Académicos
 
 > Aplicación web inteligente para la generación automática de horarios académicos
 > bajo currículo flexible, impulsada por un motor de Satisfacción de Restricciones (CSP).
@@ -9,9 +9,9 @@
 
 ---
 
-## ¿Qué es SGOHA?
+## ¿Qué es?
 
-SGOHA es una solución web desarrollada como proyecto final del curso **Taller de Proyectos 2**
+Es una solución web desarrollada como proyecto final del curso **Taller de Proyectos 2**
 (Ingeniería de Sistemas e Informática — Universidad Continental, ciclo 2026-I).
 
 El sistema automatiza la generación de horarios académicos válidos y sin conflictos,
