@@ -1,0 +1,1 @@
+# Supuestos y restricciones

@@ -1,0 +1,1 @@
+# Declaración del equipo
