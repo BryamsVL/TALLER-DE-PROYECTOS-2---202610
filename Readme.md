@@ -121,15 +121,15 @@ La estructura actual del repositorio es la siguiente:
 |-----------|------|------|
 | Declaración del equipo | [`docs/declaracion_equipo.md`](docs/declaracion_equipo.md) | Completo |
 | Visión del proyecto (resumen) | [`docs/inicio/VISION.md`](docs/inicio/VISION.md) | Resumen |
-| Visión del proyecto (detallado) | [`docs/Declaración de la visión del proyecto.md`](docs/Declaraci%C3%B3n%20de%20la%20visi%C3%B3n%20del%20proyecto.md) | Detallado |
+| Visión del proyecto (detallado) | [`docs/declaracion-vision.md`](docs/declaracion-vision.md) | Detallado |
 | Problema inicial (resumen) | [`docs/inicio/PROBLEMA.md`](docs/inicio/PROBLEMA.md) | Resumen |
-| Problema inicial (detallado) | [`docs/Documento inicial del problema.md`](docs/Documento%20inicial%20del%20problema.md) | Detallado |
+| Problema inicial (detallado) | [`docs/documento-problema.md`](docs/documento-problema.md) | Detallado |
 | Enfoque metodológico (resumen) | [`docs/inicio/ENFOQUE.md`](docs/inicio/ENFOQUE.md) | Resumen |
-| Enfoque metodológico (detallado) | [`docs/Selección del enfoque del proyecto.md`](docs/Selecci%C3%B3n%20del%20enfoque%20del%20proyecto.md) | Detallado |
-| Supuestos y restricciones | [`docs/Supuestos y restricciones.md`](docs/Supuestos%20y%20restricciones.md) | Completo |
+| Enfoque metodológico (detallado) | [`docs/seleccion-enfoque.md`](docs/seleccion-enfoque.md) | Detallado |
+| Supuestos y restricciones | [`docs/supuestos-restricciones.md`](docs/supuestos-restricciones.md) | Completo |
 | Requerimientos (resumen) | [`docs/ejecucion/REQUERIMIENTOS.md`](docs/ejecucion/REQUERIMIENTOS.md) | Resumen |
-| Requerimientos RF + RNF (completo) | [`docs/Lista preliminar de requerimientos funcionales y no funcionales.md`](docs/Lista%20preliminar%20de%20requerimientos%20funcionales%20y%20no%20funcionales.md) | Completo |
-| Project Charter | [`docs/Kickoff Project Charter.md`](docs/Kickoff%20Project%20Charter.md) | Completo |
+| Requerimientos RF + RNF (completo) | [`docs/requerimientos.md`](docs/requerimientos.md) | Completo |
+| Project Charter | [`docs/project-charter.md`](docs/project-charter.md) | Completo |
 
 ## Información del proyecto
 
