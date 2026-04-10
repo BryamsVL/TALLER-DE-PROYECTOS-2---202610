@@ -113,36 +113,32 @@ La estructura actual del repositorio es la siguiente:
         `-- README.md
 ```
 
-### Descripción general de carpetas:
-
-- `docs/` : documentación principal del proyecto.
-- `docs/inicio/` : documentos base del Sprint 0, incluyendo visión, problema y enfoque.
-- `docs/ejecucion/` : documentos vinculados a requerimientos y materiales de ejecución.
-- `docs/seguimiento_control/` : espacio destinado al seguimiento y control del proyecto.
-- `docs/cierre/` : espacio reservado para documentación de cierre.
-- `docs/Otros/` : documentos complementarios.
-- `Backend/` : carpeta base del componente de backend.
-- `Frontend/` : carpeta base del componente de frontend.
-
 ---
 
 ## Documentación disponible
 
-Los principales documentos identificados son los siguientes:
+| Documento | Ruta | Tipo |
+|-----------|------|------|
+| Declaración del equipo | [`docs/declaracion-equipo.md`](docs/declaracion-equipo.md) | Completo |
+| Visión del proyecto (resumen) | [`docs/inicio/VISION.md`](docs/inicio/VISION.md) | Resumen |
+| Visión del proyecto (detallado) | [`docs/Declaración de la visión del proyecto.md`](docs/Declaración%20de%20la%20visión%20del%20proyecto.md) | Detallado |
+| Problema inicial (resumen) | [`docs/inicio/PROBLEMA.md`](docs/inicio/PROBLEMA.md) | Resumen |
+| Problema inicial (detallado) | [`docs/Documento inicial del problema.md`](docs/Documento%20inicial%20del%20problema.md) | Detallado |
+| Enfoque metodológico (resumen) | [`docs/inicio/ENFOQUE.md`](docs/inicio/ENFOQUE.md) | Resumen |
+| Enfoque metodológico (detallado) | [`docs/Selección del enfoque del proyecto.md`](docs/Selección%20del%20enfoque%20del%20proyecto.md) | Detallado |
+| Requerimientos (resumen) | [`docs/ejecucion/REQUERIMIENTOS.md`](docs/ejecucion/REQUERIMIENTOS.md) | Resumen |
+| Requerimientos RF + RNF (completo) | [`docs/Lista preliminar de requerimientos funcionales y no funcionales.md`](docs/Lista%20preliminar%20de%20requerimientos%20funcionales%20y%20no%20funcionales.md) | Completo |
+| Project Charter | [`docs/Kickoff Project Charter.md`](docs/Kickoff%20Project%20Charter.md) | Completo |
 
-| Documento | Ruta |
-|---|---|
-| Declaración del equipo del proyecto | [docs/declaracion-equipo.md](docs/declaracion-equipo.md) |
-| Declaración de visión del proyecto (Resumen) | [docs/inicio/VISION.md](docs/inicio/VISION.md) |
-| Declaración de visión del proyecto (Detallado) | [docs/Declaración de la visión del proyecto.md](docs/seguimiento_control/Declaración%20de%20la%20visión%20del%20proyecto.md) |
-| Documento inicial del problema (Resumen) | [docs/inicio/PROBLEMA.md](docs/inicio/PROBLEMA.md) |
-| Documento inicial del problema (Detallado) | [docs/Documento inicial del problema.md](docs/seguimiento_control/Documento%20inicial%20del%20problema.md) |
-| Selección del enfoque del proyecto (Resumen) | [docs/inicio/ENFOQUE.md](docs/inicio/ENFOQUE.md) |
-| Selección del enfoque del proyecto (Detallado) | [docs/Selección del enfoque del proyecto.md](docs/seguimiento_control/Selección%20del%20enfoque%20del%20proyecto.md) |
-| Requerimientos preliminares (Resumen) | [docs/ejecucion/REQUERIMIENTOS.md](docs/ejecucion/REQUERIMIENTOS.md) |
-| Lista preliminar de requerimientos (Completo) | [docs/Lista preliminar de requerimientos funcionales y no funcionales.md](docs/seguimiento_control/Lista%20preliminar%20de%20requerimientos%20funcionales%20y%20no%20funcionales.md) |
-| Project Charter | [docs/Kickoff Project Charter.md](docs/seguimiento_control/Kickoff%20Project%20Charter.md) |
-| Índice de ejecución | [docs/ejecucion/README.md](docs/ejecucion/README.md) |
-| Índice de seguimiento y control | [docs/seguimiento_control/README.md](docs/seguimiento_control/README.md) |
-| Índice de cierre | [docs/cierre/README.md](docs/cierre/README.md) |
-| Índice de otros documentos | [docs/Otros/README.md](docs/Otros/README.md) |
+---
+
+## Información del proyecto
+
+| Campo | Detalle |
+|-------|---------|
+| Código | PFA-TP2-2026-01 |
+| Asignatura | Taller de Proyectos 2 — ISI |
+| Institución | Universidad Continental — Huancayo, Perú |
+| Ciclo | 2026-I |
+| Metodología | Scrum — sprints de 2-3 semanas |
+| Repositorio | https://github.com/BryamsVL/TALLER-DE-PROYECTOS-2---202610 |
