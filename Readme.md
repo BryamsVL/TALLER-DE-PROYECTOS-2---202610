@@ -30,8 +30,6 @@ docentes, aulas sobreasignadas y distribuciones inequitativas de turnos.
 SGOHA reemplaza ese proceso con un motor que, para una instancia de hasta 50 cursos,
 30 docentes y 20 aulas, produce una solución válida en **≤ 30 segundos**.
 
-> Documentación completa del problema: [`docs/inicio/PROBLEMA.md`](docs/inicio/PROBLEMA.md)
-> y [`docs/Documento inicial del problema.md`](docs/Documento%20inicial%20del%20problema.md)
 
 ---
 
