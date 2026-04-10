@@ -131,6 +131,7 @@ La estructura actual del repositorio es la siguiente:
 | Requerimientos RF + RNF (completo) | [`docs/seguimiento_control/Lista preliminar de requerimientos funcionales y no funcionales.md`](docs/seguimiento_control/Lista%20preliminar%20de%20requerimientos%20funcionales%20y%20no%20funcionales.md) | Completo |
 | Project Charter | [`docs/seguimiento_control/Kickoff Project Charter.md`](docs/seguimiento_control/Kickoff%20Project%20Charter.md) | Completo |
 
+
 ## Información del proyecto
 
 | Campo | Detalle |
