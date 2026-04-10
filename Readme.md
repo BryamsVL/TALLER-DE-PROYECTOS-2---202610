@@ -128,7 +128,7 @@ La estructura actual del repositorio es la siguiente:
 | Enfoque metodológico (detallado) | [`docs/seguimiento_control/Seleccion del enfoque del proyecto.md`](docs/seguimiento_control/Seleccion%20del%20enfoque%20del%20proyecto.md) | Detallado |
 | Supuestos y restricciones | [`docs/seguimiento_control/Supuestos y restricciones.md`](docs/seguimiento_control/Supuestos%20y%20restricciones.md) | Completo |
 | Requerimientos (resumen) | [`docs/ejecucion/REQUERIMIENTOS.md`](docs/ejecucion/REQUERIMIENTOS.md) | Resumen |
-| Requerimientos RF + RNF (completo) | [`docs/seguimiento_control/Lista preliminar de requerimientos funcionales y no funcionales.md`](docs/seguimiento_control/Lista%20preliminar%20de%20requerimientos%20funcionales%20y%20no%20funcionales.md) | Completo |
+| Requerimientos RF + RNF (completo) | [`docs/seguimiento_control/Lista preliminar de requerimientos.md`](docs/seguimiento_control/Lista%20preliminar%20de%20requerimientos.md) | Completo |
 | Project Charter | [`docs/seguimiento_control/Kickoff Project Charter.md`](docs/seguimiento_control/Kickoff%20Project%20Charter.md) | Completo |
 
 
