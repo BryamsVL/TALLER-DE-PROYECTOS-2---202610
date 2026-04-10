@@ -70,7 +70,6 @@ SGOHA reemplaza ese proceso con un motor que, para una instancia de hasta 50 cur
 | Identificación preliminar de requerimientos | ✅ Completado |
 | Formalización de roles y normas del equipo | ✅ Completado |
 | Organización documental del repositorio | ✅ Completado |
-| Repositorio GitHub configurado con ramas `main` / `develop` | ✅ Completado |
 
 ---
 
