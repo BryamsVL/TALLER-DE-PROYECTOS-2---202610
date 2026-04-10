@@ -34,6 +34,6 @@ documentado con todos los campos requeridos |
 
 
 
-##Trazabilidad requerimientos-problema 
+## Trazabilidad requerimientos-problema 
 
 Los RF-04, RF-05 y RF-06 responden a la restricción de limite de creditos y prerrequisitos academicos. Los RF-07 y RF-08 modelan el nucleo del CSP: no solapamiento, disponibilidad de docentes y aulas. Los RNF-01 a RNF-05 cubren los 5 atributos de calidad obligatorios segun ISO/IEC 25010, alcanzando el nivel Sobresaliente en la rubrica de calidad del software. 
