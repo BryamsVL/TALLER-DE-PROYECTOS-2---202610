@@ -1,55 +1,81 @@
-# Sistema de Generación Óptima de Horarios Académicos (SGOHA)
+# 🗓️ SGOHA — Sistema de Generación Óptima de Horarios Académicos
 
-## Descripción general
+> Aplicación web inteligente para la generación automática de horarios académicos
+> bajo currículo flexible, impulsada por un motor de Satisfacción de Restricciones (CSP).
 
-Este repositorio corresponde al proyecto universitario desarrollado en el curso Taller de Proyectos 2 — Ingeniería de Sistemas e Informática, Universidad Continental. En el Sprint 0: Inicio del proyecto, el propósito principal es organizar adecuadamente el repositorio, consolidar la documentación inicial y establecer una base formal para el trabajo colaborativo del equipo.
-
-El contenido actual del repositorio está orientado a la definición del problema, la visión inicial del proyecto, la organización documental y la identificación preliminar de requerimientos.
-
----
-
-## Integrantes del equipo y roles
-
-| Integrante | Rol |
-|------------|-----|
-| Alberto Patiño | Product Owner |
-| Andre De La Torre | Scrum Master |
-| Brianna Cortez | Dev — Backend / CSP |
-| Edward Flores | Dev — Backend / Auth |
-| Bryams Vilchez | Dev — Frontend / UI |
-| Jack Perez | Dev — QA / DevOps |
+![Estado](https://img.shields.io/badge/Sprint-0%20%E2%80%94%20Inicio-blue)
+![Metodología](https://img.shields.io/badge/Metodología-Scrum-brightgreen)
+![Licencia](https://img.shields.io/badge/Licencia-Académica-lightgrey)
 
 ---
 
-## Problemática abordada
+## ¿Qué es SGOHA?
 
-Las universidades con currículo flexible, como la Universidad Continental, enfrentan dificultades significativas en la planificación semestral de horarios académicos. El currículo flexible permite que cada estudiante elija su propia carga académica dentro de ciertos rangos, lo que genera una alta variabilidad en la demanda de secciones, docentes y aulas.
+SGOHA es una solución web desarrollada como proyecto final del curso **Taller de Proyectos 2**
+(Ingeniería de Sistemas e Informática — Universidad Continental, ciclo 2026-I).
 
-El proceso actual de generación de horarios es manual o semiautomático, dependiente del criterio de los coordinadores académicos, y frecuentemente produce resultados con conflictos (solapamientos de horarios, docentes asignados a dos cursos en la misma franja, aulas con capacidad insuficiente), inequidades en la distribución de horarios, y tiempos de procesamiento que se extienden durante semanas.
-
-Como referencia de la formulación inicial del problema, puede revisarse `docs/inicio/PROBLEMA.md` y `docs/Documento inicial del problema.md`.
-
----
-
-## Objetivo del proyecto
-
-Diseñar e implementar una aplicación web inteligente que genere horarios académicos óptimos, considerando restricciones académicas, operativas y contextuales, bajo un modelo de Satisfacción de Restricciones (CSP), con arquitectura SPA + API REST y cumplimiento de estándares W3C, ISO/IEC 25010, OWASP Top 10, WCAG 2.1 y Green Software.
-
-En el contexto específico del Sprint 0, el objetivo inmediato no es implementar el sistema completo, sino consolidar la documentación base, la organización del equipo y la estructura del repositorio para facilitar el desarrollo posterior del proyecto.
+El sistema automatiza la generación de horarios académicos válidos y sin conflictos,
+resolviendo un problema NP-completo mediante un motor CSP implementado con **OR-Tools**,
+expuesto vía microservicio **FastAPI**, con frontend en **React 18 + TypeScript** y
+backend principal en **Express + Node.js**.
 
 ---
 
-## Estado actual del Sprint 0
+## El problema que resuelve
 
-Actualmente, el proyecto se encuentra en una fase de inicio y organización. En esta etapa se prioriza:
+La elaboración manual de horarios en universidades con currículo flexible consume semanas
+de trabajo administrativo y produce resultados con errores frecuentes: solapamientos de
+docentes, aulas sobreasignadas y distribuciones inequitativas de turnos.
 
-- la definición y presentación formal del problema;
-- la declaración de visión del proyecto;
-- la identificación preliminar de requerimientos;
-- la formalización de roles, normas y compromisos del equipo;
-- la organización documental del repositorio para revisión académica.
+SGOHA reemplaza ese proceso con un motor que, para una instancia de hasta 50 cursos,
+30 docentes y 20 aulas, produce una solución válida en **≤ 30 segundos**.
+
+> Documentación completa del problema: [`docs/inicio/PROBLEMA.md`](docs/inicio/PROBLEMA.md)
+> y [`docs/Documento inicial del problema.md`](docs/Documento%20inicial%20del%20problema.md)
 
 ---
+
+## Stack tecnológico
+
+| Capa | Tecnología | Justificación |
+|------|-----------|---------------|
+| Frontend | React 18 + TypeScript (Vite) | Ecosistema maduro, FullCalendar, tipado estricto |
+| Backend principal | Express + Node.js | Consistencia JS con el frontend |
+| Microservicio CSP | FastAPI + OR-Tools | Rendimiento en resolución de restricciones complejas |
+| Base de datos | PostgreSQL 16 | Soporte robusto para consultas complejas |
+| ORM | Prisma | Tipado nativo con TypeScript |
+| Contenerización | Docker Compose | Portabilidad entre entornos |
+| CI/CD | GitHub Actions | Integración directa con el repositorio |
+| Hosting | Railway / Render | Despliegue rápido en tier gratuito |
+
+---
+
+## Equipo de desarrollo
+
+| Integrante | Rol | Módulos principales |
+|------------|-----|---------------------|
+| Alberto Patiño | Product Owner | Backlog, criterios de aceptación, visión |
+| Andre De La Torre | Scrum Master | Git workflow, ceremonias, dailies |
+| Brianna Cortez | Dev — Backend / CSP | Motor CSP, microservicio FastAPI (RF-07, RF-08) |
+| Edward Flores | Dev — Backend / Auth | API REST, JWT, registro, matrícula (RF-01, RF-02, RF-04/05/06) |
+| Bryams Vilchez | Dev — Frontend / UI | SPA React, calendario, formularios (RF-10, RF-11) |
+| Jack Perez | Dev — QA / DevOps | Pruebas, Docker, CI/CD, reportes (RF-12, RF-14, RF-15) |
+
+---
+
+## Estado del Sprint 0
+
+| Ítem | Estado |
+|------|--------|
+| Definición formal del problema | ✅ Completado |
+| Declaración de visión del proyecto | ✅ Completado |
+| Identificación preliminar de requerimientos | ✅ Completado |
+| Formalización de roles y normas del equipo | ✅ Completado |
+| Organización documental del repositorio | ✅ Completado |
+| Repositorio GitHub configurado con ramas `main` / `develop` | ✅ Completado |
+
+---
+
 
 ## Estructura del repositorio
 
