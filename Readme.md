@@ -119,7 +119,7 @@ La estructura actual del repositorio es la siguiente:
 
 | Documento | Ruta | Tipo |
 |-----------|------|------|
-| Declaración del equipo | [`docs/seguimiento_control/declaracion_equipo.md`](docs/seguimiento_control/declaracion_equipo.md) | Completo |
+| Declaración del equipo | [`docs/seguimiento_control/declaración_equipo.md`](docs/seguimiento_control/declaración_equipo.md) | Completo |
 | Visión del proyecto (resumen) | [`docs/inicio/VISION.md`](docs/inicio/VISION.md) | Resumen |
 | Visión del proyecto (detallado) | [`docs/seguimiento_control/Declaracion de la vision del proyecto.md`](docs/seguimiento_control/Declaracion%20de%20la%20vision%20del%20proyecto.md) | Detallado |
 | Problema inicial (resumen) | [`docs/inicio/PROBLEMA.md`](docs/inicio/PROBLEMA.md) | Resumen |
