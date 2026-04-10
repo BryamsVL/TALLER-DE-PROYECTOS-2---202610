@@ -1,8 +1,8 @@
-# Título del Proyecto Aquí
+# Sistema de Generación Óptima de Horarios Académicos (SGOHA)
 
 ## Descripción general
 
-Este repositorio corresponde al proyecto universitario desarrollado en el curso **Taller de Proyectos 2**. En el **Sprint 0: Inicio del proyecto**, el propósito principal es organizar adecuadamente el repositorio, consolidar la documentación inicial y establecer una base formal para el trabajo colaborativo del equipo.
+Este repositorio corresponde al proyecto universitario desarrollado en el curso Taller de Proyectos 2 — Ingeniería de Sistemas e Informática, Universidad Continental. En el Sprint 0: Inicio del proyecto, el propósito principal es organizar adecuadamente el repositorio, consolidar la documentación inicial y establecer una base formal para el trabajo colaborativo del equipo.
 
 El contenido actual del repositorio está orientado a la definición del problema, la visión inicial del proyecto, la organización documental y la identificación preliminar de requerimientos.
 
@@ -11,28 +11,31 @@ El contenido actual del repositorio está orientado a la definición del problem
 ## Integrantes del equipo y roles
 
 | Integrante | Rol |
-|---|---|
-| Nombre 1 | Product Owner |
-| Nombre 2 | Scrum Master |
-| Nombre 3 | Responsable de Frontend |
-| Nombre 4 | Responsable de Backend |
-| Nombre 5 | Responsable de Documentación y Calidad |
+|------------|-----|
+| Alberto Patiño | Product Owner |
+| Andre De La Torre | Scrum Master |
+| Brianna Cortez | Dev — Backend / CSP |
+| Edward Flores | Dev — Backend / Auth |
+| Bryams Vilchez | Dev — Frontend / UI |
+| Jack Perez | Dev — QA / DevOps |
 
 ---
 
 ## Problemática abordada
 
-Descripción del problema que aborda el proyecto. Puedes incluir contexto, causas y consecuencias.
+Las universidades con currículo flexible, como la Universidad Continental, enfrentan dificultades significativas en la planificación semestral de horarios académicos. El currículo flexible permite que cada estudiante elija su propia carga académica dentro de ciertos rangos, lo que genera una alta variabilidad en la demanda de secciones, docentes y aulas.
 
-Esta situación puede generar X, Y y Z. Como referencia de la formulación inicial del problema, puede revisarse [docs/inicio/PROBLEMA.md](docs/inicio/PROBLEMA.md) y [docs/Documento inicial del problema.md](docs/seguimiento_control/Documento%20inicial%20del%20problema.md).
+El proceso actual de generación de horarios es manual o semiautomático, dependiente del criterio de los coordinadores académicos, y frecuentemente produce resultados con conflictos (solapamientos de horarios, docentes asignados a dos cursos en la misma franja, aulas con capacidad insuficiente), inequidades en la distribución de horarios, y tiempos de procesamiento que se extienden durante semanas.
+
+Como referencia de la formulación inicial del problema, puede revisarse `docs/inicio/PROBLEMA.md` y `docs/Documento inicial del problema.md`.
 
 ---
 
 ## Objetivo del proyecto
 
-Desarrollar una propuesta orientada a ... considerando las restricciones académicas y operativas identificadas en la etapa inicial del proyecto.
+Diseñar e implementar una aplicación web inteligente que genere horarios académicos óptimos, considerando restricciones académicas, operativas y contextuales, bajo un modelo de Satisfacción de Restricciones (CSP), con arquitectura SPA + API REST y cumplimiento de estándares W3C, ISO/IEC 25010, OWASP Top 10, WCAG 2.1 y Green Software.
 
-En el contexto específico del **Sprint 0**, el objetivo inmediato no es implementar el sistema completo, sino consolidar la documentación base, la organización del equipo y la estructura del repositorio para facilitar el desarrollo posterior del proyecto.
+En el contexto específico del Sprint 0, el objetivo inmediato no es implementar el sistema completo, sino consolidar la documentación base, la organización del equipo y la estructura del repositorio para facilitar el desarrollo posterior del proyecto.
 
 ---
 
@@ -99,7 +102,7 @@ La estructura actual del repositorio es la siguiente:
 
 ## Documentación disponible
 
-Actualmente, el repositorio ha migrado su documentación al formato **Markdown**. Los principales documentos identificados son los siguientes:
+Los principales documentos identificados son los siguientes:
 
 | Documento | Ruta |
 |---|---|
