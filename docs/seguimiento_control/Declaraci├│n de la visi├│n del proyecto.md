@@ -1,2 +1,2 @@
-# Declaración de la visión del proyecto
+# Declaracion de la vision del proyecto
 Para los coordinadores académicos, docentes y estudiantes de la Universidad Continental que enfrentan dificultades en la planificación y consulta de horarios bajo un currículo flexible, el Sistema de Generación Óptima de Horarios Académicos (SGOHA) es una aplicación web inteligente que genera automáticamente horarios válidos y sin conflictos, respetando restricciones académicas, operativas y de disponibilidad. A diferencia de los procesos manuales o sistemas rígidos actuales, SGOHA incorpora un motor de satisfacción de restricciones (CSP) que produce soluciones óptimas en segundos, ofrece visualización interactiva por rol y permite ajustes manuales con revalidación en tiempo real. 
