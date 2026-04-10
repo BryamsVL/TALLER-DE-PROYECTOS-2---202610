@@ -29,10 +29,7 @@
 | RNF-06 | Eficiencia energética | El sistema debe reducir las ejecuciones del motor CSP en al menos 40% mediante caché node-cache (TTL 24 h), implementar lazy loading en React (reducción bundle inicial ≥ 20%) y aplicar early exit en el algoritmo CSP. | Green Software Foundation | Media | Sprint 3 | Logs de caché: reducción ≥ 40% de ejecuciones; Lighthouse: bundle inicial reducido ≥ 20% |
 | RNF-07 | Fiabilidad | El sistema debe mantener uptime ≥ 99% durante el período de matrícula simulado, medido con health-check automático cada 60 segundos. Todos los errores de la API deben retornar códigos HTTP estándar sin exponer stack traces. | ISO 25010 §4.4 | Alta | Sprint 2–4 | Monitor muestra uptime ≥ 99% en período de prueba; 0 stack traces expuestos en prueba de errores |
 | RNF-08 | Compatibilidad | La SPA debe funcionar correctamente en Chrome ≥ 120, Firefox ≥ 121 y Edge ≥ 120, en resoluciones ≥ 360px de ancho, verificado mediante pruebas manuales en BrowserStack o equivalente. | W3C | Media | Sprint 3 | Lista de verificación completada en los 3 navegadores y resolución mínima sin errores funcionales |
-| RNF-09 | Portabilidad | El sistema debe desplegarse completamente mediante docker-compose up en menos de 5 minutos en cualquier máquina con Docker instalado, sin modificar código fuente. Toda configuración vía variables de entorno en .env.example documentado. | ISO 25010 §4.9 | Media | Sprint 1 | Despliegue desde cero en < 5 min en máquina limpia con Docker; .env.example 
-documentado con todos los campos requeridos |
-
-
+| RNF-09 | Portabilidad | El sistema debe desplegarse completamente mediante docker-compose up en menos de 5 minutos en cualquier máquina con Docker instalado, sin modificar código fuente. Toda configuración vía variables de entorno en .env.example documentado. | ISO 25010 §4.9 | Media | Sprint 1 | Despliegue desde cero en < 5 min en máquina limpia con Docker; .env.example documentado con todos los campos requeridos |
 
 ## Trazabilidad requerimientos-problema 
 
