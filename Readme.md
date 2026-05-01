@@ -1,186 +1,103 @@
-# 🗓️Sistema de Generación Óptima de Horarios Académicos
+# 🗓️ SGOHA: Sistema de Generación Óptima de Horarios Académicos
+<div align="center">
 
-> Aplicación web inteligente para la generación automática de horarios académicos
-> bajo currículo flexible, impulsada por un motor de Satisfacción de Restricciones (CSP).
+![Stack](https://img.shields.io/badge/Architecture-React%20%2B%20Node.js%20%2B%20FastAPI-8860D0?style=for-the-badge)
+![Scrum](https://img.shields.io/badge/Methodology-Scrum%20%2F%20Agile-5680E9?style=for-the-badge)
+![OR-Tools](https://img.shields.io/badge/Engine-Google%20OR--Tools%20CP--SAT-5AB9EA?style=for-the-badge)
 
-![Estado](https://img.shields.io/badge/Sprint-0%20%E2%80%94%20Inicio-blue)
-![Metodología](https://img.shields.io/badge/Metodología-Scrum-brightgreen)
-![Licencia](https://img.shields.io/badge/Licencia-Académica-lightgrey)
+_Sistema inteligente de optimización para la planificación académica universitaria en entornos de currículo flexible._
+
+---
+</div>
+
+## 📖 Índice de Documentación (TOC)
+
+Toda la documentación del proyecto está organizada en archivos independientes para garantizar claridad y mantenibilidad, siguiendo el estándar **arc42**.
+
+### **1. Inicio y Fundamentación**
+- [🔍 Documento Inicial del Problema](docs/inicio/Documento%20inicial%20del%20problema.md) - Análisis de complejidad, naturaleza NP-completa y ambigüedades del UTP.
+- [✨ Declaración de la Visión](docs/inicio/Declaracion%20de%20la%20vision%20del%20proyecto.md) - Propuesta de valor, misión del producto y valor por actor.
+- [🛠️ Selección del Enfoque Técnico](docs/inicio/Documento%20de%20seleccion%20del%20enfoque%20del%20proyecto.md) - Justificación de tecnologías, stack y metodología Scrum.
+- [📜 Project Charter](docs/inicio/Project%20Charter.md) - Acta de constitución, hitos, stakeholders y riesgos.
+- [📌 Registro de Supuestos y Restricciones](docs/inicio/Registro%20de%20supuestos%20y%20restricciones.md) - Marco lógico del proyecto.
+
+### **2. Requerimientos y Calidad**
+- [📋 Lista de Requerimientos SMART](docs/inicio/Lista%20preliminar%20de%20requerimientos%20funcionales%20y%20no%20funcionales.md) - RF, RNF y Matriz de Trazabilidad.
+- [🤝 Declaración del Equipo](docs/inicio/Declaracion%20del%20equipo%20del%20proyecto.md) - Roles Scrum, responsabilidades y normas de trabajo.
+- [🚀 Repositorio Operativo](docs/inicio/Repositorio%20GitHub%20operativo.md) - Estructura de carpetas, ramas y guía de versiones.
+
+### **3. Arquitectura y Diseño (arc42)**
+- [🏗️ Documento Maestro ARC42](docs/ARC42.md) - Estructura completa de la arquitectura del sistema SGOHA.
 
 ---
 
-## ¿Qué es?
+## 🚀 Presentación del Proyecto
 
-Es una solución web desarrollada como proyecto final del curso **Taller de Proyectos 2**
-(Ingeniería de Sistemas e Informática — Universidad Continental, ciclo 2026-I).
+**SGOHA** aborda un **Problema Complejo de Ingeniería** de naturaleza combinatoria (**CSP — Constraint Satisfaction Problem**). El sistema utiliza un motor de satisfacción de restricciones con **OR-Tools CP-SAT** para automatizar la creación de horarios académicos, eliminando el error humano, resolviendo conflictos de solapamiento y optimizando el uso de infraestructura física.
 
-El sistema automatiza la generación de horarios académicos válidos y sin conflictos,
-resolviendo un problema NP-completo mediante un motor CSP implementado con **OR-Tools**,
-expuesto vía microservicio **FastAPI**, con frontend en **React 19 + TypeScript (TanStack Start)** y
-backend principal en **Express + Node.js + Prisma**.
-
----
-
-## El problema que resuelve
-
-La elaboración manual de horarios en universidades con currículo flexible consume semanas
-de trabajo administrativo y produce resultados con errores frecuentes: solapamientos de
-docentes, aulas sobreasignadas y distribuciones inequitativas de turnos.
-
-SGOHA reemplaza ese proceso con un motor que, para una instancia de hasta 50 cursos,
-30 docentes y 20 aulas, produce una solución válida en **≤ 30 segundos**.
-
+### **Puntos Clave del Desarrollo:**
+- **SMART Compliance:** Todos los requerimientos están validados bajo criterios específicos, medibles y temporales.
+- **CSP Engine:** Motor de generación de horarios capaz de resolver instancias de hasta 50 cursos, 30 docentes y 20 aulas en ≤ 30 segundos.
+- **Arquitectura desacoplada:** SPA (React) + API REST (Node.js/Express) + Microservicio CSP (FastAPI + OR-Tools).
+- **Green Software:** Caché de resultados CSP con TTL de 24 h para reducir cómputo innecesario en ≥ 40%.
 
 ---
 
-## Stack tecnológico
+## ⚙️ Especificaciones Técnicas (Resumen)
 
-| Capa | Tecnología | Justificación |
-|------|-----------|---------------|
-| Frontend | React 19 + TypeScript (TanStack Start + Vite) | Ecosistema maduro, file-based routing, tipado estricto, SSR ready |
-| UI / estilos | shadcn/ui + Radix + Tailwind CSS v4 | Componentes accesibles, tema consistente, atomic CSS |
-| Backend principal | Express + Node.js + TypeScript | Consistencia JS con el frontend, tipado estricto |
-| Microservicio CSP | FastAPI + OR-Tools | Rendimiento en resolución de restricciones complejas |
-| Base de datos | PostgreSQL 16 | Soporte robusto para consultas complejas |
-| ORM | Prisma | Tipado nativo con TypeScript |
-| Contenerización | Docker Compose | Portabilidad entre entornos |
-| CI/CD | GitHub Actions | Integración directa con el repositorio |
-| Hosting | Railway / Render | Despliegue rápido en tier gratuito |
+- **Rendimiento CSP:** Generación de horarios completos (50 cursos) en **≤ 30 segundos**.
+- **Latencia API:** Respuestas en el percentil 95 en **< 500 ms**.
+- **Carga visual:** Vista de calendario con carga inicial en **< 3 segundos**.
+- **Stack:** React 18 + TypeScript (Frontend) + Express + Node.js (API REST) + FastAPI + OR-Tools (Motor CSP) + PostgreSQL 16 (Base de datos).
 
 ---
 
-## Equipo de desarrollo
+## 🛠️ Guía de Ejecución Rápida
 
-| Integrante | Rol | Módulos principales |
-|------------|-----|---------------------|
-| Alberto Patiño | Product Owner | Backlog, criterios de aceptación, visión |
-| Andre De La Torre | Scrum Master | Git workflow, ceremonias, dailies |
-| Brianna Cortez | Dev — Backend / CSP | Motor CSP, microservicio FastAPI (RF-07, RF-08) |
-| Edward Flores | Dev — Backend / Auth | API REST, JWT, registro, matrícula (RF-01, RF-02, RF-04/05/06) |
-| Bryams Vilchez | Dev — Frontend / UI | SPA React, calendario, formularios (RF-10, RF-11) |
-| Jack Perez | Dev — QA / DevOps | Pruebas, Docker, CI/CD, reportes (RF-12, RF-14, RF-15) |
+> Requisito previo: tener **Docker** y **Docker Compose** instalados.
 
----
-
-## Estado del Sprint 0
-
-| Ítem | Estado |
-|------|--------|
-| Definición formal del problema | ✅ Completado |
-| Declaración de visión del proyecto | ✅ Completado |
-| Identificación preliminar de requerimientos | ✅ Completado |
-| Formalización de roles y normas del equipo | ✅ Completado |
-| Organización documental del repositorio | ✅ Completado |
-
----
-
-
-## Estructura del repositorio
-
-La estructura actual del repositorio es la siguiente:
-
+### **Ejecución completa con Docker**
+```bash
+cp .env.example .env
+docker-compose up --build
 ```
-|-- Readme.md
-|-- .gitignore
-|-- Backend/                            # API REST principal (Express + Prisma)
-|   |-- README.md
-|   |-- package.json
-|   |-- tsconfig.json
-|   |-- .env.example
-|   |-- prisma/
-|   |   `-- schema.prisma               # User, Period, Course, Classroom (Sprint 0)
-|   |-- src/
-|   |   |-- index.ts                    # bootstrap Express + middlewares + /health
-|   |   |-- routes/
-|   |   |   `-- health.ts
-|   |   |-- middleware/
-|   |   |   `-- auth.ts                 # requireAuth, requireRole (JWT - RF-02)
-|   |   `-- lib/
-|   |       `-- prisma.ts               # singleton PrismaClient
-|   `-- csp-service/                    # Microservicio CSP (FastAPI + OR-Tools)
-|       |-- README.md
-|       |-- pyproject.toml
-|       |-- Dockerfile
-|       |-- .env.example
-|       `-- app/
-|           |-- __init__.py
-|           |-- main.py                 # FastAPI app, /health, /solve
-|           |-- schemas.py              # Pydantic: SolveRequest, SolveResponse
-|           `-- solver.py               # cp_model stub (Sprint 2-3)
-|-- Frontend/                           # SPA (TanStack Start + React 19)
-|   |-- README.md
-|   |-- package.json                    # sgoha-frontend
-|   |-- tsconfig.json
-|   |-- vite.config.ts
-|   |-- components.json                 # shadcn/ui
-|   |-- eslint.config.js
-|   |-- .prettierrc
-|   `-- src/
-|       |-- router.tsx
-|       |-- routeTree.gen.ts
-|       |-- styles.css
-|       |-- routes/                     # file-based routing
-|       |   |-- __root.tsx
-|       |   |-- index.tsx
-|       |   |-- login.tsx
-|       |   |-- audit.tsx
-|       |   |-- calendar.tsx
-|       |   |-- classrooms.tsx
-|       |   |-- courses.tsx
-|       |   |-- enrollment.tsx
-|       |   |-- periods.tsx
-|       |   |-- reports.tsx
-|       |   `-- scheduler.tsx
-|       |-- components/
-|       |   |-- layout/AppLayout.tsx
-|       |   `-- ui/                     # ~50 componentes shadcn/ui
-|       |-- hooks/
-|       `-- lib/
-`-- docs/
-    |-- inicio/
-    |   |-- ENFOQUE.md
-    |   |-- PROBLEMA.md
-    |   `-- VISION.md
-    |-- ejecucion/
-    |   `-- REQUERIMIENTOS.md
-    |-- seguimiento_control/
-    |   |-- declaracion_equipo.md
-    |   |-- Declaracion de la vision del proyecto.md
-    |   |-- Documento inicial del problema.md
-    |   |-- Kickoff Project Charter.md
-    |   |-- Lista preliminar de requerimientos.md
-    |   |-- Seleccion del enfoque del proyecto.md
-    |   `-- Supuestos y restricciones.md
-    |-- cierre/
-    `-- Otros/
+
+### **Backend — API REST (Node.js)**
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+### **Microservicio CSP (FastAPI + OR-Tools)**
+```bash
+cd csp-service
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+### **Frontend (React + TypeScript)**
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
 ---
 
-## Documentación disponible
+## 👥 Equipo de Desarrollo
 
-| Documento | Ruta | Tipo |
-|-----------|------|------|
-| Declaración del equipo | [`docs/seguimiento_control/declaración_equipo.md`](docs/seguimiento_control/declaracion_equipo.md) | Completo |
-| Visión del proyecto (resumen) | [`docs/inicio/VISION.md`](docs/inicio/VISION.md) | Resumen |
-| Visión del proyecto (detallado) | [`docs/seguimiento_control/Declaracion de la vision del proyecto.md`](docs/seguimiento_control/Declaracion%20de%20la%20vision%20del%20proyecto.md) | Detallado |
-| Problema inicial (resumen) | [`docs/inicio/PROBLEMA.md`](docs/inicio/PROBLEMA.md) | Resumen |
-| Problema inicial (detallado) | [`docs/seguimiento_control/Documento inicial del problema.md`](docs/seguimiento_control/Documento%20inicial%20del%20problema.md) | Detallado |
-| Enfoque metodológico (resumen) | [`docs/inicio/ENFOQUE.md`](docs/inicio/ENFOQUE.md) | Resumen |
-| Enfoque metodológico (detallado) | [`docs/seguimiento_control/Seleccion del enfoque del proyecto.md`](docs/seguimiento_control/Seleccion%20del%20enfoque%20del%20proyecto.md) | Detallado |
-| Supuestos y restricciones | [`docs/seguimiento_control/Supuestos y restricciones.md`](docs/seguimiento_control/Supuestos%20y%20restricciones.md) | Completo |
-| Requerimientos (resumen) | [`docs/ejecucion/REQUERIMIENTOS.md`](docs/ejecucion/REQUERIMIENTOS.md) | Resumen |
-| Requerimientos RF + RNF (completo) | [`docs/seguimiento_control/Lista preliminar de requerimientos.md`](docs/seguimiento_control/Lista%20preliminar%20de%20requerimientos.md) | Completo |
-| Project Charter | [`docs/seguimiento_control/Kickoff Project Charter.md`](docs/seguimiento_control/Kickoff%20Project%20Charter.md) | Completo |
+| Rol Scrum | Integrante | Módulos |
+|---|---|---|
+| Product Owner | Alberto Patiño Reynoso | Documentación, criterios de aceptación |
+| Scrum Master | Andre De La Torre Segura | Git workflow, gestión del proyecto |
+| Dev — Backend / CSP | Brianna Cortez Ponce | Motor CSP, microservicio FastAPI |
+| Dev — Backend / Auth | Edward Flores Rodriguez | API REST, autenticación JWT, matrícula |
+| Dev — Frontend / UI | Bryams Vilchez Lazaro | SPA React, calendario, UI |
+| Dev — QA / DevOps | Jack Perez Lizarbe | Pruebas, CI/CD, Docker, reportes |
 
+---
 
-## Información del proyecto
-
-| Campo | Detalle |
-|-------|---------|
-| Código | PFA-TP2-2026-01 |
-| Asignatura | Taller de Proyectos 2 — ISI |
-| Institución | Universidad Continental — Huancayo, Perú |
-| Ciclo | 2026-I |
-| Metodología | Scrum — sprints de 2-3 semanas |
-| Repositorio | https://github.com/BryamsVL/TALLER-DE-PROYECTOS-2---202610 |
+<div align="center">
+  <sub>Taller de Proyectos 2 · Universidad Continental · Huancayo, Perú · 2026</sub>
+</div>
