@@ -16,8 +16,8 @@ Es una solución web desarrollada como proyecto final del curso **Taller de Proy
 
 El sistema automatiza la generación de horarios académicos válidos y sin conflictos,
 resolviendo un problema NP-completo mediante un motor CSP implementado con **OR-Tools**,
-expuesto vía microservicio **FastAPI**, con frontend en **React 18 + TypeScript** y
-backend principal en **Express + Node.js**.
+expuesto vía microservicio **FastAPI**, con frontend en **React 19 + TypeScript (TanStack Start)** y
+backend principal en **Express + Node.js + Prisma**.
 
 ---
 
@@ -37,8 +37,9 @@ SGOHA reemplaza ese proceso con un motor que, para una instancia de hasta 50 cur
 
 | Capa | Tecnología | Justificación |
 |------|-----------|---------------|
-| Frontend | React 18 + TypeScript (Vite) | Ecosistema maduro, FullCalendar, tipado estricto |
-| Backend principal | Express + Node.js | Consistencia JS con el frontend |
+| Frontend | React 19 + TypeScript (TanStack Start + Vite) | Ecosistema maduro, file-based routing, tipado estricto, SSR ready |
+| UI / estilos | shadcn/ui + Radix + Tailwind CSS v4 | Componentes accesibles, tema consistente, atomic CSS |
+| Backend principal | Express + Node.js + TypeScript | Consistencia JS con el frontend, tipado estricto |
 | Microservicio CSP | FastAPI + OR-Tools | Rendimiento en resolución de restricciones complejas |
 | Base de datos | PostgreSQL 16 | Soporte robusto para consultas complejas |
 | ORM | Prisma | Tipado nativo con TypeScript |
@@ -79,35 +80,79 @@ SGOHA reemplaza ese proceso con un motor que, para una instancia de hasta 50 cur
 La estructura actual del repositorio es la siguiente:
 
 ```
-|-- README.md
-|-- Backend/
+|-- Readme.md
+|-- .gitignore
+|-- Backend/                            # API REST principal (Express + Prisma)
 |   |-- README.md
-|   `-- tests/
-|       `-- README.md
-|-- docs/
-|   |-- declaracion-equipo.md
-|   |-- Declaración de la visión del proyecto.md
-|   |-- Documento inicial del problema.md
-|   |-- Kickoff Project Charter.md
-|   |-- Lista preliminar de requerimientos funcionales y no funcionales.md
-|   |-- Selección del enfoque del proyecto.md
-|   |-- cierre/
-|   |   `-- README.md
-|   |-- ejecucion/
-|   |   |-- README.md
-|   |   `-- REQUERIMIENTOS.md
-|   |-- inicio/
-|   |   |-- ENFOQUE.md
-|   |   |-- PROBLEMA.md
-|   |   `-- VISION.md
-|   |-- Otros/
-|   |   `-- README.md
-|   `-- seguimiento_control/
-|       `-- README.md
-`-- Frontend/
-    |-- README.md
-    `-- tests/
-        `-- README.md
+|   |-- package.json
+|   |-- tsconfig.json
+|   |-- .env.example
+|   |-- prisma/
+|   |   `-- schema.prisma               # User, Period, Course, Classroom (Sprint 0)
+|   |-- src/
+|   |   |-- index.ts                    # bootstrap Express + middlewares + /health
+|   |   |-- routes/
+|   |   |   `-- health.ts
+|   |   |-- middleware/
+|   |   |   `-- auth.ts                 # requireAuth, requireRole (JWT - RF-02)
+|   |   `-- lib/
+|   |       `-- prisma.ts               # singleton PrismaClient
+|   `-- csp-service/                    # Microservicio CSP (FastAPI + OR-Tools)
+|       |-- README.md
+|       |-- pyproject.toml
+|       |-- Dockerfile
+|       |-- .env.example
+|       `-- app/
+|           |-- __init__.py
+|           |-- main.py                 # FastAPI app, /health, /solve
+|           |-- schemas.py              # Pydantic: SolveRequest, SolveResponse
+|           `-- solver.py               # cp_model stub (Sprint 2-3)
+|-- Frontend/                           # SPA (TanStack Start + React 19)
+|   |-- README.md
+|   |-- package.json                    # sgoha-frontend
+|   |-- tsconfig.json
+|   |-- vite.config.ts
+|   |-- components.json                 # shadcn/ui
+|   |-- eslint.config.js
+|   |-- .prettierrc
+|   `-- src/
+|       |-- router.tsx
+|       |-- routeTree.gen.ts
+|       |-- styles.css
+|       |-- routes/                     # file-based routing
+|       |   |-- __root.tsx
+|       |   |-- index.tsx
+|       |   |-- login.tsx
+|       |   |-- audit.tsx
+|       |   |-- calendar.tsx
+|       |   |-- classrooms.tsx
+|       |   |-- courses.tsx
+|       |   |-- enrollment.tsx
+|       |   |-- periods.tsx
+|       |   |-- reports.tsx
+|       |   `-- scheduler.tsx
+|       |-- components/
+|       |   |-- layout/AppLayout.tsx
+|       |   `-- ui/                     # ~50 componentes shadcn/ui
+|       |-- hooks/
+|       `-- lib/
+`-- docs/
+    |-- inicio/
+    |   |-- ENFOQUE.md
+    |   |-- PROBLEMA.md
+    |   `-- VISION.md
+    |-- ejecucion/
+    |   `-- REQUERIMIENTOS.md
+    |-- seguimiento_control/
+    |   |-- declaracion_equipo.md
+    |   |-- Declaracion de la vision del proyecto.md
+    |   |-- Documento inicial del problema.md
+    |   |-- Kickoff Project Charter.md
+    |   |-- Lista preliminar de requerimientos.md
+    |   |-- Seleccion del enfoque del proyecto.md
+    |   `-- Supuestos y restricciones.md
+    |-- cierre/
+    `-- Otros/
 ```
 
 ---
