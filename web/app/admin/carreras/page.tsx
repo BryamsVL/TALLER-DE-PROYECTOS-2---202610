@@ -18,15 +18,9 @@ export default async function CarrerasPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: perfil } = await supabase
-    .from("perfil")
-    .select("rol")
-    .eq("id", user.id)
-    .single();
-
-  if (!perfil || (perfil.rol !== "ADMIN" && perfil.rol !== "COORDINADOR")) {
-    redirect("/dashboard");
-  }
+  // Modo prototipo: no se valida el rol aqui. La BD aplica RLS sobre la
+  // tabla `carrera` (policy carrera_write), asi que las escrituras solo
+  // funcionan si el usuario real tiene rol ADMIN/COORDINADOR.
 
   const { data: carreras, error } = await supabase
     .from("carrera")
@@ -41,10 +35,10 @@ export default async function CarrerasPage() {
             SGOHA — Carreras
           </h1>
           <Link
-            href="/dashboard"
+            href="/admin"
             className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50"
           >
-            Volver al dashboard
+            Volver
           </Link>
         </div>
       </header>
