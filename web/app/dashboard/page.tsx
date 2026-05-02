@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/actions/auth";
@@ -48,6 +49,22 @@ export default async function DashboardPage() {
             Sprint 1 en construccion. Las funcionalidades de gestion academica se
             agregaran proximamente.
           </p>
+
+          {(perfil?.rol === "ADMIN" || perfil?.rol === "COORDINADOR") && (
+            <div className="mt-8 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+              <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">
+                Administracion
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                <Link
+                  href="/admin/carreras"
+                  className="rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-1.5 text-sm text-zinc-900 dark:text-zinc-50 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                >
+                  Carreras
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>
