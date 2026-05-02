@@ -2,83 +2,131 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
+import { Lock, Mail } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { signIn } from "@/app/actions/auth";
 
 export default function LoginPage() {
   const [state, action, pending] = useActionState(signIn, undefined);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-black px-4">
-      <div className="w-full max-w-sm bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800 p-8">
-        <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50 mb-6">
-          Iniciar sesion
-        </h1>
-
-        <form action={action} className="flex flex-col gap-4">
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1"
-            >
-              Correo
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-              className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-zinc-900 dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-400"
-            />
-            {state?.errors?.email && (
-              <p className="mt-1 text-sm text-red-600">{state.errors.email[0]}</p>
-            )}
-          </div>
-
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1"
-            >
-              Contrasena
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              required
-              className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-zinc-900 dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-400"
-            />
-            {state?.errors?.password && (
-              <p className="mt-1 text-sm text-red-600">
-                {state.errors.password[0]}
+    <div className="flex min-h-screen items-center justify-center bg-background p-6">
+      <div className="grid w-full max-w-5xl overflow-hidden rounded-3xl bg-card shadow-pop md:grid-cols-2">
+        <div className="hidden flex-col justify-between bg-primary p-10 text-primary-foreground md:flex">
+          <div className="flex items-center gap-2">
+            <div className="grid h-10 w-10 place-items-center rounded-xl bg-accent text-accent-foreground font-bold">
+              S
+            </div>
+            <div>
+              <p className="text-base font-bold">SGOHA</p>
+              <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                Academic OS
               </p>
-            )}
+            </div>
           </div>
 
-          {state?.message && (
-            <p className="text-sm text-red-600">{state.message}</p>
-          )}
+          <div>
+            <h2 className="font-display text-3xl font-bold leading-tight">
+              Optimiza tu calendario academico con CSP.
+            </h2>
+            <p className="mt-3 text-sm text-muted-foreground">
+              Matricula, horarios y reportes en una sola plataforma para
+              coordinacion, docentes y estudiantes.
+            </p>
+          </div>
 
-          <button
-            type="submit"
-            disabled={pending}
-            className="mt-2 rounded-lg bg-zinc-900 dark:bg-zinc-50 text-white dark:text-zinc-900 py-2 font-medium hover:opacity-90 disabled:opacity-50 transition-opacity"
-          >
-            {pending ? "Ingresando..." : "Ingresar"}
-          </button>
-        </form>
+          <div className="rounded-2xl border border-sidebar-border bg-sidebar-active p-4 text-xs">
+            <p className="font-semibold text-sidebar-active-foreground">
+              Generacion automatica con backtracking
+            </p>
+            <p className="mt-1 text-sidebar-muted">
+              Restricciones de profesor, aula, cohorte y disponibilidad cumplidas.
+            </p>
+          </div>
+        </div>
 
-        <p className="mt-6 text-sm text-zinc-600 dark:text-zinc-400 text-center">
-          No tienes cuenta?{" "}
-          <Link
-            href="/register"
-            className="text-zinc-900 dark:text-zinc-50 font-medium underline"
-          >
-            Registrate
-          </Link>
-        </p>
+        <div className="p-8 md:p-10">
+          <h1 className="font-display text-2xl font-bold tracking-tight">
+            Bienvenido de vuelta
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Ingresa con tu cuenta institucional
+          </p>
+
+          <form action={action} className="mt-8 space-y-4">
+            <div className="space-y-2">
+              <Label
+                htmlFor="email"
+                className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+              >
+                Correo
+              </Label>
+              <div className="flex items-center gap-2 rounded-xl border border-input bg-background px-3 focus-within:ring-1 focus-within:ring-ring">
+                <Mail className="h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  placeholder="usuario@institucion.edu"
+                  className="border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
+                />
+              </div>
+              {state?.errors?.email && (
+                <p className="text-xs text-destructive">{state.errors.email[0]}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label
+                htmlFor="password"
+                className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+              >
+                Contrasena
+              </Label>
+              <div className="flex items-center gap-2 rounded-xl border border-input bg-background px-3 focus-within:ring-1 focus-within:ring-ring">
+                <Lock className="h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  placeholder="••••••••"
+                  className="border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
+                />
+              </div>
+              {state?.errors?.password && (
+                <p className="text-xs text-destructive">{state.errors.password[0]}</p>
+              )}
+            </div>
+
+            {state?.message && (
+              <p className="text-sm text-destructive">{state.message}</p>
+            )}
+
+            <Button
+              type="submit"
+              disabled={pending}
+              className="w-full rounded-xl bg-accent py-3 text-sm font-semibold text-accent-foreground hover:bg-accent/90 h-auto"
+            >
+              {pending ? "Ingresando..." : "Ingresar"}
+            </Button>
+          </form>
+
+          <p className="mt-8 text-center text-xs text-muted-foreground">
+            No tienes cuenta?{" "}
+            <Link
+              href="/register"
+              className="font-semibold text-foreground hover:underline"
+            >
+              Registrate
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

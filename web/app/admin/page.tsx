@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface Modulo {
   href: string;
@@ -54,68 +54,55 @@ const MODULOS: Modulo[] = [
   },
 ];
 
-export default async function AdminHomePage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-
+export default function AdminHomePage() {
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-black">
-      <header className="border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-            SGOHA — Admin / Coordinador
-          </h1>
-          <Link
-            href="/dashboard"
-            className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50"
-          >
-            Cambiar de rol
-          </Link>
-        </div>
+    <div className="space-y-6">
+      <header>
+        <h1 className="font-display text-2xl font-bold tracking-tight md:text-3xl">
+          Resumen
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Modulos de gestion academica. Selecciona uno para empezar.
+        </p>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 py-8">
-        <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-6">
-          Modulos de gestion academica.
-        </p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {MODULOS.map((m) => {
-            const isDisponible = m.estado === "disponible";
-            const cardClass = isDisponible
-              ? "rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors"
-              : "rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100/60 dark:bg-zinc-900/40 p-5 cursor-not-allowed";
-            return isDisponible ? (
-              <Link key={m.href} href={m.href} className={cardClass}>
-                <div className="text-base font-semibold text-zinc-900 dark:text-zinc-50 mb-1">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {MODULOS.map((m) => {
+          const isDisponible = m.estado === "disponible";
+          const inner = (
+            <Card
+              className={
+                isDisponible
+                  ? "h-full transition-colors hover:border-accent"
+                  : "h-full opacity-60 cursor-not-allowed"
+              }
+            >
+              <CardContent className="space-y-2">
+                <CardTitle className="font-display text-base">
                   {m.titulo}
+                </CardTitle>
+                <CardDescription>{m.descripcion}</CardDescription>
+                <div className="pt-2">
+                  {isDisponible ? (
+                    <Badge variant="secondary" className="bg-success/20 text-success-foreground">
+                      Disponible
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline">Proximamente</Badge>
+                  )}
                 </div>
-                <div className="text-sm text-zinc-600 dark:text-zinc-400">
-                  {m.descripcion}
-                </div>
-                <div className="mt-3 text-xs text-emerald-700 dark:text-emerald-400">
-                  Disponible
-                </div>
-              </Link>
-            ) : (
-              <div key={m.href} className={cardClass}>
-                <div className="text-base font-semibold text-zinc-700 dark:text-zinc-400 mb-1">
-                  {m.titulo}
-                </div>
-                <div className="text-sm text-zinc-500 dark:text-zinc-500">
-                  {m.descripcion}
-                </div>
-                <div className="mt-3 text-xs text-zinc-500 dark:text-zinc-500">
-                  Proximamente
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </main>
+              </CardContent>
+            </Card>
+          );
+          return isDisponible ? (
+            <Link key={m.href} href={m.href} className="block">
+              {inner}
+            </Link>
+          ) : (
+            <div key={m.href}>{inner}</div>
+          );
+        })}
+      </div>
     </div>
   );
 }
