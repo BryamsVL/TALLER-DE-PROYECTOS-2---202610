@@ -27,6 +27,9 @@ DROP TABLE IF EXISTS profesor               CASCADE;
 DROP TABLE IF EXISTS perfil                 CASCADE;
 DROP TABLE IF EXISTS carrera                CASCADE;
 
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+
+DROP FUNCTION IF EXISTS handle_new_user()       CASCADE;
 DROP FUNCTION IF EXISTS sync_sesion_denorm()    CASCADE;
 DROP FUNCTION IF EXISTS set_updated_at()        CASCADE;
 DROP FUNCTION IF EXISTS current_rol()           CASCADE;
@@ -413,6 +416,29 @@ CREATE POLICY nrcseq_admin ON nrc_secuencia FOR ALL
   USING (current_rol() IN ('ADMIN','COORDINADOR'))
   WITH CHECK (current_rol() IN ('ADMIN','COORDINADOR'));
 
+-- 7.5. Auto-creacion de perfil al registrar usuario --------------------------
+-- Cuando Supabase Auth crea una fila en auth.users (signUp), este trigger
+-- crea automaticamente la fila correspondiente en `perfil` con rol ESTUDIANTE.
+-- Corre con SECURITY DEFINER para bypassar las policies RLS (un usuario nuevo
+-- no tiene perfil aun, por lo que current_rol() retorna NULL y no puede
+-- insertar el suyo a traves de la policy normal).
+CREATE OR REPLACE FUNCTION handle_new_user()
+RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  INSERT INTO perfil (id, nombre, rol)
+  VALUES (
+    NEW.id,
+    COALESCE(NEW.raw_user_meta_data->>'nombre', NEW.email),
+    'ESTUDIANTE'
+  );
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION handle_new_user();
+
 -- 8. Seed minimo (Sprint 1) ---------------------------------------------------
 
 -- 9 bloques horarios (4 manana + 3 tarde + 2 noche)
@@ -438,11 +464,10 @@ INSERT INTO nrc_secuencia (ciclo_id, ultimo_valor)
 -- NOTAS PARA EL EQUIPO
 -- ============================================================================
 -- 1. Crear usuarios: registrar via Supabase Auth (Authentication > Users en
---    el dashboard, o supabase.auth.signUp desde la app). Despues, insertar
---    manualmente la fila en `perfil`:
---      INSERT INTO perfil(id, nombre, rol)
---      VALUES ('<uuid-de-auth.users>', 'Nombre Apellido', 'ADMIN');
---    Para Sprint 2 se anadira un trigger ON INSERT auth.users que lo automatice.
+--    el dashboard, o supabase.auth.signUp desde la app). El trigger
+--    on_auth_user_created (seccion 7.5) crea automaticamente la fila en
+--    `perfil` con rol ESTUDIANTE. Para promover a ADMIN/COORDINADOR/DOCENTE:
+--      UPDATE perfil SET rol = 'ADMIN' WHERE id = '<uuid>';
 --
 -- 2. Para regenerar el schema desde cero: SQL Editor > pegar este archivo > Run.
 --    Borra TODO (DROP CASCADE). En Sprint 2+ pasamos a Supabase CLI con

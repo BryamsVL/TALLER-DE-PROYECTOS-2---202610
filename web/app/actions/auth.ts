@@ -48,7 +48,7 @@ export async function signUp(
   }
 
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp({
+  const { error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
@@ -60,20 +60,8 @@ export async function signUp(
     return { message: error.message };
   }
 
-  // Crear fila en `perfil` con rol por defecto ESTUDIANTE.
-  // ADMIN/COORDINADOR cambian el rol manualmente en Supabase Studio.
-  if (data.user) {
-    const { error: perfilError } = await supabase.from("perfil").insert({
-      id: data.user.id,
-      nombre: parsed.data.nombre,
-      rol: "ESTUDIANTE",
-    });
-    if (perfilError) {
-      return {
-        message: `Cuenta creada pero fallo perfil: ${perfilError.message}`,
-      };
-    }
-  }
+  // El trigger `on_auth_user_created` (schema.sql seccion 7.5) crea la fila
+  // en `perfil` automaticamente con rol ESTUDIANTE. Promover roles via UPDATE.
 
   revalidatePath("/", "layout");
   redirect("/dashboard");
