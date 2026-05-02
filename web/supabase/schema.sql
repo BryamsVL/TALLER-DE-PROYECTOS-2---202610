@@ -59,11 +59,8 @@ BEGIN
 END;
 $$;
 
--- SECURITY DEFINER para que la consulta dentro de policies no dispare RLS recursivo.
-CREATE OR REPLACE FUNCTION current_rol()
-RETURNS rol_enum LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
-  SELECT rol FROM perfil WHERE id = auth.uid();
-$$;
+-- Nota: `current_rol()` se define mas abajo, despues de crear la tabla
+-- `perfil` (seccion 4) porque LANGUAGE sql valida el cuerpo en CREATE.
 
 -- 4. Tablas -------------------------------------------------------------------
 
@@ -290,6 +287,13 @@ CREATE INDEX idx_genjob_ciclo_status    ON generation_job(ciclo_id, status);
 -- 7. RLS (Row Level Security) -------------------------------------------------
 -- Nota: las Edge Functions / Server Actions que usen SERVICE_ROLE_KEY
 -- bypassan RLS. Estas policies aplican a clientes con sesion (browser).
+
+-- SECURITY DEFINER + search_path explicito: que la consulta dentro de las
+-- policies NO dispare RLS recursivo sobre la propia tabla `perfil`.
+CREATE OR REPLACE FUNCTION current_rol()
+RETURNS rol_enum LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+  SELECT rol FROM perfil WHERE id = auth.uid();
+$$;
 
 ALTER TABLE perfil                  ENABLE ROW LEVEL SECURITY;
 ALTER TABLE profesor                ENABLE ROW LEVEL SECURITY;
