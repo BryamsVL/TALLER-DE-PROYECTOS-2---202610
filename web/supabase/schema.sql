@@ -198,7 +198,9 @@ CREATE TABLE generation_job (
 CREATE TABLE nrc (
   nrc                 CHAR(5) PRIMARY KEY CHECK (nrc ~ '^[0-9]{5}$'),
   curso_id            INT NOT NULL REFERENCES curso(id),
-  profesor_id         UUID NOT NULL REFERENCES profesor(id),
+  -- profesor_id nullable: el panel admin crea NRCs sin docente y lo asigna despues.
+  -- ON DELETE SET NULL: borrar un profesor no falla si tenia NRCs asignados.
+  profesor_id         UUID REFERENCES profesor(id) ON DELETE SET NULL,
   ciclo_id            INT NOT NULL REFERENCES ciclo(id),
   cohorte_id          INT NOT NULL REFERENCES cohorte(id),
   cupo_max            SMALLINT NOT NULL DEFAULT 30 CHECK (cupo_max BETWEEN 1 AND 30),

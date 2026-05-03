@@ -5,64 +5,51 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { mapAdminWriteErrorMessage } from "../action-errors";
 
-const AsignacionSchema = z.object({
-  cursoId: z.coerce.number().int().positive({ error: "Selecciona un curso valido." }),
-  profesorId: z.uuid({ error: "Selecciona un profesor valido." }),
+const SetAsignacionSchema = z.object({
+  cursoId: z.coerce.number().int().positive(),
+  profesorId: z.uuid(),
+  activar: z.union([z.literal("true"), z.literal("false")]).transform((v) => v === "true"),
 });
 
-export type AsignacionFormState =
-  | {
-      errors?: {
-        cursoId?: string[];
-        profesorId?: string[];
-      };
-      message?: string;
-    }
-  | undefined;
+export type AsignacionResult = { ok: true } | { ok: false; message: string };
 
-export async function crearAsignacion(
-  _prev: AsignacionFormState,
-  formData: FormData,
-): Promise<AsignacionFormState> {
-  const parsed = AsignacionSchema.safeParse({
+// Idempotente: activar=true crea la relacion (ignora duplicado), activar=false la borra.
+// La paridad con `curso_profesor` es la fuente de verdad de "este profe puede dictar este curso".
+export async function setAsignacion(formData: FormData): Promise<AsignacionResult> {
+  const parsed = SetAsignacionSchema.safeParse({
     cursoId: formData.get("cursoId"),
     profesorId: formData.get("profesorId"),
+    activar: formData.get("activar"),
   });
 
   if (!parsed.success) {
-    return { errors: parsed.error.flatten().fieldErrors };
+    return { ok: false, message: "Datos invalidos." };
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.from("curso_profesor").insert({
-    curso_id: parsed.data.cursoId,
-    profesor_id: parsed.data.profesorId,
-  });
 
-  if (error) {
-    if (error.code === "23505") {
-      return {
-        message: "Esa relacion curso-profesor ya existe.",
-      };
+  if (parsed.data.activar) {
+    const { error } = await supabase
+      .from("curso_profesor")
+      .insert({ curso_id: parsed.data.cursoId, profesor_id: parsed.data.profesorId });
+
+    // 23505 = unique_violation. Si ya existe, lo tomamos como exito (idempotencia).
+    if (error && error.code !== "23505") {
+      return { ok: false, message: mapAdminWriteErrorMessage(error.code, error.message) };
     }
-    return { message: mapAdminWriteErrorMessage(error.code, error.message) };
+  } else {
+    const { error } = await supabase
+      .from("curso_profesor")
+      .delete()
+      .eq("curso_id", parsed.data.cursoId)
+      .eq("profesor_id", parsed.data.profesorId);
+
+    if (error) {
+      return { ok: false, message: mapAdminWriteErrorMessage(error.code, error.message) };
+    }
   }
 
   revalidatePath("/admin/asignaciones");
-  return { message: "ok" };
-}
-
-export async function eliminarAsignacion(formData: FormData): Promise<void> {
-  const cursoId = Number(formData.get("cursoId"));
-  const profesorId = String(formData.get("profesorId") ?? "");
-
-  if (!Number.isInteger(cursoId) || cursoId <= 0 || !profesorId) return;
-
-  const supabase = await createClient();
-  await supabase
-    .from("curso_profesor")
-    .delete()
-    .eq("curso_id", cursoId)
-    .eq("profesor_id", profesorId);
-  revalidatePath("/admin/asignaciones");
+  revalidatePath("/admin/cursos");
+  return { ok: true };
 }

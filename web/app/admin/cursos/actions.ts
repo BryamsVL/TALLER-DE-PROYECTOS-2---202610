@@ -112,3 +112,191 @@ export async function eliminarCurso(formData: FormData): Promise<void> {
   await supabase.from("curso").delete().eq("id", id);
   revalidatePath("/admin/cursos");
 }
+
+// ============================================================================
+// Acciones de NRC (instancias del curso, una por seccion/horario)
+// ============================================================================
+
+export type NrcActionResult = { ok: true } | { ok: false; message: string };
+
+const NrcCrearSchema = z.object({
+  cursoId: z.coerce.number().int().positive(),
+});
+
+const NrcEliminarSchema = z.object({
+  nrc: z.string().regex(/^[0-9]{5}$/),
+});
+
+const NrcAsignarSchema = z.object({
+  nrc: z.string().regex(/^[0-9]{5}$/),
+  // Cadena vacia => desasignar (profesor_id = null).
+  profesorId: z.union([z.uuid(), z.literal("")]).optional(),
+});
+
+// Genera el codigo NRC: [nivel%10][cursoId padded:2][instancia padded:2].
+// Ej. nivel=3, cursoId=5, instancia=1 -> "30501".
+function buildNrcCode(nivel: number, cursoId: number, instancia: number): string {
+  const d1 = String(nivel % 10);
+  const d2 = String(cursoId).padStart(2, "0");
+  const d3 = String(instancia).padStart(2, "0");
+  return `${d1}${d2}${d3}`;
+}
+
+export async function crearNrc(formData: FormData): Promise<NrcActionResult> {
+  const parsed = NrcCrearSchema.safeParse({ cursoId: formData.get("cursoId") });
+  if (!parsed.success) {
+    return { ok: false, message: "Curso invalido." };
+  }
+
+  const supabase = await createClient();
+
+  // 1. Curso (necesitamos carrera_id y nivel para la cohorte y el codigo).
+  const { data: curso, error: cursoError } = await supabase
+    .from("curso")
+    .select("id, carrera_id, nivel")
+    .eq("id", parsed.data.cursoId)
+    .single();
+
+  if (cursoError || !curso) {
+    return { ok: false, message: "No se encontro el curso." };
+  }
+
+  if (curso.id > 99) {
+    return {
+      ok: false,
+      message: "El id del curso supera 99 y no cabe en el formato del NRC (prototipo).",
+    };
+  }
+
+  // 2. Ciclo activo (asumimos uno solo). Si hay varios, tomamos el mas reciente.
+  const { data: ciclo, error: cicloError } = await supabase
+    .from("ciclo")
+    .select("id")
+    .eq("activo", true)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (cicloError) {
+    return { ok: false, message: mapAdminWriteErrorMessage(cicloError.code, cicloError.message) };
+  }
+  if (!ciclo) {
+    return { ok: false, message: "No hay un ciclo academico activo. Activa uno primero." };
+  }
+
+  // 3. Cohorte default (carrera, ciclo, nivel, seccion='A'). Get-or-create.
+  const seccion = "A";
+  const { data: cohorteExistente } = await supabase
+    .from("cohorte")
+    .select("id")
+    .eq("carrera_id", curso.carrera_id)
+    .eq("ciclo_id", ciclo.id)
+    .eq("nivel", curso.nivel)
+    .eq("seccion", seccion)
+    .maybeSingle();
+
+  let cohorteId: number;
+  if (cohorteExistente) {
+    cohorteId = cohorteExistente.id;
+  } else {
+    const { data: cohorteNueva, error: cohorteError } = await supabase
+      .from("cohorte")
+      .insert({
+        carrera_id: curso.carrera_id,
+        ciclo_id: ciclo.id,
+        nivel: curso.nivel,
+        seccion,
+      })
+      .select("id")
+      .single();
+
+    if (cohorteError || !cohorteNueva) {
+      return {
+        ok: false,
+        message: mapAdminWriteErrorMessage(cohorteError?.code, cohorteError?.message),
+      };
+    }
+    cohorteId = cohorteNueva.id;
+  }
+
+  // 4. Calcular siguiente instancia: max(ultimos 2 digitos de NRCs del curso) + 1.
+  const { data: nrcsExistentes, error: nrcsError } = await supabase
+    .from("nrc")
+    .select("nrc")
+    .eq("curso_id", curso.id);
+
+  if (nrcsError) {
+    return { ok: false, message: mapAdminWriteErrorMessage(nrcsError.code, nrcsError.message) };
+  }
+
+  const instancias = (nrcsExistentes ?? [])
+    .map((r) => Number.parseInt(r.nrc.slice(3, 5), 10))
+    .filter((n) => Number.isInteger(n));
+  const siguienteInstancia = instancias.length === 0 ? 1 : Math.max(...instancias) + 1;
+
+  if (siguienteInstancia > 99) {
+    return { ok: false, message: "Limite de 99 instancias por curso alcanzado." };
+  }
+
+  const nrcCode = buildNrcCode(curso.nivel, curso.id, siguienteInstancia);
+
+  // 5. INSERT.
+  const { error: insertError } = await supabase.from("nrc").insert({
+    nrc: nrcCode,
+    curso_id: curso.id,
+    profesor_id: null,
+    ciclo_id: ciclo.id,
+    cohorte_id: cohorteId,
+  });
+
+  if (insertError) {
+    if (insertError.code === "23505") {
+      return { ok: false, message: `El NRC ${nrcCode} ya existe.` };
+    }
+    return {
+      ok: false,
+      message: mapAdminWriteErrorMessage(insertError.code, insertError.message),
+    };
+  }
+
+  revalidatePath("/admin/cursos");
+  return { ok: true };
+}
+
+export async function eliminarNrc(formData: FormData): Promise<NrcActionResult> {
+  const parsed = NrcEliminarSchema.safeParse({ nrc: formData.get("nrc") });
+  if (!parsed.success) return { ok: false, message: "NRC invalido." };
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("nrc").delete().eq("nrc", parsed.data.nrc);
+
+  if (error) {
+    return { ok: false, message: mapAdminWriteErrorMessage(error.code, error.message) };
+  }
+
+  revalidatePath("/admin/cursos");
+  return { ok: true };
+}
+
+export async function asignarProfesorANrc(formData: FormData): Promise<NrcActionResult> {
+  const parsed = NrcAsignarSchema.safeParse({
+    nrc: formData.get("nrc"),
+    profesorId: formData.get("profesorId") ?? "",
+  });
+  if (!parsed.success) return { ok: false, message: "Datos invalidos." };
+
+  const supabase = await createClient();
+  const profesorId = parsed.data.profesorId === "" ? null : parsed.data.profesorId ?? null;
+
+  const { error } = await supabase
+    .from("nrc")
+    .update({ profesor_id: profesorId })
+    .eq("nrc", parsed.data.nrc);
+
+  if (error) {
+    return { ok: false, message: mapAdminWriteErrorMessage(error.code, error.message) };
+  }
+
+  revalidatePath("/admin/cursos");
+  return { ok: true };
+}

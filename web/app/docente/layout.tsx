@@ -5,7 +5,7 @@ import { getSessionProfile } from "@/lib/auth/get-session-profile";
 const NAV_DOCENTE: NavItem[] = [
   { href: "/docente", label: "Inicio", icon: "layoutDashboard", exact: true },
   { href: "/docente/horario", label: "Mi horario", icon: "calendar" },
-  { href: "/docente/disponibilidad", label: "Mi disponibilidad", icon: "clock" },
+  { href: "/docente/disponibilidad", label: "Horario preferente", icon: "clock" },
 ];
 
 export default async function DocenteLayout({

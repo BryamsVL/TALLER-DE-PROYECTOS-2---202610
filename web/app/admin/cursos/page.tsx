@@ -1,4 +1,3 @@
-import { Power, Trash2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import {
   Card,
@@ -7,18 +6,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { CursoForm } from "./CursoForm";
-import { eliminarCurso, toggleActivoCurso } from "./actions";
+import { CursosTable } from "./CursosTable";
 
 interface Curso {
   id: number;
@@ -31,25 +20,89 @@ interface Curso {
   activo: boolean;
 }
 
+interface NrcRow {
+  nrc: string;
+  curso_id: number;
+  profesor_id: string | null;
+  profesor_nombre: string | null;
+}
+
 export default async function CursosPage() {
   const supabase = await createClient();
 
-  const [{ data: carreras, error: carrerasError }, { data: cursos, error: cursosError }] =
-    await Promise.all([
-      supabase
-        .from("carrera")
-        .select("id, nombre, activo")
-        .order("nombre", { ascending: true }),
-      supabase
-        .from("curso")
-        .select("id, carrera_id, nivel, codigo, nombre, horas_semanales, tipo_aula, activo")
-        .order("nivel", { ascending: true })
-        .order("nombre", { ascending: true }),
-    ]);
+  const [
+    { data: carreras, error: carrerasError },
+    { data: cursos, error: cursosError },
+    { data: nrcs, error: nrcsError },
+    { data: perfilesDocentes, error: perfilesError },
+    { data: profesores, error: profesoresError },
+    { data: asignaciones, error: asignacionesError },
+  ] = await Promise.all([
+    supabase
+      .from("carrera")
+      .select("id, nombre, activo")
+      .order("nombre", { ascending: true }),
+    supabase
+      .from("curso")
+      .select("id, carrera_id, nivel, codigo, nombre, horas_semanales, tipo_aula, activo")
+      .order("nivel", { ascending: true })
+      .order("nombre", { ascending: true }),
+    supabase
+      .from("nrc")
+      .select("nrc, curso_id, profesor_id")
+      .order("nrc", { ascending: true }),
+    supabase
+      .from("perfil")
+      .select("id, nombre, activo")
+      .eq("rol", "DOCENTE")
+      .eq("activo", true)
+      .order("nombre", { ascending: true }),
+    supabase.from("profesor").select("id"),
+    supabase.from("curso_profesor").select("curso_id, profesor_id"),
+  ]);
 
-  const carrerasMap = new Map((carreras ?? []).map((carrera) => [carrera.id, carrera.nombre]));
+  const carrerasMap = Object.fromEntries(
+    (carreras ?? []).map((c) => [c.id, c.nombre] as const),
+  );
   const total = cursos?.length ?? 0;
-  const activos = cursos?.filter((curso) => curso.activo).length ?? 0;
+  const activos = cursos?.filter((c) => c.activo).length ?? 0;
+
+  // Solo perfiles DOCENTE que tambien existen en `profesor` (registrados completos).
+  const profesoresIds = new Set((profesores ?? []).map((p) => p.id));
+  const profesoresActivos = (perfilesDocentes ?? [])
+    .filter((p) => profesoresIds.has(p.id))
+    .map((p) => ({ id: p.id, nombre: p.nombre }));
+  const profesorPorId = new Map(profesoresActivos.map((p) => [p.id, p]));
+
+  // Eligibles por curso: solo los profesores marcados en `curso_profesor`.
+  const profesoresEligiblesPorCurso: Record<number, { id: string; nombre: string }[]> = {};
+  for (const a of asignaciones ?? []) {
+    const prof = profesorPorId.get(a.profesor_id);
+    if (!prof) continue;
+    (profesoresEligiblesPorCurso[a.curso_id] ??= []).push(prof);
+  }
+
+  const perfilNombre = new Map((perfilesDocentes ?? []).map((p) => [p.id, p.nombre]));
+  const nrcsPorCurso: Record<number, NrcRow[]> = {};
+  for (const row of nrcs ?? []) {
+    const enriched: NrcRow = {
+      nrc: row.nrc,
+      curso_id: row.curso_id,
+      profesor_id: row.profesor_id,
+      profesor_nombre: row.profesor_id ? perfilNombre.get(row.profesor_id) ?? null : null,
+    };
+    (nrcsPorCurso[row.curso_id] ??= []).push(enriched);
+  }
+
+  const totalNrcs = (nrcs ?? []).length;
+  const nrcsAsignados = (nrcs ?? []).filter((n) => n.profesor_id).length;
+  const fetchError =
+    carrerasError?.message ??
+    cursosError?.message ??
+    nrcsError?.message ??
+    perfilesError?.message ??
+    profesoresError?.message ??
+    asignacionesError?.message;
 
   return (
     <div className="space-y-6">
@@ -58,29 +111,33 @@ export default async function CursosPage() {
           Cursos
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Gestiona la malla curricular, el nivel academico y el tipo de aula requerido.
+          Gestiona la malla curricular y los NRCs (instancias) que se dictan cada ciclo.
         </p>
       </header>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Total registrados</CardDescription>
+            <CardDescription>Cursos</CardDescription>
             <CardTitle className="font-display text-2xl">{total}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Activos</CardDescription>
+            <CardDescription>Cursos activos</CardDescription>
             <CardTitle className="font-display text-2xl">{activos}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Carreras disponibles</CardDescription>
-            <CardTitle className="font-display text-2xl">
-              {carreras?.filter((carrera) => carrera.activo).length ?? 0}
-            </CardTitle>
+            <CardDescription>NRCs creados</CardDescription>
+            <CardTitle className="font-display text-2xl">{totalNrcs}</CardTitle>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardDescription>NRCs con docente</CardDescription>
+            <CardTitle className="font-display text-2xl">{nrcsAsignados}</CardTitle>
           </CardHeader>
         </Card>
       </div>
@@ -105,89 +162,29 @@ export default async function CursosPage() {
         <CardHeader>
           <CardTitle className="font-display text-base">Cursos registrados</CardTitle>
           <CardDescription>
-            {total} curso{total === 1 ? "" : "s"} en total.
+            Expande una fila para ver y gestionar sus NRCs.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {(carrerasError || cursosError) && (
+          {fetchError && (
             <p className="mb-4 text-sm text-destructive">
-              Error cargando cursos: {carrerasError?.message ?? cursosError?.message}
+              Error cargando datos: {fetchError}
             </p>
           )}
 
-          {!carrerasError && !cursosError && total === 0 && (
+          {!fetchError && total === 0 && (
             <p className="py-8 text-center text-sm text-muted-foreground">
               Aun no hay cursos registrados.
             </p>
           )}
 
-          {cursos && cursos.length > 0 && (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Codigo</TableHead>
-                  <TableHead>Curso</TableHead>
-                  <TableHead>Carrera</TableHead>
-                  <TableHead className="w-[80px]">Nivel</TableHead>
-                  <TableHead className="w-[110px]">Horas</TableHead>
-                  <TableHead>Tipo aula</TableHead>
-                  <TableHead className="w-[120px]">Estado</TableHead>
-                  <TableHead className="w-[200px] text-right">Acciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {(cursos as Curso[]).map((curso) => (
-                  <TableRow key={curso.id}>
-                    <TableCell className="font-medium">{curso.codigo}</TableCell>
-                    <TableCell>{curso.nombre}</TableCell>
-                    <TableCell>{carrerasMap.get(curso.carrera_id) ?? "Sin carrera"}</TableCell>
-                    <TableCell>{curso.nivel}</TableCell>
-                    <TableCell>{curso.horas_semanales}</TableCell>
-                    <TableCell>{curso.tipo_aula}</TableCell>
-                    <TableCell>
-                      {curso.activo ? (
-                        <Badge
-                          variant="secondary"
-                          className="bg-success/20 text-success-foreground"
-                        >
-                          Activo
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline">Inactivo</Badge>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex justify-end gap-2">
-                        <form action={toggleActivoCurso}>
-                          <input type="hidden" name="id" value={curso.id} />
-                          <input
-                            type="hidden"
-                            name="activo"
-                            value={String(curso.activo)}
-                          />
-                          <Button type="submit" variant="ghost" size="sm">
-                            <Power className="h-3.5 w-3.5" />
-                            {curso.activo ? "Desactivar" : "Activar"}
-                          </Button>
-                        </form>
-                        <form action={eliminarCurso}>
-                          <input type="hidden" name="id" value={curso.id} />
-                          <Button
-                            type="submit"
-                            variant="ghost"
-                            size="sm"
-                            className="text-destructive hover:text-destructive"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                            Eliminar
-                          </Button>
-                        </form>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+          {total > 0 && (
+            <CursosTable
+              cursos={cursos as Curso[]}
+              carrerasMap={carrerasMap}
+              nrcsPorCurso={nrcsPorCurso}
+              profesoresEligiblesPorCurso={profesoresEligiblesPorCurso}
+            />
           )}
         </CardContent>
       </Card>

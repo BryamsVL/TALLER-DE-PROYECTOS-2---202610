@@ -4,6 +4,7 @@ import { getSessionProfile, isAdminRole } from "@/lib/auth/get-session-profile";
 
 const NAV_ADMIN: NavItem[] = [
   { href: "/admin", label: "Inicio", icon: "layoutDashboard", exact: true },
+  { href: "/admin/usuarios", label: "Usuarios", icon: "userCog" },
   { href: "/admin/carreras", label: "Carreras", icon: "building" },
   { href: "/admin/aulas", label: "Aulas", icon: "door" },
   { href: "/admin/profesores", label: "Profesores", icon: "users" },

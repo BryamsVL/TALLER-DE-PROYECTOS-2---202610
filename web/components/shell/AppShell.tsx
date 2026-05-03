@@ -16,6 +16,7 @@ import {
   LayoutDashboard,
   Link2,
   LogOut,
+  UserCog,
   Users,
 } from "lucide-react";
 import { signOut } from "@/app/actions/auth";
@@ -32,6 +33,7 @@ const NAV_ICONS = {
   graduationCap: GraduationCap,
   layoutDashboard: LayoutDashboard,
   link: Link2,
+  userCog: UserCog,
   users: Users,
 } satisfies Record<string, LucideIcon>;
 

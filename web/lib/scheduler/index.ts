@@ -1,6 +1,7 @@
 // API publica del modulo scheduler.
 
-export { solve } from "./solver";
+export { solve, solveForExistingNRCs } from "./solver";
+export type { NRCExistente, SchedulerInputModel3 } from "./solver";
 export type {
   AulaInput,
   BloqueInput,

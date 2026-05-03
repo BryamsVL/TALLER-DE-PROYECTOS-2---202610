@@ -27,3 +27,19 @@ export function getRequiredSupabaseEnv() {
 
   return env;
 }
+
+export function getServiceRoleKey() {
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+  if (!key || isPlaceholder(key)) return null;
+  return key;
+}
+
+export function getRequiredServiceRoleKey() {
+  const key = getServiceRoleKey();
+  if (!key) {
+    throw new Error(
+      "Falta SUPABASE_SERVICE_ROLE_KEY en .env.local. Es necesaria para crear usuarios desde el panel admin.",
+    );
+  }
+  return key;
+}

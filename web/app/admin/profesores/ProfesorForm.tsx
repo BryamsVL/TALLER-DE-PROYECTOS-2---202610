@@ -3,20 +3,12 @@
 import { useActionState, useEffect, useRef } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { crearProfesor } from "./actions";
 import { TIPO_PROFESOR_OPTIONS } from "../catalog-options";
 
-interface PerfilOption {
-  id: string;
-  nombre: string;
-  activo: boolean;
-}
-
-interface ProfesorFormProps {
-  perfiles: PerfilOption[];
-}
-
-export function ProfesorForm({ perfiles }: ProfesorFormProps) {
+export function ProfesorForm() {
   const [state, action, pending] = useActionState(crearProfesor, undefined);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -27,58 +19,93 @@ export function ProfesorForm({ perfiles }: ProfesorFormProps) {
   }, [state]);
 
   return (
-    <form ref={formRef} action={action} className="grid gap-3 md:grid-cols-[1.4fr_1fr_auto]">
-      <div>
-        <select
-          name="perfilId"
-          required
-          defaultValue=""
-          className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring"
-          aria-invalid={state?.errors?.perfilId ? "true" : undefined}
-          disabled={perfiles.length === 0}
-        >
-          <option value="" disabled>
-            {perfiles.length === 0 ? "No hay perfiles DOCENTE disponibles" : "Selecciona un perfil"}
-          </option>
-          {perfiles.map((perfil) => (
-            <option key={perfil.id} value={perfil.id}>
-              {perfil.nombre}{perfil.activo ? "" : " (inactivo)"}
-            </option>
-          ))}
-        </select>
-        {state?.errors?.perfilId && (
-          <p className="mt-1 text-xs text-destructive">{state.errors.perfilId[0]}</p>
-        )}
+    <form ref={formRef} action={action} className="grid gap-4">
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="space-y-1.5">
+          <Label htmlFor="prof-nombre">Nombre completo</Label>
+          <Input
+            id="prof-nombre"
+            name="nombre"
+            type="text"
+            required
+            minLength={2}
+            maxLength={100}
+            placeholder="Ej. Maria Lopez"
+            aria-invalid={state?.errors?.nombre ? "true" : undefined}
+          />
+          {state?.errors?.nombre && (
+            <p className="text-xs text-destructive">{state.errors.nombre[0]}</p>
+          )}
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="prof-email">Correo</Label>
+          <Input
+            id="prof-email"
+            name="email"
+            type="email"
+            required
+            placeholder="docente@institucion.edu"
+            aria-invalid={state?.errors?.email ? "true" : undefined}
+          />
+          {state?.errors?.email && (
+            <p className="text-xs text-destructive">{state.errors.email[0]}</p>
+          )}
+        </div>
       </div>
 
-      <div>
-        <select
-          name="tipo"
-          required
-          defaultValue="TIEMPO_COMPLETO"
-          className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring"
-          aria-invalid={state?.errors?.tipo ? "true" : undefined}
-          disabled={perfiles.length === 0}
-        >
-          {TIPO_PROFESOR_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        {state?.errors?.tipo && (
-          <p className="mt-1 text-xs text-destructive">{state.errors.tipo[0]}</p>
-        )}
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="space-y-1.5">
+          <Label htmlFor="prof-password">Contrasena temporal</Label>
+          <Input
+            id="prof-password"
+            name="password"
+            type="text"
+            required
+            minLength={8}
+            placeholder="Minimo 8 caracteres"
+            aria-invalid={state?.errors?.password ? "true" : undefined}
+          />
+          {state?.errors?.password && (
+            <p className="text-xs text-destructive">{state.errors.password[0]}</p>
+          )}
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="prof-tipo">Tipo de contrato</Label>
+          <select
+            id="prof-tipo"
+            name="tipo"
+            required
+            defaultValue="TIEMPO_COMPLETO"
+            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring"
+            aria-invalid={state?.errors?.tipo ? "true" : undefined}
+          >
+            {TIPO_PROFESOR_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          {state?.errors?.tipo && (
+            <p className="text-xs text-destructive">{state.errors.tipo[0]}</p>
+          )}
+        </div>
       </div>
 
-      <Button type="submit" disabled={pending || perfiles.length === 0} className="md:self-start">
-        <Plus className="h-4 w-4" />
-        {pending ? "Registrando..." : "Registrar profesor"}
-      </Button>
-
-      {state?.message && state.message !== "ok" && (
-        <p className="md:col-span-3 text-xs text-destructive">{state.message}</p>
-      )}
+      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+        {state?.message && state.message !== "ok" ? (
+          <p className="text-xs text-destructive">{state.message}</p>
+        ) : (
+          <span className="text-xs text-muted-foreground">
+            Se crea el usuario en Auth, se asigna rol DOCENTE y se registra como profesor.
+          </span>
+        )}
+        <Button type="submit" disabled={pending} className="md:self-end">
+          <Plus className="h-4 w-4" />
+          {pending ? "Registrando..." : "Registrar profesor"}
+        </Button>
+      </div>
     </form>
   );
 }
