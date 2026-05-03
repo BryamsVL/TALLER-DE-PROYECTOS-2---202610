@@ -1,12 +1,11 @@
 import { redirect } from "next/navigation";
-import { LayoutDashboard, Calendar, Clock } from "lucide-react";
 import { AppShell, type NavItem } from "@/components/shell/AppShell";
-import { createClient } from "@/lib/supabase/server";
+import { getSessionProfile } from "@/lib/auth/get-session-profile";
 
 const NAV_DOCENTE: NavItem[] = [
-  { href: "/docente", label: "Inicio", icon: LayoutDashboard, exact: true },
-  { href: "/docente/horario", label: "Mi horario", icon: Calendar },
-  { href: "/docente/disponibilidad", label: "Mi disponibilidad", icon: Clock },
+  { href: "/docente", label: "Inicio", icon: "layoutDashboard", exact: true },
+  { href: "/docente/horario", label: "Mi horario", icon: "calendar" },
+  { href: "/docente/disponibilidad", label: "Mi disponibilidad", icon: "clock" },
 ];
 
 export default async function DocenteLayout({
@@ -14,16 +13,16 @@ export default async function DocenteLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const { user, profile } = await getSessionProfile();
+
+  if (!profile.activo || profile.rol !== "DOCENTE") {
+    redirect("/dashboard");
+  }
 
   return (
     <AppShell
       roleLabel="Docente"
-      userEmail={user.email ?? ""}
+      userEmail={user.email}
       navItems={NAV_DOCENTE}
     >
       {children}

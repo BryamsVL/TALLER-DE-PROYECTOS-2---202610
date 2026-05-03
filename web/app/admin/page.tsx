@@ -20,19 +20,19 @@ const MODULOS: Modulo[] = [
     href: "/admin/aulas",
     titulo: "Aulas",
     descripcion: "Espacios fisicos: teoria, laboratorio, auditorio.",
-    estado: "proximamente",
+    estado: "disponible",
   },
   {
     href: "/admin/profesores",
     titulo: "Profesores",
     descripcion: "Plantel docente y tipo de contrato.",
-    estado: "proximamente",
+    estado: "disponible",
   },
   {
     href: "/admin/cursos",
     titulo: "Cursos",
     descripcion: "Malla curricular: nombre, horas semanales, tipo de aula.",
-    estado: "proximamente",
+    estado: "disponible",
   },
   {
     href: "/admin/cohortes",
@@ -44,7 +44,7 @@ const MODULOS: Modulo[] = [
     href: "/admin/asignaciones",
     titulo: "Curso a Profesor",
     descripcion: "Que profesor puede dictar que curso.",
-    estado: "proximamente",
+    estado: "disponible",
   },
   {
     href: "/admin/horarios",

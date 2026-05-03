@@ -3,14 +3,44 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
-import { LogOut, ChevronsLeftRight } from "lucide-react";
+import {
+  BookMarked,
+  Building2,
+  Calendar,
+  CalendarClock,
+  ChevronsLeftRight,
+  Clock,
+  DoorOpen,
+  FileText,
+  GraduationCap,
+  LayoutDashboard,
+  Link2,
+  LogOut,
+  Users,
+} from "lucide-react";
 import { signOut } from "@/app/actions/auth";
 import { cn } from "@/lib/utils";
+
+const NAV_ICONS = {
+  bookMarked: BookMarked,
+  building: Building2,
+  calendar: Calendar,
+  calendarClock: CalendarClock,
+  clock: Clock,
+  door: DoorOpen,
+  fileText: FileText,
+  graduationCap: GraduationCap,
+  layoutDashboard: LayoutDashboard,
+  link: Link2,
+  users: Users,
+} satisfies Record<string, LucideIcon>;
+
+export type NavIconName = keyof typeof NAV_ICONS;
 
 export interface NavItem {
   href: string;
   label: string;
-  icon: LucideIcon;
+  icon: NavIconName;
   exact?: boolean;
 }
 
@@ -33,7 +63,8 @@ function SidebarLink({
   item: NavItem;
   active: boolean;
 }) {
-  const Icon = item.icon;
+  const Icon = NAV_ICONS[item.icon];
+
   return (
     <Link
       href={item.href}

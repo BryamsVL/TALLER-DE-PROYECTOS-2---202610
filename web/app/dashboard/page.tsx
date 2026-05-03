@@ -3,13 +3,13 @@ import { redirect } from "next/navigation";
 import { Settings2, GraduationCap, BookUser, ChevronRight } from "lucide-react";
 import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/actions/auth";
+import { getSessionProfile, isAdminRole, type AppRole } from "@/lib/auth/get-session-profile";
 
 const ROLES = [
   {
     href: "/admin",
-    label: "ROL 1",
+    role: "ADMIN",
     titulo: "Admin / Coordinador",
     descripcion:
       "Gestiona carreras, cursos, aulas, profesores y genera horarios.",
@@ -17,26 +17,33 @@ const ROLES = [
   },
   {
     href: "/docente",
-    label: "ROL 2",
+    role: "DOCENTE",
     titulo: "Docente",
     descripcion: "Consulta tu horario y registra tu disponibilidad semanal.",
     icon: BookUser,
   },
   {
     href: "/estudiante",
-    label: "ROL 3",
+    role: "ESTUDIANTE",
     titulo: "Estudiante",
     descripcion: "Ve tus inscripciones, tu horario y solicita cambios.",
     icon: GraduationCap,
   },
 ] as const;
 
+function canAccess(role: AppRole, targetRole: (typeof ROLES)[number]["role"]) {
+  if (targetRole === "ADMIN") {
+    return isAdminRole(role);
+  }
+
+  return role === targetRole;
+}
+
 export default async function DashboardPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { user, profile } = await getSessionProfile();
   if (!user) redirect("/login");
+
+  const availableRoles = ROLES.filter((role) => profile.activo && canAccess(profile.rol, role.role));
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -64,18 +71,18 @@ export default async function DashboardPage() {
       <main className="flex-1 flex flex-col items-center justify-center px-6 py-16">
         <div className="text-center max-w-3xl w-full">
           <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
-            Modo prototipo
+            Acceso por rol
           </p>
           <h1 className="font-display text-3xl md:text-4xl font-bold tracking-tight mb-3">
-            Selecciona el rol a previsualizar
+            Ingresa a tu espacio de trabajo
           </h1>
           <p className="text-muted-foreground mb-12">
-            Cada vista muestra la interfaz que vera ese tipo de usuario. Las
-            restricciones reales por rol se activaran mas adelante.
+            La plataforma ahora respeta el rol real registrado en tu perfil y
+            solo muestra los modulos que tu usuario puede usar.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {ROLES.map((r) => {
+            {availableRoles.map((r) => {
               const Icon = r.icon;
               return (
                 <Link key={r.href} href={r.href} className="block">
@@ -86,7 +93,7 @@ export default async function DashboardPage() {
                           <Icon className="h-5 w-5" />
                         </div>
                         <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                          {r.label}
+                          {r.role}
                         </span>
                       </div>
                       <CardTitle className="font-display text-lg">
@@ -106,8 +113,14 @@ export default async function DashboardPage() {
             })}
           </div>
 
+          {availableRoles.length === 0 && (
+            <p className="text-sm text-muted-foreground">
+              Tu usuario no tiene un rol activo con acceso a modulos en este momento.
+            </p>
+          )}
+
           <p className="mt-10 text-xs text-muted-foreground">
-            Sesion activa: {user.email}
+            Sesion activa: {user.email} | Rol: {profile.rol}
           </p>
         </div>
       </main>

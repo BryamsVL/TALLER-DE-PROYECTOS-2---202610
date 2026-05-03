@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { mapAdminWriteErrorMessage } from "../action-errors";
 
 const CarreraSchema = z.object({
   nombre: z
@@ -41,7 +42,7 @@ export async function crearCarrera(
     if (error.code === "23505") {
       return { errors: { nombre: ["Ya existe una carrera con ese nombre."] } };
     }
-    return { message: error.message };
+    return { message: mapAdminWriteErrorMessage(error.code, error.message) };
   }
 
   revalidatePath("/admin/carreras");

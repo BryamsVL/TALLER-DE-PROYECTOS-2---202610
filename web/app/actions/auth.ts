@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { getSupabaseEnv } from "@/lib/supabase/env";
 import {
   LoginSchema,
   SignupSchema,
@@ -20,6 +21,13 @@ export async function signIn(
 
   if (!parsed.success) {
     return { errors: parsed.error.flatten().fieldErrors };
+  }
+
+  if (!getSupabaseEnv()) {
+    return {
+      message:
+        "Falta configurar Supabase. Copia .env.local.example a .env.local y completa NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.",
+    };
   }
 
   const supabase = await createClient();
@@ -47,6 +55,13 @@ export async function signUp(
     return { errors: parsed.error.flatten().fieldErrors };
   }
 
+  if (!getSupabaseEnv()) {
+    return {
+      message:
+        "Falta configurar Supabase. Copia .env.local.example a .env.local y completa NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.",
+    };
+  }
+
   const supabase = await createClient();
   const { error } = await supabase.auth.signUp({
     email: parsed.data.email,
@@ -68,6 +83,10 @@ export async function signUp(
 }
 
 export async function signOut(): Promise<void> {
+  if (!getSupabaseEnv()) {
+    redirect("/login?setup=supabase");
+  }
+
   const supabase = await createClient();
   await supabase.auth.signOut();
   revalidatePath("/", "layout");

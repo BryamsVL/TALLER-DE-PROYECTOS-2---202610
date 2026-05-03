@@ -1,20 +1,19 @@
 import { redirect } from "next/navigation";
-import { LayoutDashboard, BookMarked, Calendar, FileText } from "lucide-react";
 import { AppShell, type NavItem } from "@/components/shell/AppShell";
-import { createClient } from "@/lib/supabase/server";
+import { getSessionProfile } from "@/lib/auth/get-session-profile";
 
 const NAV_ESTUDIANTE: NavItem[] = [
-  { href: "/estudiante", label: "Inicio", icon: LayoutDashboard, exact: true },
+  { href: "/estudiante", label: "Inicio", icon: "layoutDashboard", exact: true },
   {
     href: "/estudiante/inscripciones",
     label: "Mis inscripciones",
-    icon: BookMarked,
+    icon: "bookMarked",
   },
-  { href: "/estudiante/horario", label: "Mi horario", icon: Calendar },
+  { href: "/estudiante/horario", label: "Mi horario", icon: "calendar" },
   {
     href: "/estudiante/solicitudes",
     label: "Solicitudes",
-    icon: FileText,
+    icon: "fileText",
   },
 ];
 
@@ -23,16 +22,16 @@ export default async function EstudianteLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const { user, profile } = await getSessionProfile();
+
+  if (!profile.activo || profile.rol !== "ESTUDIANTE") {
+    redirect("/dashboard");
+  }
 
   return (
     <AppShell
       roleLabel="Estudiante"
-      userEmail={user.email ?? ""}
+      userEmail={user.email}
       navItems={NAV_ESTUDIANTE}
     >
       {children}
