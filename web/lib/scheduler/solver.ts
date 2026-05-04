@@ -28,6 +28,7 @@ import {
   type AulaInput,
   type BloqueInput,
   type CursoInput,
+  type DisponibilidadInput,
   type NRCAsignacion,
   type SchedulerInput,
   type SchedulerOutput,

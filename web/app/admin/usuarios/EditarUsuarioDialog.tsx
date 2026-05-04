@@ -61,12 +61,14 @@ export function EditarUsuarioDialog({
 
   useEffect(() => {
     if (usuario) {
-      setNombre(usuario.nombre);
-      setRol(usuario.rol);
-      setActivo(usuario.activo);
-      setTipo(usuario.tipo ?? "TIEMPO_COMPLETO");
-      setCarreraId(usuario.carreraId ?? "");
-      setError(null);
+      queueMicrotask(() => {
+        setNombre(usuario.nombre);
+        setRol(usuario.rol);
+        setActivo(usuario.activo);
+        setTipo(usuario.tipo ?? "TIEMPO_COMPLETO");
+        setCarreraId(usuario.carreraId ?? "");
+        setError(null);
+      });
     }
   }, [usuario]);
 

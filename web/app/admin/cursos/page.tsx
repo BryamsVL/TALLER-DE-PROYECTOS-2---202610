@@ -20,13 +20,6 @@ interface Curso {
   activo: boolean;
 }
 
-interface NrcRow {
-  nrc: string;
-  curso_id: number;
-  profesor_id: string | null;
-  profesor_nombre: string | null;
-}
-
 export default async function CursosPage() {
   const supabase = await createClient();
 
@@ -34,9 +27,6 @@ export default async function CursosPage() {
     { data: carreras, error: carrerasError },
     { data: cursos, error: cursosError },
     { data: nrcs, error: nrcsError },
-    { data: perfilesDocentes, error: perfilesError },
-    { data: profesores, error: profesoresError },
-    { data: asignaciones, error: asignacionesError },
   ] = await Promise.all([
     supabase
       .from("carrera")
@@ -49,16 +39,8 @@ export default async function CursosPage() {
       .order("nombre", { ascending: true }),
     supabase
       .from("nrc")
-      .select("nrc, curso_id, profesor_id")
+      .select("nrc, curso_id")
       .order("nrc", { ascending: true }),
-    supabase
-      .from("perfil")
-      .select("id, nombre, activo")
-      .eq("rol", "DOCENTE")
-      .eq("activo", true)
-      .order("nombre", { ascending: true }),
-    supabase.from("profesor").select("id"),
-    supabase.from("curso_profesor").select("curso_id, profesor_id"),
   ]);
 
   const carrerasMap = Object.fromEntries(
@@ -67,42 +49,17 @@ export default async function CursosPage() {
   const total = cursos?.length ?? 0;
   const activos = cursos?.filter((c) => c.activo).length ?? 0;
 
-  // Solo perfiles DOCENTE que tambien existen en `profesor` (registrados completos).
-  const profesoresIds = new Set((profesores ?? []).map((p) => p.id));
-  const profesoresActivos = (perfilesDocentes ?? [])
-    .filter((p) => profesoresIds.has(p.id))
-    .map((p) => ({ id: p.id, nombre: p.nombre }));
-  const profesorPorId = new Map(profesoresActivos.map((p) => [p.id, p]));
-
-  // Eligibles por curso: solo los profesores marcados en `curso_profesor`.
-  const profesoresEligiblesPorCurso: Record<number, { id: string; nombre: string }[]> = {};
-  for (const a of asignaciones ?? []) {
-    const prof = profesorPorId.get(a.profesor_id);
-    if (!prof) continue;
-    (profesoresEligiblesPorCurso[a.curso_id] ??= []).push(prof);
-  }
-
-  const perfilNombre = new Map((perfilesDocentes ?? []).map((p) => [p.id, p.nombre]));
-  const nrcsPorCurso: Record<number, NrcRow[]> = {};
+  const nrcsPorCurso: Record<number, { nrc: string }[]> = {};
   for (const row of nrcs ?? []) {
-    const enriched: NrcRow = {
-      nrc: row.nrc,
-      curso_id: row.curso_id,
-      profesor_id: row.profesor_id,
-      profesor_nombre: row.profesor_id ? perfilNombre.get(row.profesor_id) ?? null : null,
-    };
-    (nrcsPorCurso[row.curso_id] ??= []).push(enriched);
+    (nrcsPorCurso[row.curso_id] ??= []).push({ nrc: row.nrc });
   }
 
   const totalNrcs = (nrcs ?? []).length;
-  const nrcsAsignados = (nrcs ?? []).filter((n) => n.profesor_id).length;
+  const nrcsAsignados = totalNrcs;
   const fetchError =
     carrerasError?.message ??
     cursosError?.message ??
-    nrcsError?.message ??
-    perfilesError?.message ??
-    profesoresError?.message ??
-    asignacionesError?.message;
+    nrcsError?.message;
 
   return (
     <div className="space-y-6">
@@ -162,7 +119,7 @@ export default async function CursosPage() {
         <CardHeader>
           <CardTitle className="font-display text-base">Cursos registrados</CardTitle>
           <CardDescription>
-            Expande una fila para ver y gestionar sus NRCs.
+            Cada curso tiene una vista detalle con calendario semanal y gestion de NRCs.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -183,7 +140,6 @@ export default async function CursosPage() {
               cursos={cursos as Curso[]}
               carrerasMap={carrerasMap}
               nrcsPorCurso={nrcsPorCurso}
-              profesoresEligiblesPorCurso={profesoresEligiblesPorCurso}
             />
           )}
         </CardContent>

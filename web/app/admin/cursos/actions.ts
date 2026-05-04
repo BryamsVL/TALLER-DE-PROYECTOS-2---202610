@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { mapAdminWriteErrorMessage } from "../action-errors";
+import type { Dia } from "@/lib/scheduler/types";
 
 const CursoSchema = z.object({
   carreraId: z.coerce.number().int().positive({ error: "Selecciona una carrera valida." }),
@@ -119,6 +120,8 @@ export async function eliminarCurso(formData: FormData): Promise<void> {
 
 export type NrcActionResult = { ok: true } | { ok: false; message: string };
 
+const DIAS_SET = new Set<Dia>(["LUN", "MAR", "MIE", "JUE", "VIE", "SAB"]);
+
 const NrcCrearSchema = z.object({
   cursoId: z.coerce.number().int().positive(),
 });
@@ -133,6 +136,27 @@ const NrcAsignarSchema = z.object({
   profesorId: z.union([z.uuid(), z.literal("")]).optional(),
 });
 
+const NrcProgramadoSchema = z.object({
+  cursoId: z.coerce.number().int().positive(),
+  profesorId: z.uuid(),
+  seccion: z
+    .string()
+    .trim()
+    .min(1, { error: "La seccion es obligatoria." })
+    .max(5, { error: "La seccion admite hasta 5 caracteres." }),
+  cupoMax: z.coerce
+    .number()
+    .int({ error: "El cupo debe ser entero." })
+    .min(1, { error: "El cupo minimo es 1." })
+    .max(30, { error: "El cupo maximo es 30." }),
+  slotKeys: z.string().min(2, { error: "Selecciona al menos un bloque." }),
+});
+
+interface SlotSelection {
+  dia: Dia;
+  bloqueId: number;
+}
+
 // Genera el codigo NRC: [nivel%10][cursoId padded:2][instancia padded:2].
 // Ej. nivel=3, cursoId=5, instancia=1 -> "30501".
 function buildNrcCode(nivel: number, cursoId: number, instancia: number): string {
@@ -140,6 +164,35 @@ function buildNrcCode(nivel: number, cursoId: number, instancia: number): string
   const d2 = String(cursoId).padStart(2, "0");
   const d3 = String(instancia).padStart(2, "0");
   return `${d1}${d2}${d3}`;
+}
+
+function buildNrcCodeFromCycle(prefijo: string, secuencia: number) {
+  return `${prefijo}${String(secuencia).padStart(3, "0")}`;
+}
+
+function parseSlotKeys(raw: string): SlotSelection[] | null {
+  try {
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return null;
+
+    const slots = parsed
+      .map((item) => {
+        if (
+          typeof item === "object" &&
+          item !== null &&
+          typeof item.dia === "string" &&
+          typeof item.bloqueId === "number"
+        ) {
+          return { dia: item.dia as Dia, bloqueId: item.bloqueId };
+        }
+        return null;
+      })
+      .filter((item): item is SlotSelection => item !== null);
+
+    return slots;
+  } catch {
+    return null;
+  }
 }
 
 export async function crearNrc(formData: FormData): Promise<NrcActionResult> {
@@ -275,6 +328,10 @@ export async function eliminarNrc(formData: FormData): Promise<NrcActionResult> 
   }
 
   revalidatePath("/admin/cursos");
+  const cursoId = Number(formData.get("cursoId"));
+  if (Number.isInteger(cursoId) && cursoId > 0) {
+    revalidatePath(`/admin/cursos/${cursoId}`);
+  }
   return { ok: true };
 }
 
@@ -298,5 +355,322 @@ export async function asignarProfesorANrc(formData: FormData): Promise<NrcAction
   }
 
   revalidatePath("/admin/cursos");
+  return { ok: true };
+}
+
+export async function crearNrcProgramado(formData: FormData): Promise<NrcActionResult> {
+  const parsed = NrcProgramadoSchema.safeParse({
+    cursoId: formData.get("cursoId"),
+    profesorId: formData.get("profesorId"),
+    seccion: formData.get("seccion"),
+    cupoMax: formData.get("cupoMax"),
+    slotKeys: formData.get("slotKeys"),
+  });
+
+  if (!parsed.success) {
+    const firstError = Object.values(parsed.error.flatten().fieldErrors).flat()[0];
+    return { ok: false, message: firstError ?? "Datos invalidos." };
+  }
+
+  const slots = parseSlotKeys(parsed.data.slotKeys);
+  if (!slots || slots.length === 0) {
+    return { ok: false, message: "Selecciona al menos un bloque horario." };
+  }
+
+  const slotMap = new Map<string, SlotSelection>();
+  for (const slot of slots) {
+    if (!DIAS_SET.has(slot.dia) || !Number.isInteger(slot.bloqueId) || slot.bloqueId <= 0) {
+      return { ok: false, message: "Hay bloques horarios invalidos en la seleccion." };
+    }
+    slotMap.set(`${slot.dia}|${slot.bloqueId}`, slot);
+  }
+
+  const uniqueSlots = [...slotMap.values()];
+  const supabase = await createClient();
+
+  const { data: curso, error: cursoError } = await supabase
+    .from("curso")
+    .select("id, carrera_id, nivel, horas_semanales, tipo_aula, activo")
+    .eq("id", parsed.data.cursoId)
+    .single();
+
+  if (cursoError || !curso) {
+    return { ok: false, message: "No se encontro el curso." };
+  }
+
+  if (!curso.activo) {
+    return { ok: false, message: "El curso esta inactivo. Activalo antes de programar NRCs." };
+  }
+
+  const requiredSessions = Number(curso.horas_semanales) / 1.5;
+  if (uniqueSlots.length !== requiredSessions) {
+    return {
+      ok: false,
+      message: `Este curso requiere ${requiredSessions} bloque(s) de 1.5 horas.`,
+    };
+  }
+
+  const { data: ciclo, error: cicloError } = await supabase
+    .from("ciclo")
+    .select("id, prefijo_nrc")
+    .eq("activo", true)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (cicloError) {
+    return { ok: false, message: mapAdminWriteErrorMessage(cicloError.code, cicloError.message) };
+  }
+
+  if (!ciclo) {
+    return { ok: false, message: "No hay un ciclo academico activo." };
+  }
+
+  const { data: asignacion } = await supabase
+    .from("curso_profesor")
+    .select("curso_id")
+    .eq("curso_id", curso.id)
+    .eq("profesor_id", parsed.data.profesorId)
+    .maybeSingle();
+
+  if (!asignacion) {
+    return {
+      ok: false,
+      message: "El profesor seleccionado no esta habilitado para dictar este curso.",
+    };
+  }
+
+  const { data: profesorPerfil } = await supabase
+    .from("perfil")
+    .select("activo, nombre")
+    .eq("id", parsed.data.profesorId)
+    .eq("rol", "DOCENTE")
+    .maybeSingle();
+
+  if (!profesorPerfil?.activo) {
+    return { ok: false, message: "El profesor seleccionado no esta activo." };
+  }
+
+  const seccion = parsed.data.seccion.toUpperCase();
+  const { data: cohorteExistente } = await supabase
+    .from("cohorte")
+    .select("id")
+    .eq("carrera_id", curso.carrera_id)
+    .eq("ciclo_id", ciclo.id)
+    .eq("nivel", curso.nivel)
+    .eq("seccion", seccion)
+    .maybeSingle();
+
+  let cohorteId = cohorteExistente?.id;
+
+  if (!cohorteId) {
+    const { data: cohorteNueva, error: cohorteError } = await supabase
+      .from("cohorte")
+      .insert({
+        carrera_id: curso.carrera_id,
+        ciclo_id: ciclo.id,
+        nivel: curso.nivel,
+        seccion,
+      })
+      .select("id")
+      .single();
+
+    if (cohorteError || !cohorteNueva) {
+      return {
+        ok: false,
+        message: mapAdminWriteErrorMessage(cohorteError?.code, cohorteError?.message),
+      };
+    }
+
+    cohorteId = cohorteNueva.id;
+  }
+
+  const { data: bloques, error: bloquesError } = await supabase
+    .from("bloque_horario")
+    .select("id, hora_inicio, hora_fin")
+    .in(
+      "id",
+      uniqueSlots.map((slot) => slot.bloqueId),
+    );
+
+  if (bloquesError || !bloques || bloques.length !== uniqueSlots.length) {
+    return { ok: false, message: "Uno o mas bloques horarios ya no existen." };
+  }
+
+  const { data: aulas, error: aulasError } = await supabase
+    .from("aula")
+    .select("id, nombre")
+    .eq("activo", true)
+    .eq("tipo", curso.tipo_aula)
+    .order("id", { ascending: true });
+
+  if (aulasError) {
+    return { ok: false, message: mapAdminWriteErrorMessage(aulasError.code, aulasError.message) };
+  }
+
+  if (!aulas || aulas.length === 0) {
+    return {
+      ok: false,
+      message: `No hay aulas activas del tipo ${curso.tipo_aula} para este curso.`,
+    };
+  }
+
+  const diasSeleccionados = [...new Set(uniqueSlots.map((slot) => slot.dia))];
+  const bloqueIdsSeleccionados = [...new Set(uniqueSlots.map((slot) => slot.bloqueId))];
+
+  const { data: sesionesExistentes, error: sesionesError } = await supabase
+    .from("sesion_nrc")
+    .select("dia, bloque_id, aula_id, profesor_id, cohorte_id")
+    .in("dia", diasSeleccionados)
+    .in("bloque_id", bloqueIdsSeleccionados);
+
+  if (sesionesError) {
+    return {
+      ok: false,
+      message: mapAdminWriteErrorMessage(sesionesError.code, sesionesError.message),
+    };
+  }
+
+  for (const slot of uniqueSlots) {
+    const conflictingProfessor = (sesionesExistentes ?? []).find(
+      (session) =>
+        session.dia === slot.dia &&
+        session.bloque_id === slot.bloqueId &&
+        session.profesor_id === parsed.data.profesorId,
+    );
+
+    if (conflictingProfessor) {
+      return {
+        ok: false,
+        message: `${profesorPerfil.nombre} ya tiene una sesion programada en ${slot.dia}.`,
+      };
+    }
+
+    const conflictingCohorte = (sesionesExistentes ?? []).find(
+      (session) =>
+        session.dia === slot.dia &&
+        session.bloque_id === slot.bloqueId &&
+        session.cohorte_id === cohorteId,
+    );
+
+    if (conflictingCohorte) {
+      return {
+        ok: false,
+        message: `La cohorte ${curso.nivel}-${seccion} ya tiene una sesion en ${slot.dia}.`,
+      };
+    }
+  }
+
+  const sesionesPreparadas: Array<{
+    dia: Dia;
+    bloque_id: number;
+    aula_id: number;
+  }> = [];
+
+  for (const slot of uniqueSlots) {
+    const aulasOcupadas = new Set(
+      (sesionesExistentes ?? [])
+        .filter((session) => session.dia === slot.dia && session.bloque_id === slot.bloqueId)
+        .map((session) => session.aula_id),
+    );
+
+    const aulaDisponible = aulas.find((aula) => !aulasOcupadas.has(aula.id));
+    if (!aulaDisponible) {
+      const bloque = bloques.find((item) => item.id === slot.bloqueId);
+      return {
+        ok: false,
+        message: `No hay aulas libres para ${slot.dia} ${bloque?.hora_inicio.slice(0, 5) ?? ""}-${bloque?.hora_fin.slice(0, 5) ?? ""}.`,
+      };
+    }
+
+    sesionesPreparadas.push({
+      dia: slot.dia,
+      bloque_id: slot.bloqueId,
+      aula_id: aulaDisponible.id,
+    });
+  }
+
+  const { data: secuenciaActual } = await supabase
+    .from("nrc_secuencia")
+    .select("ultimo_valor")
+    .eq("ciclo_id", ciclo.id)
+    .maybeSingle();
+
+  if (!secuenciaActual) {
+    const { error: insertSecuenciaError } = await supabase
+      .from("nrc_secuencia")
+      .insert({ ciclo_id: ciclo.id, ultimo_valor: 0 });
+
+    if (insertSecuenciaError && insertSecuenciaError.code !== "23505") {
+      return {
+        ok: false,
+        message: mapAdminWriteErrorMessage(
+          insertSecuenciaError.code,
+          insertSecuenciaError.message,
+        ),
+      };
+    }
+  }
+
+  const siguienteValor = (secuenciaActual?.ultimo_valor ?? 0) + 1;
+  if (siguienteValor > 999) {
+    return { ok: false, message: "El ciclo activo ya alcanzo el limite de 999 NRCs." };
+  }
+
+  const { error: updateSecuenciaError } = await supabase
+    .from("nrc_secuencia")
+    .update({ ultimo_valor: siguienteValor })
+    .eq("ciclo_id", ciclo.id);
+
+  if (updateSecuenciaError) {
+    return {
+      ok: false,
+      message: mapAdminWriteErrorMessage(
+        updateSecuenciaError.code,
+        updateSecuenciaError.message,
+      ),
+    };
+  }
+
+  const nrcCode = buildNrcCodeFromCycle(ciclo.prefijo_nrc, siguienteValor);
+  const { error: nrcInsertError } = await supabase.from("nrc").insert({
+    nrc: nrcCode,
+    curso_id: curso.id,
+    profesor_id: parsed.data.profesorId,
+    ciclo_id: ciclo.id,
+    cohorte_id: cohorteId,
+    cupo_max: parsed.data.cupoMax,
+  });
+
+  if (nrcInsertError) {
+    return {
+      ok: false,
+      message: mapAdminWriteErrorMessage(nrcInsertError.code, nrcInsertError.message),
+    };
+  }
+
+  const { error: sesionesInsertError } = await supabase.from("sesion_nrc").insert(
+    sesionesPreparadas.map((session) => ({
+      nrc: nrcCode,
+      profesor_id: parsed.data.profesorId,
+      cohorte_id: cohorteId,
+      dia: session.dia,
+      bloque_id: session.bloque_id,
+      aula_id: session.aula_id,
+    })),
+  );
+
+  if (sesionesInsertError) {
+    await supabase.from("nrc").delete().eq("nrc", nrcCode);
+    return {
+      ok: false,
+      message: mapAdminWriteErrorMessage(sesionesInsertError.code, sesionesInsertError.message),
+    };
+  }
+
+  revalidatePath("/admin/cursos");
+  revalidatePath(`/admin/cursos/${curso.id}`);
+  revalidatePath("/admin/horarios");
+
   return { ok: true };
 }
