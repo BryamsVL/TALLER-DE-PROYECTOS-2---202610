@@ -2,9 +2,8 @@
 
 import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
-import { ArrowLeft, CalendarPlus, Clock3, Trash2, Users } from "lucide-react";
+import { ArrowLeft, CalendarPlus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -109,6 +108,9 @@ export function CourseScheduleWorkspace({
   const [cupoMax, setCupoMax] = useState("30");
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteTargetNrc, setDeleteTargetNrc] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const orderedBlocks = useMemo(
     () => [...bloques].sort((a, b) => a.orden - b.orden),
@@ -139,12 +141,27 @@ export function CourseScheduleWorkspace({
   function toggleSlot(dia: Dia, bloqueId: number) {
     const key = `${dia}|${bloqueId}`;
     const next = new Set(selectedSlots);
+
     if (next.has(key)) {
       next.delete(key);
     } else {
-      next.add(key);
+      if (next.size < requiredSlots) {
+        next.add(key);
+      }
     }
     setSelectedSlots(next);
+  }
+
+  function isSlotOccupied(dia: Dia, bloqueId: number): boolean {
+    const key = `${dia}|${bloqueId}`;
+    return (sessionsBySlot.get(key) ?? []).length > 0;
+  }
+
+  function canSelectSlot(dia: Dia, bloqueId: number): boolean {
+    const key = `${dia}|${bloqueId}`;
+    const isSelected = selectedSlots.has(key);
+    const isMaxReached = selectedSlots.size >= requiredSlots && !isSelected;
+    return !isMaxReached && !isSlotOccupied(dia, bloqueId);
   }
 
   function resetModalState() {
@@ -201,17 +218,36 @@ export function CourseScheduleWorkspace({
     });
   }
 
-  function handleDeleteNrc(nrc: string) {
-    setError(null);
+  function openDeleteNrcDialog(nrc: string) {
+    setDeleteError(null);
+    setDeleteTargetNrc(nrc);
+    setDeleteOpen(true);
+  }
+
+  function handleDeleteDialogChange(nextOpen: boolean) {
+    setDeleteOpen(nextOpen);
+    if (!nextOpen) {
+      setDeleteTargetNrc(null);
+      setDeleteError(null);
+    }
+  }
+
+  function confirmDeleteNrc() {
+    if (!deleteTargetNrc) return;
+
+    setDeleteError(null);
     const formData = new FormData();
-    formData.set("nrc", nrc);
+    formData.set("nrc", deleteTargetNrc);
     formData.set("cursoId", String(course.id));
 
     startTransition(async () => {
       const result = await eliminarNrc(formData);
       if (!result.ok) {
-        setError(result.message);
+        setDeleteError(result.message);
+        return;
       }
+
+      handleDeleteDialogChange(false);
     });
   }
 
@@ -252,17 +288,21 @@ export function CourseScheduleWorkspace({
 
             <div className="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)]">
               <div className="space-y-4">
-                <div className="rounded-xl border bg-muted/30 p-4">
+                <div className={`rounded-xl border p-4 ${selectedSlots.size === requiredSlots ? "bg-success/10 border-success/30" : "bg-muted/30"}`}>
                   <p className="text-xs uppercase tracking-wider text-muted-foreground">
                     Progreso de seleccion
                   </p>
-                  <p className="mt-2 font-display text-3xl font-bold tracking-tight">
+                  <p className={`mt-2 font-display text-3xl font-bold tracking-tight ${selectedSlots.size === requiredSlots ? "text-success" : ""}`}>
                     {selectedSlots.size}/{requiredSlots}
                   </p>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    Cada bloque equivale a 1.5 horas. El calendario usa el horario institucional de
-                    7:00 a 22:10.
-                  </p>
+                  {selectedSlots.size === requiredSlots ? (
+                    <p className="mt-2 text-sm text-success font-medium">✓ Seleccion completada</p>
+                  ) : (
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      Cada bloque equivale a 1.5 horas. El calendario usa el horario institucional de
+                      7:00 a 22:10.
+                    </p>
+                  )}
                 </div>
 
                 <label className="block space-y-2">
@@ -284,14 +324,11 @@ export function CourseScheduleWorkspace({
                 </label>
 
                 <div className="block space-y-2">
-                  <span className="text-sm font-medium">Código NRC (preview)</span>
+                  <span className="text-sm font-medium">Código NRC</span>
                   <div className="flex h-10 w-full rounded-md border border-input bg-muted/30 px-3 py-2 text-sm shadow-sm">
                     <div className="flex items-center justify-between w-full">
                       <span className="font-semibold text-lg tracking-wider">
                         {String(course.nivel % 10)}{String(numeroCreacionCurso).padStart(2, "0")}{String(nrcs.length + 1).padStart(2, "0")}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        Nivel {course.nivel} • Curso #{numeroCreacionCurso} • Instancia #{nrcs.length + 1}
                       </span>
                     </div>
                   </div>
@@ -358,23 +395,34 @@ export function CourseScheduleWorkspace({
                           {DAYS.map((day) => {
                             const key = `${day.key}|${block.id}`;
                             const selected = selectedSlots.has(key);
+                            const occupied = isSlotOccupied(day.key, block.id);
+                            const canSelect = canSelectSlot(day.key, block.id);
+                            const occupantNrcs = sessionsBySlot.get(key) ?? [];
 
                             return (
                               <button
                                 key={key}
                                 type="button"
-                                onClick={() => toggleSlot(day.key, block.id)}
-                                className={`min-h-20 border-l px-2 py-2 text-left transition-colors ${
-                                  isLast ? "" : "border-b"
-                                } ${
-                                  selected
+                                onClick={() => canSelect && toggleSlot(day.key, block.id)}
+                                disabled={!canSelect}
+                                className={`min-h-20 border-l px-2 py-2 text-left transition-colors ${isLast ? "" : "border-b"
+                                  } ${selected
                                     ? "bg-accent/15 ring-1 ring-inset ring-accent"
-                                    : "hover:bg-muted/50"
-                                }`}
+                                    : occupied
+                                      ? "bg-destructive/10 cursor-not-allowed"
+                                      : "hover:bg-muted/50"
+                                  } ${!canSelect ? "opacity-60" : ""}`}
                               >
                                 <div className="text-[11px] font-medium text-muted-foreground">
-                                  {selected ? "Seleccionado" : "Disponible"}
+                                  {selected && "Seleccionado"}
+                                  {occupied && !selected && "Ocupado"}
+                                  {!selected && !occupied && "Disponible"}
                                 </div>
+                                {occupied && (
+                                  <div className="mt-1 text-[10px] text-destructive font-medium">
+                                    {occupantNrcs.map((n) => n.nrc).join(", ")}
+                                  </div>
+                                )}
                                 <div className="mt-2 text-xs">
                                   {formatHour(block.hora_inicio)} - {formatHour(block.hora_fin)}
                                 </div>
@@ -403,6 +451,29 @@ export function CourseScheduleWorkspace({
               </Button>
               <Button onClick={handleSave} disabled={pending || !canCreate}>
                 {pending ? "Guardando..." : "Guardar NRC"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={deleteOpen} onOpenChange={handleDeleteDialogChange}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Eliminar NRC</DialogTitle>
+              <DialogDescription>
+                Esto eliminara el NRC <span className="font-medium text-foreground">{deleteTargetNrc}</span> y{" "}
+                <span className="font-medium text-foreground">todas sus instancias  </span> asociadas.
+              </DialogDescription>
+            </DialogHeader>
+
+            {deleteError && <p className="text-sm text-destructive">{deleteError}</p>}
+
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => handleDeleteDialogChange(false)} disabled={pending}>
+                Cancelar
+              </Button>
+              <Button type="button" variant="destructive" onClick={confirmDeleteNrc} disabled={pending || !deleteTargetNrc}>
+                {pending ? "Eliminando..." : "Eliminar"}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -459,9 +530,8 @@ export function CourseScheduleWorkspace({
                       return (
                         <div
                           key={`${day.key}-${block.id}`}
-                          className={`min-h-28 space-y-2 border-l px-2 py-2 ${
-                            isLast ? "" : "border-b"
-                          }`}
+                          className={`min-h-28 space-y-2 border-l px-2 py-2 ${isLast ? "" : "border-b"
+                            }`}
                         >
                           {items.map((item) => {
                             const color = stableColor(item.nrc);
@@ -477,7 +547,10 @@ export function CourseScheduleWorkspace({
                               >
                                 <button
                                   type="button"
-                                  onClick={() => handleDeleteNrc(item.nrc)}
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    openDeleteNrcDialog(item.nrc);
+                                  }}
                                   className="absolute right-1 top-1 inline-flex h-6 w-6 items-center justify-center rounded-none bg-transparent text-foreground/70 transition-colors hover:bg-foreground/5 hover:text-foreground"
                                   aria-label={`Eliminar NRC ${item.nrc}`}
                                   title="Eliminar NRC"

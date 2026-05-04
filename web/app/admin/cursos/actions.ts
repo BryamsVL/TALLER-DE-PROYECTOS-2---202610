@@ -334,6 +334,28 @@ export async function eliminarNrc(formData: FormData): Promise<NrcActionResult> 
   if (!parsed.success) return { ok: false, message: "NRC invalido." };
 
   const supabase = await createClient();
+
+  const cursoIdRaw = formData.get("cursoId");
+  const cursoId = typeof cursoIdRaw === "string" || typeof cursoIdRaw === "number" ? Number(cursoIdRaw) : NaN;
+
+  const { data: nrcRow, error: nrcLookupError } = await supabase
+    .from("nrc")
+    .select("nrc, curso_id")
+    .eq("nrc", parsed.data.nrc)
+    .maybeSingle();
+
+  if (nrcLookupError) {
+    return { ok: false, message: mapAdminWriteErrorMessage(nrcLookupError.code, nrcLookupError.message) };
+  }
+
+  if (!nrcRow) {
+    return { ok: false, message: "No existe ese NRC." };
+  }
+
+  if (Number.isInteger(cursoId) && cursoId > 0 && nrcRow.curso_id !== cursoId) {
+    return { ok: false, message: "Ese NRC no pertenece a este curso." };
+  }
+
   const { error } = await supabase.from("nrc").delete().eq("nrc", parsed.data.nrc);
 
   if (error) {
@@ -341,9 +363,9 @@ export async function eliminarNrc(formData: FormData): Promise<NrcActionResult> 
   }
 
   revalidatePath("/admin/cursos");
-  const cursoId = Number(formData.get("cursoId"));
   if (Number.isInteger(cursoId) && cursoId > 0) {
     revalidatePath(`/admin/cursos/${cursoId}`);
+    revalidatePath("/admin/horarios");
   }
   return { ok: true };
 }
