@@ -56,7 +56,16 @@ Toda la documentación está organizada por fases del proyecto siguiendo el est�
 
 ---
 
-### **5. 👥 Equipo y Gestión**
+### **5. ⚙️ Ejecución del Sistema**
+> _Documentación técnica del backend en marcha_
+
+- [📄 Backend — README](docs/ejecucion/backend/README.md) — Stack, endpoints, variables de entorno y guía de arranque.
+- [🔬 Microservicio CSP Explicado](docs/ejecucion/backend/CSP_SERVICE_EXPLAINED.md) — Internals de OR-Tools CP-SAT, variables, restricciones y función objetivo.
+- [🧪 Guía de Testing](docs/ejecucion/backend/TESTING.md) — Tests implementados, cómo ejecutarlos y cobertura por sprint.
+
+---
+
+### **6. 👥 Equipo y Gestión**
 > _¿Quiénes somos y cómo trabajamos?_
 
 - [🤝 Declaración del Equipo](docs/inicio/Declaracion%20del%20equipo%20del%20proyecto.md) — Roles Scrum, responsabilidades y normas de trabajo.
@@ -101,21 +110,21 @@ docker-compose up --build
 
 ### Backend — API REST (Node.js)
 ```bash
-cd backend
+cd Backend
 npm install
 npm run dev
 ```
 
 ### Microservicio CSP (FastAPI + OR-Tools)
 ```bash
-cd csp-service
+cd Backend/csp-service
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
 ### Frontend (React + TypeScript)
 ```bash
-cd frontend
+cd Frontend
 npm install
 npm run dev
 ```
