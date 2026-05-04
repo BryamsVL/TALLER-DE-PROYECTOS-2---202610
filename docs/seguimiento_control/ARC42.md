@@ -8,21 +8,21 @@ Universidad Continental — Ciclo 2026-I
 Describe los objetivos del sistema y las metas de calidad.
 
 - **Visión:** El SGOHA es una aplicación web inteligente que genera automáticamente horarios válidos y sin conflictos para coordinadores, docentes y estudiantes de la Universidad Continental bajo un currículo flexible.
-- **Problema Real:** [Documento inicial del problema — primer borrador](https://github.com/BryamsVL/TALLER-DE-PROYECTOS-2---202610) *(Entregable G del Sprint 0)*
+- **Problema Real:** [Documento inicial del problema — primer borrador](https://github.com/BryamsVL/TALLER-DE-PROYECTOS-2---202610/blob/main/docs/inicio/Documento%20inicial%20del%20problema%20(primer%20borrador).md) *(Entregable G del Sprint 0)*
 
 ---
 
 ## 2. Restricciones de Arquitectura
 Limitaciones de diseño, técnicas o de negocio validadas con stakeholders.
 
-- **Restricciones:** [Registro de Supuestos y Restricciones](https://github.com/BryamsVL/TALLER-DE-PROYECTOS-2---202610) *(Entregable D del Sprint 0)*
+- **Restricciones:** [Registro de Supuestos y Restricciones](https://github.com/BryamsVL/TALLER-DE-PROYECTOS-2---202610/blob/main/docs/inicio/Registro%20de%20supuestos%20y%20restricciones.md) *(Entregable D del Sprint 0)*
 
 ---
 
 ## 3. Contexto y Alcance
 Delimitación de las fronteras operativas y de negocio.
 
-- **Alcance y Metas:** [Project Charter](https://github.com/BryamsVL/TALLER-DE-PROYECTOS-2---202610) *(Entregable C del Sprint 0)*
+- **Alcance y Metas:** [Project Charter](https://github.com/BryamsVL/TALLER-DE-PROYECTOS-2---202610/blob/main/docs/inicio/Project%20Charter.md) *(Entregable C del Sprint 0)*
 - **Dentro del alcance:** Registro de entidades, validación de matrícula, motor CSP, visualización interactiva, exportación PDF/Excel, autenticación por roles y auditoría.
 - **Fuera del alcance:** Integración con ERP externos, app móvil nativa, módulo de pagos, soporte multilenguaje.
 
@@ -31,7 +31,7 @@ Delimitación de las fronteras operativas y de negocio.
 ## 4. Estrategia de Solución
 Decisiones tecnológicas fundamentales y justificaciones.
 
-- **Justificación Técnica:** [Documento de Selección del Enfoque](https://github.com/BryamsVL/TALLER-DE-PROYECTOS-2---202610) *(Entregable A del Sprint 0)*
+- **Justificación Técnica:** [Documento de Selección del Enfoque](https://github.com/BryamsVL/TALLER-DE-PROYECTOS-2---202610/blob/main/docs/inicio/Documento%20de%20seleccion%20del%20enfoque%20del%20proyecto.md) *(Entregable A del Sprint 0)*
 
 | Capa | Tecnología seleccionada | Alternativa descartada |
 |---|---|---|
@@ -181,7 +181,7 @@ Reglas de negocio y arquitecturales de aplicación global.
 ## 10. Requerimientos de Calidad
 Atributos de calidad formulados bajo el enfoque SMART.
 
-- **Calidad de Software:** [Lista de RF y RNF](https://github.com/BryamsVL/TALLER-DE-PROYECTOS-2---202610) *(Entregable H del Sprint 0)*
+- **Calidad de Software:** [Lista de RF y RNF](https://github.com/BryamsVL/TALLER-DE-PROYECTOS-2---202610/blob/main/docs/inicio/Lista%20preliminar%20de%20requerimientos%20funcionales%20y%20no%20funcionales.md) *(Entregable H del Sprint 0)*
 - Estándar aplicado: **ISO/IEC 25010** — rendimiento, escalabilidad, usabilidad, seguridad, mantenibilidad, fiabilidad, portabilidad y eficiencia energética.
 
 ---
