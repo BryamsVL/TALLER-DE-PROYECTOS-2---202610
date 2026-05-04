@@ -1,48 +1,72 @@
-# Costo Acumulado del Proyecto "Sistema de Generación de Horarios Universitarios"
+## Gráfico del Costo Acumulado del Proyecto - SGOHA
 
-**Gerente del Proyecto:** Jhon / Brianna
-**Fecha de corte:** Julio 2026
-**Moneda:** Dólares Americanos (USD)
+| Fecha       | Costo Mensual Proyectado | Acumulado Proyectado | Costo Mensual Actual | Acumulado Actual |
+|------------|--------------------------|----------------------|----------------------|------------------|
+| 13/04/2026 | $80                      | $80                  | $82                  | $82              |
+| 14/04/2026 | $85                      | $165                 | $83                  | $165             |
+| 15/04/2026 | $100                     | $265                 | $102                 | $267             |
+| 16/04/2026 | $75                      | $340                 | $73                  | $340             |
+| 17/04/2026 | $90                      | $430                 | $88                  | $428             |
+| 18/04/2026 | $60                      | $490                 | $62                  | $490             |
+| 19/04/2026 | $0                       | $490                 | $0                   | $490             |
+| 20/04/2026 | $70                      | $560                 | $68                  | $558             |
+| 21/04/2026 | $80                      | $640                 | $82                  | $640             |
+| 22/04/2026 | $60                      | $700                 | $58                  | $698             |
+| 23/04/2026 | $0                       | $700                 | $0                   | $698             |
+| 24/04/2026 | $80                      | $780                 | $85                  | $783             |
+| 25/04/2026 | $75                      | $855                 | $72                  | $855             |
+| 26/04/2026 | $0                       | $855                 | $0                   | $855             |
+| 27/04/2026 | $90                      | $945                 | $93                  | $948             |
+| 28/04/2026 | $85                      | $1030                | $82                  | $1030            |
+| 29/04/2026 | $70                      | $1100                | $68                  | $1098            |
+| 30/04/2026 | $95                      | $1195                | $98                  | $1196            |
+| 01/05/2026 | $60                      | $1255                | $58                  | $1254            |
+| 02/05/2026 | $0                       | $1255                | $0                   | $1254            |
+| 03/05/2026 | $80                      | $1335                | $85                  | $1339            |
+| 04/05/2026 | $90                      | $1425                | $88                  | $1427            |
+| 05/05/2026 | $100                     | $1525                | $105                 | $1532            |
+| 06/05/2026 | $75                      | $1600                | $73                  | $1605            |
+| 07/05/2026 | $0                       | $1600                | $0                   | $1605            |
+| 08/05/2026 | $85                      | $1685                | $88                  | $1693            |
+| 09/05/2026 | $90                      | $1775                | $87                  | $1780            |
+| 10/05/2026 | $95                      | $1870                | $98                  | $1878            |
+| 11/05/2026 | $60                      | $1930                | $58                  | $1936            |
+| 12/05/2026 | $0                       | $1930                | $0                   | $1936            |
+| 13/05/2026 | $85                      | $2015                | $82                  | $2018            |
+| 14/05/2026 | $90                      | $2105                | $95                  | $2113            |
+| 15/05/2026 | $100                     | $2205                | $98                  | $2211            |
+| 16/05/2026 | $75                      | $2280                | $72                  | $2283            |
+| 17/05/2026 | $0                       | $2280                | $0                   | $2283            |
+| 18/05/2026 | $85                      | $2365                | $88                  | $2371            |
+| 19/05/2026 | $90                      | $2455                | $92                  | $2463            |
+| 20/05/2026 | $95                      | $2550                | $93                  | $2556            |
+| 21/05/2026 | $70                      | $2620                | $68                  | $2624            |
+| 22/05/2026 | $0                       | $2620                | $0                   | $2624            |
+| 23/05/2026 | $80                      | $2700                | $78                  | $2702            |
+| 24/05/2026 | $85                      | $2785                | $88                  | $2790            |
+| 25/05/2026 | $90                      | $2875                | $92                  | $2882            |
+| 26/05/2026 | $75                      | $2950                | $72                  | $2954            |
+| 27/05/2026 | $0                       | $2950                | $0                   | $2954            |
+| 28/05/2026 | $80                      | $3030                | $85                  | $3039            |
+| 29/05/2026 | $70                      | $3100                | $68                  | $3107            |
+| 30/05/2026 | $60                      | $3160                | $62                  | $3169            |
+| 31/05/2026 | $0                       | $3160                | $0                   | $3169            |
+| 01/06/2026 | $85                      | $3245                | $88                  | $3257            |
+| 02/06/2026 | $90                      | $3335                | $92                  | $3349            |
+| 03/06/2026 | $95                      | $3430                | $98                  | $3447            |
+| 04/06/2026 | $70                      | $3500                | $68                  | $3515            |
+| 05/06/2026 | $0                       | $3500                | $0                   | $3515            |
+| 06/06/2026 | $80                      | $3580                | $85                  | $3600            |
+| 07/06/2026 | $85                      | $3665                | $82                  | $3682            |
+| 08/06/2026 | $90                      | $3755                | $95                  | $3777            |
+| 09/06/2026 | $75                      | $3830                | $73                  | $3850            |
+| 10/06/2026 | $0                       | $3830                | $0                   | $3850            |
+| 11/06/2026 | $80                      | $3910                | $85                  | $3935            |
+| 12/06/2026 | $85                      | $3995                | $88                  | $4023            |
+| 13/06/2026 | $70                      | $4065                | $72                  | $4095            |
+| 14/06/2026 | $0                       | $4065                | $0                   | $4095            |
+| 15/06/2026 | $75                      | $4140                | $78                  | $4173            |
+| 16/06/2026 | $80                      | $4220                | $85                  | $4258            |
+| 17/06/2026 | $60                      | $4280                | $62                  | $4320            |
 
-Este documento presenta la evolución del costo acumulado del proyecto a lo largo de sus 5 sprints, basado en el presupuesto detallado en la hoja "Costos por Sprint".
-
-## Resumen de Costos por Sprint
-
-| Sprint | Período | Costo del Sprint (USD) | Costo Acumulado (USD) | Observaciones |
-|---|---|---|---|---|
-| **Sprint 0 (Setup)** * | Semanas 1-2 | $660 | $660 | Costos de inicio: definición, planificación, diseño, configuración inicial. (Basado en hojas "Costos a lo largo del tiempo") |
-| **Sprint 1** | 13/04 - 25/04 | $660 | **$1,320** | Finalización de HU-01 a HU-06. Autenticación y ABM de datos maestros completos. |
-| **Sprint 2** | 28/04 - 10/05 | $750 | **$2,070** | Finalización de HU-07 a HU-10. Lógica de negocio y primer prototipo funcional del motor CSP. |
-| **Sprint 3** | 12/05 - 06/06 | $950 | **$3,020** | Desarrollo de optimización del CSP, ajustes manuales e interfaz de calendario final. |
-| **Sprint 4** | 09/06 - 28/06 | $690 | **$3,710** | Implementación de reportes (PDF/Excel), logs de auditoría y pruebas QA intensivas. |
-| **Sprint 5** | 30/06 - 10/07 | $570 | **$4,280** | Documentación final, ajustes post-revisión, video demo, sustentación y contingencia. |
-
-*\*El Sprint 0 no está en la hoja "Costos por Sprint", pero se deduce de la hoja "Costos a lo largo del tiempo" (que suma $660 en las secciones "Inicio" y "Planificación"). Para un acumulado preciso, lo incluimos como costo base previo al primer sprint de desarrollo.*
-
-## Gráfico de Evolución del Costo Acumulado
-
-Aquí se visualiza cómo se ha ido invirtiendo el presupuesto a lo largo del tiempo.
-
-```text
-Costo Acumulado (USD)
-^
-$4,500 |
-       |                                    * (S5: $4,280)
-$4,000 |                                *
-       |                            * (S4: $3,710)
-$3,500 |
-       |
-$3,000 |                        * (S3: $3,020)
-       |
-$2,500 |
-       |
-$2,000 |                * (S2: $2,070)
-       |
-$1,500 |
-       |        * (S1: $1,320)
-$1,000 |    *
-       |
-$500   | *
-       |
-$0     +----------------------------------------------------> Tiempo (Sprints)
-       S0    S1     S2     S3     S4     S5
+![Costo acumulado del proyecto](../../otros/costo-acumulado.png)
