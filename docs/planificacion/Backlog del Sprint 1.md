@@ -35,16 +35,12 @@
 
 | ID   | Tarea                                    | Historia | Responsable | Estado       | Est | Día 1 | Día 2 | Día 3 | Día 4 | Día 5 | Día 6 | Día 7 | Día 8 | Día 9 | Día 10 |
 |------|------------------------------------------|----------|-------------|--------------|-----|-----|------|------|------|------|------|------|------|------|-------|
-| 1.1  | Configurar repositorio y Docker          | US-01     | JHON        | Terminado    | 3   | 3   | 2    | 1    | 0    | 0    | 0    | 0    | 0    | 0    | 0     |
-| 1.2  | Implementar autenticación JWT            | US-02     | JHON        | Terminado    | 5   | 5   | 4    | 3    | 2    | 1    | 0    | 0    | 0    | 0    | 0     |
-| 1.3  | CRUD de cursos                           | US-04     | JHON        | En progreso  | 5   | 5   | 5    | 4    | 3    | 2    | 1    | 0    | 0    | 0    | 0     |
+| 1.1  | Configurar repositorio y Docker          | US-01     | ALBERTO        | Terminado    | 3   | 3   | 2    | 1    | 0    | 0    | 0    | 0    | 0    | 0    | 0     |
+| 1.2  | Implementar autenticación JWT            | US-02     | ANDRE        | Terminado    | 5   | 5   | 4    | 3    | 2    | 1    | 0    | 0    | 0    | 0    | 0     |
+| 1.3  | CRUD de cursos                           | US-04     | JACK        | En progreso  | 5   | 5   | 5    | 4    | 3    | 2    | 1    | 0    | 0    | 0    | 0     |
 | 1.4  | CRUD de aulas                            | US-05     | JHON        | En progreso  | 3   | 3   | 3    | 2    | 2    | 1    | 1    | 0    | 0    | 0    | 0     |
-| 1.5  | Gestión de períodos académicos           | US-07     | JHON        | En progreso  | 3   | 3   | 3    | 2    | 1    | 1    | 0    | 0    | 0    | 0    | 0     |
-| 1.6  | Editar y desactivar cuentas              | US-03     | JHON        | En progreso  | 3   | 3   | 3    | 2    | 2    | 1    | 1    | 0    | 0    | 0    | 0     |
-| 1.7  | Desplegar Walking Skeleton en Railway    | -         | JHON        | En progreso  | 2   | 2   | 2    | 2    | 1    | 1    | 0    | 0    | 0    | 0    | 0     |
+| 1.5  | Gestión de períodos académicos           | US-07     | BRYAMS        | En progreso  | 3   | 3   | 3    | 2    | 1    | 1    | 0    | 0    | 0    | 0    | 0     |
+| 1.6  | Editar y desactivar cuentas              | US-03     | ALBERTO        | En progreso  | 3   | 3   | 3    | 2    | 2    | 1    | 1    | 0    | 0    | 0    | 0     |
+| 1.7  | Desplegar Walking Skeleton en Railway    | -         | BRIANNA        | En progreso  | 2   | 2   | 2    | 2    | 1    | 1    | 0    | 0    | 0    | 0    | 0     |
 
 ---
-
-### Sprint Backlog 1
-
-![Burndown Chart Sprint 1](../../otros/BacklogSprint1.png)
