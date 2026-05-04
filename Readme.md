@@ -61,7 +61,7 @@ Toda la documentación está organizada por fases del proyecto siguiendo el est�
 
 - [📄 Backend — README](docs/ejecucion/backend/README.md) — Stack, endpoints, variables de entorno y guía de arranque.
 - [🔬 Microservicio CSP Explicado](docs/ejecucion/backend/CSP_SERVICE_EXPLAINED.md) — Internals de OR-Tools CP-SAT, variables, restricciones y función objetivo.
-- [🧪 Guía de Testing](docs/ejecucion/backend/TESTING.md) — Tests implementados, cómo ejecutarlos y cobertura por sprint.
+- [🧪 Guía de Testing](docs/ejecucion/backend/testing.md) — Tests implementados, cómo ejecutarlos y cobertura por sprint.
 
 ---
 
@@ -94,7 +94,7 @@ Toda la documentación está organizada por fases del proyecto siguiendo el est�
 | Carga inicial del calendario | < 3 segundos |
 | Reducción de cómputo (caché) | ≥ 40% |
 
-**Stack:** React 18 + TypeScript · Express + Node.js · FastAPI + OR-Tools · PostgreSQL 16
+**Stack:** React 18 + TypeScript · Express + Node.js · FastAPI + OR-Tools · Supabase
 
 ---
 
