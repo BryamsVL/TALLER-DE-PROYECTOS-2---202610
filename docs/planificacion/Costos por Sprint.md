@@ -1,7 +1,6 @@
 # Costos por Sprint
 
-**Nombre del Proyecto:**  
-**Gerente del Proyecto:**  
+**Nombre del Proyecto:**  SGOAH
 
 ---
 
