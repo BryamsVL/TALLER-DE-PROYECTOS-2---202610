@@ -64,7 +64,81 @@ Descomposición lógica en módulos principales.
 ## 6. Vista de Ejecución
 Interacción entre los bloques en tiempo de ejecución.
 
-- **TBD:** Se definirá mediante diagramas de secuencia en el Sprint 1, incluyendo el flujo de generación de horario (coordinador → API REST → microservicio CSP → PostgreSQL → respuesta visual).
+### Documentación técnica del backend
+
+*   **Información general:** [Backend — README](../ejecucion/backend/README.md)
+*   **Microservicio CSP (OR-Tools):** [CSP Service Explained](../ejecucion/backend/CSP_SERVICE_EXPLAINED.md)
+*   **Pruebas:** [Testing](../ejecucion/backend/TESTING.md)
+
+### Flujo principal: Generación de horario
+
+El flujo central del sistema involucra la coordinación entre el frontend, la API REST y el microservicio CSP:
+
+```
+Coordinador (Frontend React)
+     │
+     │  POST /schedule/generate  { period_id, cursos, docentes, aulas }
+     ▼
+API REST — Express + Node.js  (puerto 3001)
+     │  Valida JWT + rol Coordinador
+     │  Consulta entidades en PostgreSQL (via Prisma)
+     │
+     │  POST /solve  { period_id, courses[], timeout_seconds }
+     ▼
+Microservicio CSP — FastAPI + OR-Tools  (puerto 8000)
+     │  Pydantic valida el payload (SolveRequest)
+     │  Motor CP-SAT:
+     │    ├── Variables booleanas  x[(curso, docente, aula, franja)]
+     │    ├── Restricción: cada curso asignado exactamente 1 vez
+     │    ├── Restricción: sin solapamiento de docente
+     │    ├── Restricción: sin solapamiento de aula
+     │    └── Función objetivo: maximizar asignaciones óptimas
+     │  Devuelve SolveResponse { status, assignments[], conflicts[] }
+     ▼
+API REST — Express + Node.js
+     │  Persiste resultado en PostgreSQL
+     │  Registra auditoría (SHA-256)
+     │  Aplica caché node-cache (TTL 24 h)
+     ▼
+Coordinador (Frontend React)
+     Visualiza horario en vista de calendario interactivo
+     Puede exportar a PDF / Excel
+```
+
+### Estados posibles del solver CSP
+
+| Status | Significado | Acción del sistema |
+|---|---|---|
+| `OPTIMAL` | Mejor solución encontrada | Mostrar horario completo |
+| `FEASIBLE` | Solución válida (no óptima) | Mostrar horario con aviso |
+| `INFEASIBLE` | Sin solución factible | Mostrar conflictos al coordinador |
+| `TIMEOUT` | Tiempo agotado (> 30 s) | Mostrar solución parcial si existe |
+
+### Flujo secundario: Autenticación
+
+```
+Usuario (cualquier rol)
+     │  POST /auth/login  { email, password }
+     ▼
+API REST — Express
+     │  bcrypt.compare(password, hash)  — cost factor ≥ 12
+     │  Genera JWT con rol y expiración 8 h
+     ▼
+Usuario
+     Almacena JWT en memoria / cookie segura
+     Adjunta Bearer token en cada petición protegida
+```
+
+### Estado de implementación por sprint
+
+| Flujo | Sprint 0 | Sprint 1 | Sprint 2–3 |
+|---|---|---|---|
+| Healthcheck ambos servicios | ✅ | ✅ | ✅ |
+| JWT + middleware auth | ⚙️ base | ✅ | ✅ |
+| CRUD entidades (cursos, aulas, docentes) | 🔲 | ✅ | ✅ |
+| Motor CSP (POST /solve completo) | stub | stub | ✅ |
+| Caché node-cache TTL 24 h | 🔲 | 🔲 | ✅ |
+| Exportación PDF / Excel | 🔲 | 🔲 | ✅ |
 
 ---
 
