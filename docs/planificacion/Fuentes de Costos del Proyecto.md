@@ -1,8 +1,4 @@
 # Fuentes de Costo del Proyecto
-
-**Nombre del Proyecto:**  
-**Gerente del Proyecto:**  
-
 ---
 
 ## Instrucciones
