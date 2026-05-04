@@ -157,11 +157,11 @@ interface SlotSelection {
   bloqueId: number;
 }
 
-// Genera el codigo NRC: [nivel%10][cursoId padded:2][instancia padded:2].
-// Ej. nivel=3, cursoId=5, instancia=1 -> "30501".
-function buildNrcCode(nivel: number, cursoId: number, instancia: number): string {
+// Genera el codigo NRC: [nivel:1][numeroCreacionCurso:2][instancia:2].
+// Ej. nivel=3, numeroCreacion=5, instancia=1 -> "30501".
+function buildNrcCode(nivel: number, numeroCreacionCurso: number, instancia: number): string {
   const d1 = String(nivel % 10);
-  const d2 = String(cursoId).padStart(2, "0");
+  const d2 = String(numeroCreacionCurso).padStart(2, "0");
   const d3 = String(instancia).padStart(2, "0");
   return `${d1}${d2}${d3}`;
 }
@@ -214,14 +214,27 @@ export async function crearNrc(formData: FormData): Promise<NrcActionResult> {
     return { ok: false, message: "No se encontro el curso." };
   }
 
-  if (curso.id > 99) {
+  // 2. Calcular numero de creacion del curso (ordinal dentro de la carrera).
+  const { data: todosCursos, error: todosCursosError } = await supabase
+    .from("curso")
+    .select("id")
+    .eq("carrera_id", curso.carrera_id)
+    .order("created_at", { ascending: true });
+
+  if (todosCursosError) {
+    return { ok: false, message: mapAdminWriteErrorMessage(todosCursosError.code, todosCursosError.message) };
+  }
+
+  const numeroCreacionCurso = ((todosCursos ?? []).findIndex((c) => c.id === curso.id) + 1) || 1;
+
+  if (numeroCreacionCurso > 99) {
     return {
       ok: false,
-      message: "El id del curso supera 99 y no cabe en el formato del NRC (prototipo).",
+      message: "La carrera supera 99 cursos y no cabe en el formato del NRC.",
     };
   }
 
-  // 2. Ciclo activo (asumimos uno solo). Si hay varios, tomamos el mas reciente.
+  // 3. Ciclo activo (asumimos uno solo). Si hay varios, tomamos el mas reciente.
   const { data: ciclo, error: cicloError } = await supabase
     .from("ciclo")
     .select("id")
@@ -237,7 +250,7 @@ export async function crearNrc(formData: FormData): Promise<NrcActionResult> {
     return { ok: false, message: "No hay un ciclo academico activo. Activa uno primero." };
   }
 
-  // 3. Cohorte default (carrera, ciclo, nivel, seccion='A'). Get-or-create.
+  // 4. Cohorte default (carrera, ciclo, nivel, seccion='A'). Get-or-create.
   const seccion = "A";
   const { data: cohorteExistente } = await supabase
     .from("cohorte")
@@ -272,7 +285,7 @@ export async function crearNrc(formData: FormData): Promise<NrcActionResult> {
     cohorteId = cohorteNueva.id;
   }
 
-  // 4. Calcular siguiente instancia: max(ultimos 2 digitos de NRCs del curso) + 1.
+  // 5. Calcular siguiente instancia: max(ultimos 2 digitos de NRCs del curso) + 1.
   const { data: nrcsExistentes, error: nrcsError } = await supabase
     .from("nrc")
     .select("nrc")
@@ -291,9 +304,9 @@ export async function crearNrc(formData: FormData): Promise<NrcActionResult> {
     return { ok: false, message: "Limite de 99 instancias por curso alcanzado." };
   }
 
-  const nrcCode = buildNrcCode(curso.nivel, curso.id, siguienteInstancia);
+  const nrcCode = buildNrcCode(curso.nivel, numeroCreacionCurso, siguienteInstancia);
 
-  // 5. INSERT.
+  // 6. INSERT.
   const { error: insertError } = await supabase.from("nrc").insert({
     nrc: nrcCode,
     curso_id: curso.id,
@@ -590,49 +603,46 @@ export async function crearNrcProgramado(formData: FormData): Promise<NrcActionR
     });
   }
 
-  const { data: secuenciaActual } = await supabase
-    .from("nrc_secuencia")
-    .select("ultimo_valor")
-    .eq("ciclo_id", ciclo.id)
-    .maybeSingle();
+  // Calcular numero de creacion del curso (ordinal dentro de la carrera).
+  const { data: todosCursos, error: todosCursosError } = await supabase
+    .from("curso")
+    .select("id")
+    .eq("carrera_id", curso.carrera_id)
+    .order("created_at", { ascending: true });
 
-  if (!secuenciaActual) {
-    const { error: insertSecuenciaError } = await supabase
-      .from("nrc_secuencia")
-      .insert({ ciclo_id: ciclo.id, ultimo_valor: 0 });
-
-    if (insertSecuenciaError && insertSecuenciaError.code !== "23505") {
-      return {
-        ok: false,
-        message: mapAdminWriteErrorMessage(
-          insertSecuenciaError.code,
-          insertSecuenciaError.message,
-        ),
-      };
-    }
+  if (todosCursosError) {
+    return { ok: false, message: mapAdminWriteErrorMessage(todosCursosError.code, todosCursosError.message) };
   }
 
-  const siguienteValor = (secuenciaActual?.ultimo_valor ?? 0) + 1;
-  if (siguienteValor > 999) {
-    return { ok: false, message: "El ciclo activo ya alcanzo el limite de 999 NRCs." };
-  }
+  const numeroCreacionCurso = ((todosCursos ?? []).findIndex((c) => c.id === curso.id) + 1) || 1;
 
-  const { error: updateSecuenciaError } = await supabase
-    .from("nrc_secuencia")
-    .update({ ultimo_valor: siguienteValor })
-    .eq("ciclo_id", ciclo.id);
-
-  if (updateSecuenciaError) {
+  if (numeroCreacionCurso > 99) {
     return {
       ok: false,
-      message: mapAdminWriteErrorMessage(
-        updateSecuenciaError.code,
-        updateSecuenciaError.message,
-      ),
+      message: "La carrera supera 99 cursos y no cabe en el formato del NRC.",
     };
   }
 
-  const nrcCode = buildNrcCodeFromCycle(ciclo.prefijo_nrc, siguienteValor);
+  // Calcular siguiente instancia del NRC: max(ultimos 2 digitos de NRCs del curso) + 1.
+  const { data: nrcsExistentes, error: nrcsError } = await supabase
+    .from("nrc")
+    .select("nrc")
+    .eq("curso_id", curso.id);
+
+  if (nrcsError) {
+    return { ok: false, message: mapAdminWriteErrorMessage(nrcsError.code, nrcsError.message) };
+  }
+
+  const instancias = (nrcsExistentes ?? [])
+    .map((r) => Number.parseInt(r.nrc.slice(3, 5), 10))
+    .filter((n) => Number.isInteger(n));
+  const siguienteInstancia = instancias.length === 0 ? 1 : Math.max(...instancias) + 1;
+
+  if (siguienteInstancia > 99) {
+    return { ok: false, message: "Limite de 99 instancias por curso alcanzado." };
+  }
+
+  const nrcCode = buildNrcCode(curso.nivel, numeroCreacionCurso, siguienteInstancia);
   const { error: nrcInsertError } = await supabase.from("nrc").insert({
     nrc: nrcCode,
     curso_id: curso.id,

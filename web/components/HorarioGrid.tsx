@@ -19,9 +19,10 @@ export interface BloqueRow {
 export interface HorarioCell {
   dia: Dia;
   bloque_id: number;
-  titulo: string;
-  subtitulo?: string;
-  detalle?: string;
+  cursoNombre: string;
+  nrc: string;
+  aula: string;
+  docente?: string;
 }
 
 interface HorarioGridProps {
@@ -29,13 +30,13 @@ interface HorarioGridProps {
   cells: HorarioCell[];
 }
 
-// Genera un color estable por titulo (hash simple). Usa hsl con saturacion fija.
-function colorPorTitulo(titulo: string): string {
-  let h = 0;
-  for (let i = 0; i < titulo.length; i++) {
-    h = (h * 31 + titulo.charCodeAt(i)) % 360;
-  }
-  return `hsl(${h} 70% 92%)`;
+function formatTimeAMPM(time24: string) {
+  const [h, m] = time24.split(":");
+  let hours = parseInt(h, 10);
+  const ampm = hours >= 12 ? "pm" : "am";
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  return `${hours}:${m} ${ampm}`;
 }
 
 export function HorarioGrid({ bloques, cells }: HorarioGridProps) {
@@ -47,33 +48,29 @@ export function HorarioGrid({ bloques, cells }: HorarioGridProps) {
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border bg-background">
-      <div className="min-w-[720px] grid grid-cols-[120px_repeat(6,minmax(0,1fr))]">
-        <div className="border-b border-r bg-muted/40 px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Bloque
-        </div>
+    <div className="overflow-x-auto bg-background">
+      <div className="min-w-[720px] grid grid-cols-[80px_repeat(6,minmax(0,1fr))]">
+        <div className="bg-[#28a745] px-2 py-3"></div>
         {DIAS.map((d) => (
           <div
             key={d.key}
-            className="border-b px-2 py-2 text-center text-xs font-semibold uppercase tracking-wider bg-muted/40 text-muted-foreground"
+            className="px-2 py-3 text-center text-sm font-bold text-white bg-[#28a745]"
           >
-            {d.label}
+            {d.label === "Mie" ? "Miércoles" : d.label === "Sab" ? "Sábado" : d.label}
           </div>
         ))}
 
         {ordenadas.map((b, idx) => {
           const isLast = idx === ordenadas.length - 1;
+          const [h] = b.hora_inicio.split(":");
           return (
-            <div key={b.id} className="contents">
+            <div key={b.id} className="contents group">
               <div
-                className={`flex flex-col gap-0.5 border-r px-3 py-3 text-xs ${
+                className={`flex items-start justify-center border-r px-2 py-4 text-xs font-semibold ${
                   isLast ? "" : "border-b"
                 }`}
               >
-                <div className="font-medium">B{b.orden}</div>
-                <div className="text-[10px] text-muted-foreground">
-                  {b.hora_inicio.slice(0, 5)} - {b.hora_fin.slice(0, 5)}
-                </div>
+                {h}:00
               </div>
 
               {DIAS.map((d) => {
@@ -81,24 +78,23 @@ export function HorarioGrid({ bloques, cells }: HorarioGridProps) {
                 return (
                   <div
                     key={`${d.key}-${b.id}`}
-                    className={`px-1 py-1 ${isLast ? "" : "border-b"}`}
+                    className={`p-1 ${isLast ? "" : "border-b"} border-r border-slate-200 last:border-r-0 relative`}
                   >
                     {cell ? (
                       <div
-                        className="rounded-md p-2"
-                        style={{ backgroundColor: colorPorTitulo(cell.titulo) }}
+                        className="h-full w-full bg-[#ff7f0e] text-white p-2 flex flex-col items-center justify-center text-center shadow-sm"
                       >
-                        <div className="text-xs font-semibold leading-tight">
-                          {cell.titulo}
+                        <div className="text-[10px] font-bold uppercase leading-tight mb-1">
+                          {cell.cursoNombre}
                         </div>
-                        {cell.subtitulo && (
-                          <div className="text-[10px] text-muted-foreground">
-                            {cell.subtitulo}
-                          </div>
-                        )}
-                        {cell.detalle && (
-                          <div className="text-[10px] text-muted-foreground">
-                            {cell.detalle}
+                        <div className="text-[10px] mb-1">NRC: {cell.nrc}</div>
+                        <div className="text-[10px] mb-1">
+                          {formatTimeAMPM(b.hora_inicio)} - {formatTimeAMPM(b.hora_fin)}
+                        </div>
+                        <div className="text-[10px] mb-1">Aula - {cell.aula}</div>
+                        {cell.docente && (
+                          <div className="text-[9px] italic mt-1">
+                            {cell.docente}
                           </div>
                         )}
                       </div>

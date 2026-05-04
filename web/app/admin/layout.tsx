@@ -7,7 +7,6 @@ const NAV_ADMIN: NavItem[] = [
   { href: "/admin/usuarios", label: "Usuarios", icon: "userCog" },
   { href: "/admin/carreras", label: "Carreras", icon: "building" },
   { href: "/admin/aulas", label: "Aulas", icon: "door" },
-  { href: "/admin/profesores", label: "Profesores", icon: "users" },
   { href: "/admin/cursos", label: "Cursos", icon: "bookMarked" },
   { href: "/admin/cohortes", label: "Cohortes", icon: "graduationCap" },
   { href: "/admin/asignaciones", label: "Curso ↔ Profesor", icon: "link" },

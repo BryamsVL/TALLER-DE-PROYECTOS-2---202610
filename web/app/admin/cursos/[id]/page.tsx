@@ -82,6 +82,15 @@ export default async function CursoDetailPage({ params }: PageProps) {
       nombre: profesor.nombre,
     }));
 
+  // Calcular numero de creacion del curso (ordinal dentro de la carrera)
+  const { data: todosCursosCarrera } = await supabase
+    .from("curso")
+    .select("id")
+    .eq("carrera_id", course.carrera_id)
+    .order("created_at", { ascending: true });
+
+  const numeroCreacionCurso = ((todosCursosCarrera ?? []).findIndex((c) => c.id === course.id) + 1) || 1;
+
   const nrcs = cycle
     ? await supabase
         .from("nrc")
@@ -164,6 +173,7 @@ export default async function CursoDetailPage({ params }: PageProps) {
       professors={professors}
       defaultSection={nextSectionValue((cohortesCurso ?? []).map((cohorte) => cohorte.seccion))}
       nrcs={nrcCards}
+      numeroCreacionCurso={numeroCreacionCurso}
       canCreate={!!cycle && professors.length > 0 && course.activo}
     />
   );

@@ -119,13 +119,7 @@ function Sidebar({
       </nav>
 
       <div className="mt-6 border-t border-sidebar-border pt-4 space-y-1">
-        <Link
-          href="/dashboard"
-          className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-sidebar-muted transition-colors hover:bg-sidebar-active/60 hover:text-sidebar-active-foreground"
-        >
-          <ChevronsLeftRight className="h-4 w-4" />
-          Cambiar de rol
-        </Link>
+
         <form action={signOut}>
           <button
             type="submit"
@@ -162,12 +156,7 @@ function MobileBar({
           </p>
         </div>
       </div>
-      <Link
-        href="/dashboard"
-        className="text-xs text-sidebar-muted hover:text-sidebar-active-foreground"
-      >
-        Cambiar
-      </Link>
+
       <span className="sr-only">{userEmail}</span>
     </div>
   );
@@ -187,7 +176,10 @@ export function AppShell({
         navItems={navItems}
         pathname={pathname}
       />
-      <main className="px-4 py-4 lg:pl-[19.5rem] lg:pr-6">
+      <main
+        suppressHydrationWarning
+        className="py-4 pr-4 pl-[30px] lg:pl-[calc(19.5rem+20px)] lg:pr-6"
+      >
         <MobileBar roleLabel={roleLabel} userEmail={userEmail} />
         {children}
       </main>

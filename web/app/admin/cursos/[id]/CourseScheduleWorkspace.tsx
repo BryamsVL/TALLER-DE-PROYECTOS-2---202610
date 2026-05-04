@@ -71,6 +71,7 @@ interface CourseScheduleWorkspaceProps {
   professors: ProfessorOption[];
   defaultSection: string;
   nrcs: NrcCard[];
+  numeroCreacionCurso: number;
   canCreate: boolean;
 }
 
@@ -98,12 +99,13 @@ export function CourseScheduleWorkspace({
   professors,
   defaultSection,
   nrcs,
+  numeroCreacionCurso,
   canCreate,
 }: CourseScheduleWorkspaceProps) {
   const [open, setOpen] = useState(false);
   const [selectedSlots, setSelectedSlots] = useState<Set<string>>(new Set());
   const [professorId, setProfessorId] = useState(professors[0]?.id ?? "");
-  const [section, setSection] = useState(defaultSection);
+  const [section, setSection] = useState("A");
   const [cupoMax, setCupoMax] = useState("30");
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -148,7 +150,7 @@ export function CourseScheduleWorkspace({
   function resetModalState() {
     setSelectedSlots(new Set());
     setProfessorId(professors[0]?.id ?? "");
-    setSection(defaultSection);
+    setSection("A");
     setCupoMax("30");
     setError(null);
   }
@@ -225,20 +227,9 @@ export function CourseScheduleWorkspace({
             Volver a cursos
           </Link>
           <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="outline">{course.codigo}</Badge>
-              <Badge variant="outline">{course.carrera_nombre}</Badge>
-              <Badge variant="outline">Nivel {course.nivel}</Badge>
-              <Badge variant="outline">{course.tipo_aula}</Badge>
-            </div>
             <h1 className="mt-3 font-display text-2xl font-bold tracking-tight md:text-3xl">
               {course.nombre}
             </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {cycleName
-                ? `Calendario semanal de los NRCs del ciclo ${cycleName}.`
-                : "No hay ciclo activo para programar NRCs en este momento."}
-            </p>
           </div>
         </div>
 
@@ -292,15 +283,19 @@ export function CourseScheduleWorkspace({
                   </select>
                 </label>
 
-                <label className="block space-y-2">
-                  <span className="text-sm font-medium">Seccion</span>
-                  <input
-                    value={section}
-                    onChange={(event) => setSection(event.target.value.toUpperCase())}
-                    maxLength={5}
-                    className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
-                  />
-                </label>
+                <div className="block space-y-2">
+                  <span className="text-sm font-medium">Código NRC (preview)</span>
+                  <div className="flex h-10 w-full rounded-md border border-input bg-muted/30 px-3 py-2 text-sm shadow-sm">
+                    <div className="flex items-center justify-between w-full">
+                      <span className="font-semibold text-lg tracking-wider">
+                        {String(course.nivel % 10)}{String(numeroCreacionCurso).padStart(2, "0")}{String(nrcs.length + 1).padStart(2, "0")}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        Nivel {course.nivel} • Curso #{numeroCreacionCurso} • Instancia #{nrcs.length + 1}
+                      </span>
+                    </div>
+                  </div>
+                </div>
 
                 <label className="block space-y-2">
                   <span className="text-sm font-medium">Cupo maximo</span>
@@ -414,25 +409,6 @@ export function CourseScheduleWorkspace({
         </Dialog>
       </header>
 
-      <div className="grid gap-4 md:grid-cols-4">
-        <div className="rounded-2xl border bg-card p-5 shadow-sm">
-          <p className="text-xs uppercase tracking-wider text-muted-foreground">Horas</p>
-          <p className="mt-2 font-display text-3xl font-bold">{course.horas_semanales}</p>
-        </div>
-        <div className="rounded-2xl border bg-card p-5 shadow-sm">
-          <p className="text-xs uppercase tracking-wider text-muted-foreground">Bloques requeridos</p>
-          <p className="mt-2 font-display text-3xl font-bold">{requiredSlots}</p>
-        </div>
-        <div className="rounded-2xl border bg-card p-5 shadow-sm">
-          <p className="text-xs uppercase tracking-wider text-muted-foreground">NRCs del curso</p>
-          <p className="mt-2 font-display text-3xl font-bold">{nrcs.length}</p>
-        </div>
-        <div className="rounded-2xl border bg-card p-5 shadow-sm">
-          <p className="text-xs uppercase tracking-wider text-muted-foreground">Profes habilitados</p>
-          <p className="mt-2 font-display text-3xl font-bold">{professors.length}</p>
-        </div>
-      </div>
-
       {!cycleName && (
         <div className="rounded-2xl border border-dashed bg-background p-4 text-sm text-muted-foreground">
           No hay ciclo activo. Activa uno desde la base o desde el modulo correspondiente para poder
@@ -447,13 +423,10 @@ export function CourseScheduleWorkspace({
         </div>
       )}
 
-      <section className="grid gap-6 xl:grid-cols-[1.35fr_0.85fr]">
+      <section className="grid gap-6">
         <div className="rounded-2xl border bg-card shadow-sm">
           <div className="border-b px-6 py-5">
             <h2 className="font-display text-lg font-bold tracking-tight">Calendario semanal</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Vista semanal de todos los NRCs del curso, organizada por bloque y dia.
-            </p>
           </div>
 
           <div className="overflow-x-auto">
@@ -476,7 +449,6 @@ export function CourseScheduleWorkspace({
                 return (
                   <div key={block.id} className="contents">
                     <div className={`border-r px-3 py-3 ${isLast ? "" : "border-b"}`}>
-                      <div className="text-sm font-medium">B{block.orden}</div>
                       <div className="text-xs text-muted-foreground">
                         {formatHour(block.hora_inicio)} - {formatHour(block.hora_fin)}
                       </div>
@@ -496,17 +468,26 @@ export function CourseScheduleWorkspace({
                             return (
                               <div
                                 key={`${item.nrc}-${day.key}-${block.id}`}
-                                className="rounded-xl border p-2"
+                                className="relative w-full rounded-none border p-2 pr-8"
                                 style={{
                                   backgroundColor: color.background,
                                   borderColor: color.border,
                                   color: color.text,
                                 }}
                               >
-                                <div className="text-xs font-semibold">{item.nrc}</div>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteNrc(item.nrc)}
+                                  className="absolute right-1 top-1 inline-flex h-6 w-6 items-center justify-center rounded-none bg-transparent text-foreground/70 transition-colors hover:bg-foreground/5 hover:text-foreground"
+                                  aria-label={`Eliminar NRC ${item.nrc}`}
+                                  title="Eliminar NRC"
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                </button>
+                                <div className="text-xs font-semibold">NRC: {item.nrc}</div>
                                 <div className="mt-1 text-[11px]">{item.profesor}</div>
                                 <div className="text-[11px] opacity-80">
-                                  Sec. {item.seccion} | {item.aula}
+                                  {item.aula}
                                 </div>
                               </div>
                             );
@@ -519,84 +500,6 @@ export function CourseScheduleWorkspace({
               })}
             </div>
           </div>
-        </div>
-
-        <div className="space-y-4">
-          <div className="rounded-2xl border bg-card p-5 shadow-sm">
-            <h2 className="font-display text-lg font-bold tracking-tight">NRCs creados</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Resumen por NRC con docente, seccion y cupo maximo.
-            </p>
-          </div>
-
-          {nrcs.length === 0 && (
-            <div className="rounded-2xl border border-dashed bg-background p-5 text-sm text-muted-foreground">
-              Aun no hay NRCs programados para este curso.
-            </div>
-          )}
-
-          {nrcs.map((nrc) => (
-            <div key={nrc.nrc} className="rounded-2xl border bg-card p-5 shadow-sm">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline">{nrc.nrc}</Badge>
-                    <Badge variant="outline">Sec. {nrc.seccion}</Badge>
-                  </div>
-                  <p className="mt-3 text-sm font-medium">{nrc.profesor_nombre}</p>
-                </div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  disabled={pending}
-                  onClick={() => handleDeleteNrc(nrc.nrc)}
-                  className="text-destructive hover:text-destructive"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  Eliminar
-                </Button>
-              </div>
-
-              <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
-                <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1">
-                  <Users className="h-3.5 w-3.5" />
-                  Cupo {nrc.cupo_max}
-                </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1">
-                  <Clock3 className="h-3.5 w-3.5" />
-                  {nrc.sesiones.length} bloque(s)
-                </span>
-              </div>
-
-              <div className="mt-4 space-y-2">
-                {nrc.sesiones
-                  .slice()
-                  .sort((a, b) => {
-                    const dayDiff = DAYS.findIndex((day) => day.key === a.dia) - DAYS.findIndex((day) => day.key === b.dia);
-                    if (dayDiff !== 0) return dayDiff;
-                    return a.bloque_id - b.bloque_id;
-                  })
-                  .map((session) => {
-                    const bloque = orderedBlocks.find((item) => item.id === session.bloque_id);
-                    return (
-                      <div
-                        key={`${nrc.nrc}-${session.dia}-${session.bloque_id}`}
-                        className="rounded-xl border bg-background px-3 py-2 text-sm"
-                      >
-                        <span className="font-medium">{session.dia}</span>{" "}
-                        <span className="text-muted-foreground">
-                          {bloque
-                            ? `${formatHour(bloque.hora_inicio)} - ${formatHour(bloque.hora_fin)}`
-                            : `Bloque ${session.bloque_id}`}
-                        </span>
-                        <span className="text-muted-foreground"> | {session.aula_nombre}</span>
-                      </div>
-                    );
-                  })}
-              </div>
-            </div>
-          ))}
         </div>
       </section>
     </div>

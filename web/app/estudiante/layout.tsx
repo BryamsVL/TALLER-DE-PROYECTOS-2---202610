@@ -7,7 +7,7 @@ const NAV_ESTUDIANTE: NavItem[] = [
   { href: "/estudiante", label: "Inicio", icon: "layoutDashboard", exact: true },
   {
     href: "/estudiante/inscripciones",
-    label: "Mis inscripciones",
+    label: "Matricula",
     icon: "bookMarked",
   },
   { href: "/estudiante/horario", label: "Mi horario", icon: "calendar" },

@@ -52,26 +52,28 @@ export default async function EstudianteHorarioPage() {
       : Promise.resolve({ data: null }),
     supabase.from("bloque_horario").select("id, orden, hora_inicio, hora_fin"),
     supabase.from("aula").select("id, nombre"),
-    supabase.from("curso").select("id, codigo"),
+    supabase.from("curso").select("id, nombre"),
     supabase
       .from("perfil")
       .select("id, nombre")
       .eq("rol", "DOCENTE"),
   ]);
 
-  const cursoPorId = new Map((cursos ?? []).map((c) => [c.id, c.codigo]));
+  const cursoPorId = new Map((cursos ?? []).map((c) => [c.id, c.nombre]));
   const aulaPorId = new Map((aulas ?? []).map((a) => [a.id, a.nombre]));
   const perfilNombre = new Map((perfiles ?? []).map((p) => [p.id, p.nombre]));
   const nrcPorId = new Map((nrcsRows ?? []).map((n) => [n.nrc, n]));
 
   const cells: HorarioCell[] = (sesiones ?? []).map((s) => {
     const nrcInfo = nrcPorId.get(s.nrc);
+    const cursoNombre = nrcInfo ? cursoPorId.get(nrcInfo.curso_id) ?? s.nrc : s.nrc;
     return {
       dia: s.dia,
       bloque_id: s.bloque_id,
-      titulo: nrcInfo ? cursoPorId.get(nrcInfo.curso_id) ?? s.nrc : s.nrc,
-      subtitulo: aulaPorId.get(s.aula_id) ?? "?",
-      detalle: nrcInfo?.profesor_id
+      cursoNombre: cursoNombre,
+      nrc: s.nrc,
+      aula: aulaPorId.get(s.aula_id) ?? "?",
+      docente: nrcInfo?.profesor_id
         ? perfilNombre.get(nrcInfo.profesor_id) ?? undefined
         : undefined,
     };

@@ -45,6 +45,10 @@ export default async function DashboardPage() {
 
   const availableRoles = ROLES.filter((role) => profile.activo && canAccess(profile.rol, role.role));
 
+  if (availableRoles.length > 0) {
+    redirect(availableRoles[0].href);
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <header className="border-b border-border bg-card">
@@ -69,55 +73,22 @@ export default async function DashboardPage() {
       </header>
 
       <main className="flex-1 flex flex-col items-center justify-center px-6 py-16">
-        <div className="text-center max-w-3xl w-full">
+        <div className="text-center max-w-xl w-full">
           <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
-            Acceso por rol
+            Acceso denegado
           </p>
-          <h1 className="font-display text-3xl md:text-4xl font-bold tracking-tight mb-3">
-            Ingresa a tu espacio de trabajo
+          <h1 className="font-display text-2xl md:text-3xl font-bold tracking-tight mb-3">
+            No tienes acceso a modulos activos
           </h1>
-          <p className="text-muted-foreground mb-12">
-            La plataforma ahora respeta el rol real registrado en tu perfil y
-            solo muestra los modulos que tu usuario puede usar.
+          <p className="text-muted-foreground mb-8">
+            Tu usuario no tiene un rol activo con acceso a modulos en este momento.
           </p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {availableRoles.map((r) => {
-              const Icon = r.icon;
-              return (
-                <Link key={r.href} href={r.href} className="block">
-                  <Card className="h-full text-left transition-colors hover:border-accent">
-                    <CardContent className="p-6 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="grid h-10 w-10 place-items-center rounded-xl bg-accent/20 text-accent-foreground">
-                          <Icon className="h-5 w-5" />
-                        </div>
-                        <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                          {r.role}
-                        </span>
-                      </div>
-                      <CardTitle className="font-display text-lg">
-                        {r.titulo}
-                      </CardTitle>
-                      <CardDescription className="leading-snug">
-                        {r.descripcion}
-                      </CardDescription>
-                      <div className="flex items-center gap-1 text-sm font-medium pt-2">
-                        Ingresar
-                        <ChevronRight className="h-4 w-4" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              );
-            })}
-          </div>
-
-          {availableRoles.length === 0 && (
-            <p className="text-sm text-muted-foreground">
-              Tu usuario no tiene un rol activo con acceso a modulos en este momento.
-            </p>
-          )}
+          
+          <form action={signOut}>
+            <Button type="submit">
+              Cerrar sesion y volver al inicio
+            </Button>
+          </form>
 
           <p className="mt-10 text-xs text-muted-foreground">
             Sesion activa: {user.email} | Rol: {profile.rol}

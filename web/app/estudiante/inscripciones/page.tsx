@@ -39,7 +39,7 @@ export default async function InscripcionesPage() {
       <div className="space-y-6">
         <header>
           <h1 className="font-display text-2xl font-bold tracking-tight md:text-3xl">
-            Mis inscripciones
+            Matricula
           </h1>
         </header>
         <Card>
@@ -101,6 +101,10 @@ export default async function InscripcionesPage() {
   }
 
   const misNrcs = new Set((misInscripciones ?? []).map((i) => i.nrc));
+  const misCursosIds = new Set(
+    (nrcsCarrera ?? []).filter((n) => misNrcs.has(n.nrc)).map((n) => n.curso_id)
+  );
+
   const misInscripcionesView = (nrcsCarrera ?? [])
     .filter((n) => misNrcs.has(n.nrc))
     .map((n) => {
@@ -117,7 +121,7 @@ export default async function InscripcionesPage() {
     });
 
   const disponibles = (nrcsCarrera ?? [])
-    .filter((n) => !misNrcs.has(n.nrc) && n.profesor_id && profesoresIds.has(n.profesor_id))
+    .filter((n) => !misCursosIds.has(n.curso_id) && n.profesor_id && profesoresIds.has(n.profesor_id))
     .map((n) => {
       const curso = cursoPorId.get(n.curso_id);
       const ocupados = cuposActuales.get(n.nrc) ?? 0;
@@ -137,7 +141,7 @@ export default async function InscripcionesPage() {
     <div className="space-y-6">
       <header>
         <h1 className="font-display text-2xl font-bold tracking-tight md:text-3xl">
-          Mis inscripciones
+          Matricula
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Ciclo {ciclo.nombre}. Solo se muestran cursos de tu carrera.
