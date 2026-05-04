@@ -69,4 +69,6 @@
 | 16/06/2026 | $80                      | $4220                | $85                  | $4258            |
 | 17/06/2026 | $60                      | $4280                | $62                  | $4320            |
 
-![Costo acumulado del proyecto](../../otros/costo-acumulado.png)
+<img width="745" height="292" alt="image" src="https://github.com/user-attachments/assets/4f30939a-e549-43c0-8890-b3bc129352f4" />
+
+
