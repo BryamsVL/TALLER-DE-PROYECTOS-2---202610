@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -39,15 +40,17 @@ export default function EstudianteHomePage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {MODULOS.map((m) => (
-          <Card key={m.href} className="h-full opacity-60 cursor-not-allowed">
-            <CardContent className="space-y-2">
-              <CardTitle className="font-display text-base">{m.titulo}</CardTitle>
-              <CardDescription>{m.descripcion}</CardDescription>
-              <div className="pt-2">
-                <Badge variant="outline">Proximamente</Badge>
-              </div>
-            </CardContent>
-          </Card>
+          <Link key={m.href} href={m.href} className="block">
+            <Card className="h-full transition-colors hover:border-accent">
+              <CardContent className="space-y-2">
+                <CardTitle className="font-display text-base">{m.titulo}</CardTitle>
+                <CardDescription>{m.descripcion}</CardDescription>
+                <div className="pt-2">
+                  <Badge variant="secondary">Disponible</Badge>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
         ))}
       </div>
     </div>

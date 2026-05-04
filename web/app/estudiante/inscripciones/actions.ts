@@ -64,11 +64,13 @@ export async function inscribirseEnNrc(formData: FormData): Promise<InscripcionR
     return { ok: false, message: "NRC no encontrado." };
   }
 
-  const { count: inscripcionesActivas } = await supabase
-    .from("inscripcion")
-    .select("*", { count: "exact", head: true })
-    .eq("nrc", parsed.data.nrc)
-    .eq("estado", "ACTIVA");
+  // RLS oculta filas de otros estudiantes, asi que un SELECT cliente cuenta
+  // solo las propias. Usamos la funcion SECURITY DEFINER definida en
+  // migrations/002 para obtener el conteo real saltando RLS.
+  const { data: inscripcionesActivas } = await supabase.rpc(
+    "inscripcion_activas_count",
+    { p_nrc: parsed.data.nrc },
+  );
 
   if ((inscripcionesActivas ?? 0) >= nrcInfo.cupo_max) {
     return { ok: false, message: "El NRC ya alcanzo su cupo maximo." };

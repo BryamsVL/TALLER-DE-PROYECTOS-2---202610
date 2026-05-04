@@ -88,21 +88,16 @@ export default async function InscripcionesPage() {
     .in("curso_id", cursoIds.length > 0 ? cursoIds : [-1])
     .eq("ciclo_id", ciclo.id);
 
-  // Conteo de inscripciones activas por NRC (para mostrar cupo).
-  const { data: todasInscripciones } = await supabase
-    .from("inscripcion")
-    .select("nrc")
-    .in(
-      "nrc",
-      (nrcsCarrera ?? []).length > 0
-        ? (nrcsCarrera ?? []).map((n) => n.nrc)
-        : ["00000"],
-    )
-    .eq("estado", "ACTIVA");
-
+  // Conteo de inscripciones activas por NRC (saltando RLS via SECURITY DEFINER).
+  // Ver migrations/002_perfil_docente_read_y_cupo.sql.
   const cuposActuales = new Map<string, number>();
-  for (const r of todasInscripciones ?? []) {
-    cuposActuales.set(r.nrc, (cuposActuales.get(r.nrc) ?? 0) + 1);
+  if ((nrcsCarrera ?? []).length > 0) {
+    const { data: cupoRows } = await supabase.rpc("nrc_cupo_actual", {
+      p_nrcs: (nrcsCarrera ?? []).map((n) => n.nrc),
+    });
+    for (const r of (cupoRows ?? []) as { nrc: string; ocupados: number }[]) {
+      cuposActuales.set(r.nrc, r.ocupados);
+    }
   }
 
   const misNrcs = new Set((misInscripciones ?? []).map((i) => i.nrc));
