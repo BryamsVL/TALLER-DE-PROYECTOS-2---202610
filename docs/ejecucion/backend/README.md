@@ -5,7 +5,7 @@ Backend del proyecto **SGOHA** (Sistema de Generación Óptima de Horarios Acad�
 
 ## 📖 Documentos
 
-Este directorio contiene 3 documentos:
+Este directorio contiene 3 documentos:F
 
 1. **README.md** (este archivo) — Información general del backend
 2. **[CSP_SERVICE_EXPLAINED.md](CSP_SERVICE_EXPLAINED.md)** — Explicación detallada del microservicio CSP y su integración con OR-Tools
@@ -48,7 +48,7 @@ Motor de satisfacción de restricciones que genera asignaciones curso-docente-au
 | **TypeScript** | 5+ | Tipado estático |
 | **Express** | 4 | Framework HTTP |
 | **Prisma** | 5 | ORM con tipado nativo TypeScript |
-| **PostgreSQL** | 16 | Base de datos relacional principal |
+| **SupaBase** | 16 | Base de datos relacional principal |
 | **jsonwebtoken** | — | Tokens JWT (RF-02) |
 | **bcrypt** | — | Hash de contraseñas (cost ≥ 12, RNF-04) |
 | **zod** | — | Validación de inputs |
@@ -137,7 +137,7 @@ Detalles completos en [TESTING.md](TESTING.md).
 - Node.js 20+ y npm
 - Python 3.11+ y pip
 - Docker y Docker Compose (recomendado)
-- PostgreSQL 16 (o usar el contenedor Docker)
+- Supabase (o usar el contenedor Docker)
 
 ### Con Docker Compose (Recomendado)
 
@@ -226,7 +226,7 @@ Ver `.env.example` completo en `Backend/.env.example`.
 
 | Variable | Default | Propósito |
 |---|---|---|
-| `DATABASE_URL` | — | Conexión PostgreSQL |
+| `DATABASE_URL` | — | Conexión SupaBase |
 | `JWT_SECRET` | — | Secreto JWT (nunca hardcodear) |
 | `JWT_EXPIRES_IN` | `8h` | Duración del token (RF-02) |
 | `BCRYPT_ROUNDS` | `12` | Cost factor bcrypt (RNF-04) |
