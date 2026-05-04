@@ -37,7 +37,7 @@
 | Desarrollo frontend React | Semana 7-9 | 150 | Internet, energía, herramientas |
 | Desarrollo backend Node | Semana 7-10 | 180 | Recursos desarrollo |
 | Microservicio CSP OR-Tools | Semana 8-10 | 200 | Pruebas computacionales |
-| PostgreSQL y pruebas integración | Semana 10 | 120 | Recursos técnicos |
+| Supabase y pruebas integración | Semana 10 | 120 | Recursos técnicos |
 | Hosting pruebas (Railway/Render) | Semana 11 | 90 | Despliegue MVP |
 | Reuniones técnicas equipo | Semana 9-12 | 100 | Transporte y coordinación |
 | | **Subtotal** | **840** | |
