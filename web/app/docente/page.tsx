@@ -14,7 +14,7 @@ const MODULOS: Modulo[] = [
     href: "/docente/horario",
     titulo: "Mi horario",
     descripcion: "Cursos asignados, dias, bloques y aulas para el ciclo activo.",
-    disponible: false,
+    disponible: true,
   },
   {
     href: "/docente/disponibilidad",
