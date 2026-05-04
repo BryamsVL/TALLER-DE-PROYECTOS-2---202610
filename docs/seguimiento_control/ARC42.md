@@ -81,7 +81,7 @@ Coordinador (Frontend React)
      ▼
 API REST — Express + Node.js  (puerto 3001)
      │  Valida JWT + rol Coordinador
-     │  Consulta entidades en PostgreSQL (via Prisma)
+     │  Consulta entidades en Supabase (via Prisma)
      │
      │  POST /solve  { period_id, courses[], timeout_seconds }
      ▼
@@ -96,7 +96,7 @@ Microservicio CSP — FastAPI + OR-Tools  (puerto 8000)
      │  Devuelve SolveResponse { status, assignments[], conflicts[] }
      ▼
 API REST — Express + Node.js
-     │  Persiste resultado en PostgreSQL
+     │  Persiste resultado en Supabase
      │  Registra auditoría (SHA-256)
      │  Aplica caché node-cache (TTL 24 h)
      ▼
@@ -148,7 +148,7 @@ Infraestructura de hardware y software.
 - **Frontend:** Vercel (tier gratuito)
 - **Backend / API REST:** Render o Railway (tier gratuito)
 - **Microservicio CSP:** Render (contenedor Docker)
-- **Base de datos:** PostgreSQL en Railway o Render
+- **Base de datos:** Supabase
 - **Orquestación local:** Docker Compose
 - **Requisito mínimo:** Servidor con al menos 4 GB RAM y acceso a internet *(Supuesto S6)*
 
@@ -171,7 +171,7 @@ Reglas de negocio y arquitecturales de aplicación global.
 ## 9. Decisiones de Arquitectura (ADR)
 
 - **ADR-01:** Separación del motor CSP en microservicio independiente (FastAPI + OR-Tools) para no limitar el rendimiento del backend principal en Node.js.
-- **ADR-02:** Uso de PostgreSQL sobre MySQL por mayor robustez en consultas complejas y estructuras de datos avanzadas.
+- **ADR-02:** Uso de Supabase por mayor robustez en consultas complejas y estructuras de datos avanzadas.
 - **ADR-03:** Prisma como ORM por tipado nativo con TypeScript, reduciendo errores y mejorando mantenibilidad.
 - **ADR-04:** node-cache sobre Redis por simplicidad de implementación, suficiente para los requerimientos actuales.
 - **ADR-05:** Metodología Scrum — iteraciones cortas de 2–4 semanas con retroalimentación continua, alineada con requerimientos cambiantes.
