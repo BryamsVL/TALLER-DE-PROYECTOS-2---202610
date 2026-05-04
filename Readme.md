@@ -135,9 +135,9 @@ npm run dev
 
 | Rol Scrum | Integrante | Módulos |
 |-----------|-----------|---------|
-| Product Owner | Alberto Patiño Reynoso | Documentación, criterios de aceptación |
+| Product Owner | Brianna Cortez Ponce | Documentación, criterios de aceptación |
 | Scrum Master | Andre De La Torre Segura | Git workflow, gestión del proyecto |
-| Dev — Backend / CSP | Brianna Cortez Ponce | Motor CSP, microservicio FastAPI |
+| Dev — Backend / CSP | Alberto Patiño Reynoso | Motor CSP, microservicio FastAPI |
 | Dev — Backend / Auth | Edward Flores Rodriguez | API REST, autenticación JWT, matrícula |
 | Dev — Frontend / UI | Bryams Vilchez Lazaro | SPA React, calendario, UI |
 | Dev — QA / DevOps | Jack Perez Lizarbe | Pruebas, CI/CD, Docker, reportes |
