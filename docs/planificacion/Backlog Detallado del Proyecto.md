@@ -1,7 +1,7 @@
 # 📋 Backlog Detallado del Producto — SGOHA
 
 **Proyecto:** SGOHA — Sistema de Generación Óptima de Horarios Académicos  
-**Stack:** React + TypeScript · Express · Node.js · PostgreSQL · OR-Tools  
+**Stack:** React + TypeScript · Express · Node.js · Supabase · OR-Tools  
 **Total Story Points:** 107 pts · 20 historias · 4 Sprints
 
 ---
