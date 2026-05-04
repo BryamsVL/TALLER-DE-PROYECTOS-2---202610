@@ -14,7 +14,7 @@ Read it before making any change to the codebase.
 Current stack:
 
 - `Frontend/`: React 18 + TypeScript + Vite + TanStack Router + shadcn/ui
-- `Backend/`: Node.js 20 + TypeScript + Express 4 + Prisma 5 + PostgreSQL 16
+- `Backend/`: Node.js 20 + TypeScript + Express 4 + Prisma 5 + Supabase
 - `Backend/csp-service/`: FastAPI + Python 3.11 + OR-Tools CP-SAT
 
 Current status: **Sprint 0 / Sprint 1**
@@ -121,7 +121,7 @@ When working on this project, prioritize these files:
 - validates requests with `zod`
 - delegates schedule generation to CSP service via HTTP (`CSP_SERVICE_URL`)
 - handles auth with JWT (`requireAuth` middleware)
-- persists data to PostgreSQL via Prisma
+- persists data to Supabase
 
 **CSP microservice (port 8000):**
 
@@ -304,7 +304,7 @@ Before finishing any task, verify:
 
 > You are working on SGOHA (Sistema de Generación Óptima de Horarios Académicos).
 > The architecture has three layers: `Frontend/` (React + Vite + TanStack Router),
-> `Backend/` (Express + TypeScript + Prisma + PostgreSQL), and
+> `Backend/` (Express + TypeScript + Prisma + Supabase), and
 > `Backend/csp-service/` (FastAPI + OR-Tools CP-SAT).
 > The project is in Sprint 0-1: only `/health` is implemented in the backend and the
 > CSP solver is a stub returning INFEASIBLE.
