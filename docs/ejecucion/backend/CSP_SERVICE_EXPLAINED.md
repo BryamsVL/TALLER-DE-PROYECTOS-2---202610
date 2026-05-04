@@ -334,7 +334,7 @@ Microservicio CSP FastAPI (puerto 8000)
           │
           ▼
 API REST Express
-     │ Almacena resultado en PostgreSQL (via Prisma)
+     │ Almacena resultado en SupaBase
      │ Registra en log de auditoría (SHA-256)
      │
      ▼
