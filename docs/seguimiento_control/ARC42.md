@@ -38,7 +38,7 @@ Decisiones tecnológicas fundamentales y justificaciones.
 | Frontend (SPA) | React 18 + TypeScript (Vite) | Vue 3 |
 | Backend (API REST) | Express + Node.js | FastAPI |
 | Microservicio CSP | FastAPI + OR-Tools | Backtracking en Node.js |
-| Base de datos | PostgreSQL 16 | MySQL |
+| Base de datos | Supabase | MySQL |
 | ORM | Prisma | Sequelize |
 | Caché | node-cache | Redis |
 | Reportes | PDFKit + ExcelJS | Librerías manuales |
@@ -54,7 +54,7 @@ Descomposición lógica en módulos principales.
 - **Frontend:** React 18 + TypeScript — SPA con vistas de calendario, formularios de registro, matrícula e integración con API REST. *(Responsable: Bryams Vilchez)*
 - **Backend / API REST:** Express + Node.js — autenticación JWT, registro de entidades, validaciones de matrícula. *(Responsable: Andre De La Torre)*
 - **Microservicio CSP:** FastAPI + OR-Tools — motor de satisfacción de restricciones para generación de horarios. *(Responsable: Brianna Cortez)*
-- **Base de datos:** PostgreSQL 16 con ORM Prisma.
+- **Base de datos:** Supabase con ORM Prisma.
 - **DevOps:** Docker Compose + GitHub Actions. *(Responsable: Jack Perez)*
 
 > 📌 *El detalle de componentes internos se desarrollará en el Sprint 1.*
