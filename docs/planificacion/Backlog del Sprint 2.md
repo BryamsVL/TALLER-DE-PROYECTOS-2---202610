@@ -45,4 +45,3 @@
 
 ### Burndown Chart
 
-![Burndown Chart Sprint 2](../../otros/BacklogSprint2.png)
