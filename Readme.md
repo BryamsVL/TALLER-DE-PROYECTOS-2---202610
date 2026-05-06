@@ -190,16 +190,16 @@ Toda la documentación está estructurada bajo metodologías ágiles y **Spec-Dr
 * 3º Evaluación de sostenibilidad (enfoque Green Software)
 
 ### 3.3. Gestión de Riesgos y Oportunidades
-**a. Registros obligatorios** ➔ [Ver Matriz Completa](docs/gestion/riesgos-oportunidades.md)
-* **1º Registro de riesgos**
+**a. Registros obligatorios**
+* **1º Registro de riesgos** ➔ [Ver Documento](docs/gestion/registro-riesgos.md)
   * i. Descripción del riesgo
   * ii. Probabilidad e impacto
   * iii. Estrategia de mitigación
-* **2º Registro de oportunidades**
+* **2º Registro de oportunidades** ➔ [Ver Documento](docs/gestion/registro-oportunidades.md)
   * i. Impacto positivo esperado
   * ii. Estrategia de aprovechamiento
 
-**b. Análisis esperado** ➔ [Ver Análisis de Riesgos](docs/gestion/riesgos-oportunidades.md)
+**b. Análisis esperado** ➔ [Ver Documento](docs/gestion/analisis-riesgos.md)
 * 1º Relación de riesgos con:
   * i. Restricciones del problema (CSP)
   * ii. Limitaciones técnicas
