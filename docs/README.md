@@ -9,6 +9,7 @@ El núcleo normativo del sistema. Ninguna línea de código debe escribirse sin 
 - [AGENTS.md](./sdd/AGENTS.md) — Guía para agentes IA
 - [Constitution](./sdd/constitution.md) — Reglas y principios rectores
 - [Spec del Sistema](./sdd/spec.md) — Restricciones, entradas y casos límite
+- [Análisis SDD](./sdd/analisis-sdd.md) — Coherencia, reducción de ambigüedad y anticipación de conflictos
 - [Decisiones Técnicas (ADR)](./sdd/decisiones-tecnicas.md) — Elección de tecnologías
 
 ### 2. [Planificación (`/planificacion`)](./planificacion)

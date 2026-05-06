@@ -167,6 +167,7 @@ Toda la documentación está estructurada bajo metodologías ágiles y **Spec-Dr
 ### 4. Spec-Driven Development (SDD)
 * 🤖 **[Principios del Sistema (Constitution)](docs/sdd/AGENTS.md)**
 * 📄 **[Especificación Formal (Restricciones y Casos)](docs/sdd/spec.md)**
+* 🔎 **[Análisis SDD (Coherencia y Ambigüedad)](docs/sdd/analisis-sdd.md)**
 
 ### 5. Repositorio e Histórico de Sprints
 * 🟢 **[Sprint 1: Base de Entidades y Auth](docs/sprints/sprint-1/backlog.md)**
