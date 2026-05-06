@@ -31,9 +31,9 @@ Control del proyecto, presupuestos y riesgos.
 
 ### 4. [Arquitectura Técnica (`/arquitectura`)](./arquitectura)
 Documentación para el equipo de desarrollo.
-- [ARC42](./arquitectura/ARC42.md) — Diagramas y contexto
-- [CSP Service Explained](./arquitectura/CSP-SERVICE-EXPLAINED.md) — Explicación matemática del solver
-- [Testing Backend](./arquitectura/testing-backend.md) — Guía de pruebas
+- [ARC42](./arquitectura/ARC42.md) — Diagramas y contexto del sistema
+- [Algoritmo del Solver](./arquitectura/algoritmo-solver.md) — Cómo funciona el motor de optimización CSP
+- [Testing del Backend](./arquitectura/testing-backend.md) — Guía de pruebas del servidor
 
 ### 5. [Sprints (`/sprints`)](./sprints)
 Histórico y trabajo en curso dividido por iteraciones.

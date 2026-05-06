@@ -238,6 +238,11 @@ Toda la documentación está estructurada bajo metodologías ágiles y **Spec-Dr
 * **2º Evidencia de:**
   * i. Integración de funcionalidades ➔ [Ver Trazabilidad](docs/planificacion/trazabilidad.md)
   * ii. Evolución del sistema ➔ [Ver Trazabilidad](docs/planificacion/trazabilidad.md)
+* **3º Documentación de arquitectura:**
+  * i. Vistas y decisiones del sistema ➔ [Ver ARC42](docs/arquitectura/ARC42.md)
+  * ii. Motor de optimización CSP ➔ [Ver Algoritmo del Solver](docs/arquitectura/algoritmo-solver.md)
+  * iii. Pruebas del backend ➔ [Ver Testing](docs/arquitectura/testing-backend.md)
+
 
 **d. Análisis esperado** ➔ [Ver Matriz de Trazabilidad](docs/planificacion/trazabilidad.md)
 * 1º Trazabilidad entre:
