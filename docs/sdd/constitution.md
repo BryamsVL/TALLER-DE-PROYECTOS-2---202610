@@ -12,6 +12,22 @@
 
 ---
 
+## 2. Restricciones Duras y Blandas (Globales)
+
+Toda la lógica de negocio debe regirse por el catálogo de restricciones formalizadas en el motor CSP:
+
+**Restricciones Duras (Hard Constraints - Inviolables)**
+- **D1 (Unicidad Docente):** Un docente no puede enseñar en dos lugares al mismo tiempo.
+- **D2 (Unicidad Aula):** Un aula no puede albergar dos clases simultáneas.
+- **D3 (Capacidad):** El número de alumnos matriculados no puede exceder el aforo del aula física.
+- **D4 (Aprobación Académica):** Estrictamente prohibido matricular si no se cumplen los prerrequisitos.
+
+**Restricciones Blandas (Soft Constraints - Optimizables)**
+- **B1 (Carga Horaria Continua):** Minimizar horas muertas (huecos) en el horario de un docente.
+- **B2 (Preferencias):** Priorizar asignación en el turno declarado por el profesor.
+
+---
+
 ## 2. Reglas Globales de Desarrollo
 
 ### 2.1. Gestión de Ramas (Git Flow)
