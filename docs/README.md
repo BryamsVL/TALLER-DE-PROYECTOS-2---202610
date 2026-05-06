@@ -1,0 +1,38 @@
+# Índice de Documentación — SGOHA
+
+Bienvenido a la documentación del **Sistema de Generación Óptima de Horarios Académicos (SGOHA)**. Todo el proyecto está diseñado bajo el enfoque de *Spec-Driven Development* (SDD).
+
+## 📂 Directorios Principales
+
+### 1. [Spec-Driven Development (`/sdd`)](./sdd)
+El núcleo normativo del sistema. Ninguna línea de código debe escribirse sin estar amparada aquí.
+- [AGENTS.md](./sdd/AGENTS.md) — Guía para agentes IA
+- [Constitution](./sdd/constitution.md) — Reglas y principios rectores
+- [Spec del Sistema](./sdd/spec.md) — Restricciones, entradas y casos límite
+- [Decisiones Técnicas (ADR)](./sdd/decisiones-tecnicas.md) — Elección de tecnologías
+
+### 2. [Planificación (`/planificacion`)](./planificacion)
+Artefactos ágiles y de trazabilidad.
+- [Backlog del Producto](./planificacion/backlog-producto.md)
+- [Planificación Jira](./planificacion/planificacion-jira.md)
+- [Métricas Ágiles](./planificacion/metricas-agiles.md)
+- [Matriz de Trazabilidad](./planificacion/trazabilidad.md)
+- [Archivos Excel](./planificacion/xlsx/)
+
+### 3. [Gestión y Control (`/gestion`)](./gestion)
+Control del proyecto, presupuestos y riesgos.
+- [Presupuesto General](./gestion/presupuesto.md)
+- [Riesgos y Oportunidades](./gestion/riesgos-oportunidades.md)
+- [Costo Acumulado](./gestion/costo-acumulado.md)
+
+### 4. [Arquitectura Técnica (`/arquitectura`)](./arquitectura)
+Documentación para el equipo de desarrollo.
+- [ARC42](./arquitectura/ARC42.md) — Diagramas y contexto
+- [CSP Service Explained](./arquitectura/CSP-SERVICE-EXPLAINED.md) — Explicación matemática del solver
+- [Testing Backend](./arquitectura/testing-backend.md) — Guía de pruebas
+
+### 5. [Sprints (`/sprints`)](./sprints)
+Histórico y trabajo en curso dividido por iteraciones.
+- [Sprint 1 (Inicio y Fundamentos)](./sprints/sprint-1) — Completado
+- [Sprint 2 (Motor CSP)](./sprints/sprint-2) — En curso
+- [Sprint 3 (PMV)](./sprints/sprint-3) — Planificado

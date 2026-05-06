@@ -1,3 +1,0 @@
-# REPOSITORIO GITHUB DEL PROYECTO
-
-<https://github.com/BryamsVL/TALLER-DE-PROYECTOS-2---202610.git>
