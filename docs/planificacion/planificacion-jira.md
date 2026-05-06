@@ -1,144 +1,92 @@
-# Planificación del Proyecto — SGOHA
+# Planificación Jira — SGOHA
 
-**Proyecto:** Sistema de Generación Óptima de Horarios Académicos  
-**Curso:** Taller de Proyectos 2 · Universidad Continental  
-**Sprint actual:** Sprint 2 (en curso)  
+**Proyecto:** Sistema de Generación Óptima de Horarios Académicos (SGOHA)
 **Fecha:** Mayo 2026
 
 ---
 
-## 1. Épicas del Proyecto
+## Estructura de Épicas y Sprints
 
-| ID | Nombre | Descripción | Sprint |
-|---|---|---|---|
-| EP-01 | Gestión de Entidades Base | Estudiantes, docentes, cursos, aulas y componentes. | Sprint 1 |
-| EP-02 | Autenticación y Control de Acceso | Sistema de login JWT y roles (ADMIN, COORDINATOR, etc.). | Sprint 1 |
-| EP-03 | Configuración del Período Académico | Franjas horarias, tiempos de traslado y parámetros del ciclo. | Sprint 1 |
-| EP-04 | Generación de Horario Institucional | Etapa 1: Solver CSP resolviendo restricciones duras (D1-D9). | Sprint 2 |
-| EP-05 | Generación de Horario de Docentes | Etapa 2: Ajuste manual, activación y consideraciones blandas. | Sprint 2 |
-| EP-06 | Generación de Horario de Estudiantes | Etapa 3: Matrícula, carga académica y prerrequisitos. | Sprint 3 |
-| EP-07 | Visualización y Exportación | Vistas semanales, filtros y reportes en PDF/Excel. | Sprint 3 |
+El proyecto está dividido en 7 Épicas y 3 Sprints.
 
----
-
-## 2. Backlog Completo — 26 Historias de Usuario
-
-| ID | Épica | Historia | Prioridad | Pts | Deps | Restricción CSP | Sprint | Estado |
-|---|---|---|---|---|---|---|---|---|
-| HU-01 | EP-02 | Como administrador, quiero registrar usuarios, para asignarles roles en el sistema. | Alta | 3 | - | - | 1 | ✅ Terminado |
-| HU-02 | EP-02 | Como usuario, quiero iniciar sesión, para acceder a las funciones de mi rol. | Alta | 5 | HU-01 | - | 1 | ✅ Terminado |
-| HU-03 | EP-02 | Como administrador, quiero controlar el acceso por rol, para proteger la información. | Alta | 3 | HU-02 | - | 1 | ✅ Terminado |
-| HU-04 | EP-01 | Como administrador, quiero gestionar estudiantes, para tener su registro base. | Media | 3 | HU-03 | - | 1 | ✅ Terminado |
-| HU-05 | EP-01 | Como administrador, quiero gestionar docentes, para asignarles cursos. | Alta | 3 | HU-03 | - | 1 | ✅ Terminado |
-| HU-06 | EP-01 | Como docente, quiero declarar mi disponibilidad, para que se considere en el horario. | Alta | 5 | HU-05 | B1-B3 | 1 | ✅ Terminado |
-| HU-07 | EP-01 | Como administrador, quiero gestionar cursos y componentes, para la oferta del período. | Alta | 5 | HU-03 | - | 1 | ✅ Terminado |
-| HU-08 | EP-01 | Como administrador, quiero gestionar aulas, para que sean asignadas a las clases. | Alta | 3 | HU-03 | D3 | 1 | ✅ Terminado |
-| HU-09 | EP-03 | Como coordinador, quiero configurar las franjas horarias, para delimitar el horario válido. | Alta | 3 | HU-03 | - | 1 | ✅ Terminado |
-| HU-10 | EP-03 | Como coordinador, quiero configurar tiempos de traslado y parámetros, para el solver. | Media | 2 | HU-09 | - | 1 | ✅ Terminado |
-| HU-11 | EP-04 | Como coordinador, quiero que el motor CSP considere las restricciones duras (D1-D9), para obtener un horario factible. | Alta | 8 | HU-06,07,08,10 | D1-D9 | 2 | 🔄 En curso |
-| HU-12 | EP-04 | Como coordinador, quiero ejecutar la generación y ver el resultado, para confirmar el horario. | Alta | 5 | HU-11 | - | 2 | 🔄 En curso |
-| HU-13 | EP-05 | Como coordinador, quiero activar y cancelar el horario, para gestionar su vigencia. | Alta | 3 | HU-12 | - | 2 | 🔄 En curso |
-| HU-14 | EP-05 | Como coordinador, quiero ajustar asignaciones manualmente, para resolver excepciones. | Media | 5 | HU-12 | - | 2 | 🔄 En curso |
-| HU-15 | EP-05 | Como coordinador, quiero que el solver use restricciones blandas (B1-B5), para optimizar puntuaciones. | Media | 5 | HU-11 | B1-B5 | 2 | 🔄 En curso |
-| HU-16 | EP-05 | Como docente, quiero ver la vista de mi horario, para conocer mi carga. | Alta | 5 | HU-12 | - | 2 | 🔄 En curso |
-| HU-17 | EP-05 | Como docente, quiero consultar mi horario interactivo, para organizarme. | Media | 3 | HU-16 | - | 2 | 🔄 En curso |
-| HU-18 | EP-06 | Como estudiante, quiero validación de prerrequisitos, para matricularme correctamente. | Alta | 5 | HU-04,07 | D12-D13 | 3 | ⬜ Pendiente |
-| HU-19 | EP-06 | Como coordinador, quiero controlar la carga académica (20-22 cr), para cumplir la norma. | Alta | 3 | HU-18 | D14 | 3 | ⬜ Pendiente |
-| HU-20 | EP-06 | Como estudiante, quiero generación automática de mi horario, para evitar conflictos. | Alta | 8 | HU-19 | D18 | 3 | ⬜ Pendiente |
-| HU-21 | EP-06 | Como sistema, quiero atomicidad en cursos compuestos, para que lab y teoría no se separen. | Media | 5 | HU-07 | D19 | 3 | ⬜ Pendiente |
-| HU-22 | EP-07 | Como estudiante, quiero consultar mi horario, para asistir a mis clases. | Alta | 5 | HU-20 | - | 3 | ⬜ Pendiente |
-| HU-23 | EP-07 | Como usuario, quiero una grilla semanal, para ver el horario visualmente. | Alta | 5 | HU-17,22 | - | 3 | ⬜ Pendiente |
-| HU-24 | EP-07 | Como coordinador, quiero exportar el horario a PDF, para imprimirlo. | Media | 3 | HU-23 | - | 3 | ⬜ Pendiente |
-| HU-25 | EP-07 | Como coordinador, quiero exportar el horario a Excel, para análisis externo. | Media | 3 | HU-23 | - | 3 | ⬜ Pendiente |
-| HU-26 | EP-07 | Como administrador, quiero protección OWASP, para mantener el sistema seguro. | Alta | 5 | - | - | 3 | ⬜ Pendiente |
-
----
-
-## 3. Criterios de Aceptación (Ejemplos Clave)
-
-**HU-11 — Restricciones Duras en Solver:**
-```
-Dado que el coordinador inicia la generación,
-cuando el solver CP-SAT se ejecuta,
-entonces se garantizan restricciones como: un docente no está en dos aulas a la vez, y la capacidad del aula no se excede.
-```
-
-**HU-20 — Horario Estudiantes:**
-```
-Dado que el estudiante selecciona sus cursos,
-cuando el sistema procesa la solicitud,
-entonces no existen cruces horarios y la suma de créditos está entre 20 y 22.
-```
-
----
-
-## 4. Priorización por Valor, Riesgo y Complejidad
-
-*(Resumen de tareas críticas en el proyecto)*
-
-| ID | Historia | Valor | Riesgo | Complejidad | Total | Prioridad |
-|---|---|---|---|---|---|---|
-| HU-11 | Solver Restricciones Duras | 5 | 5 | 5 | 15 | 🔴 Crítica |
-| HU-20 | Generación Horario Estudiante | 5 | 4 | 5 | 14 | 🔴 Crítica |
-| HU-02 | Inicio de Sesión | 5 | 3 | 2 | 10 | 🟠 Alta |
-| HU-15 | Solver Restricciones Blandas | 4 | 4 | 4 | 12 | 🟠 Alta |
-| HU-26 | Protección OWASP | 5 | 3 | 3 | 11 | 🟠 Alta |
-
----
-
-## 5. Estructura de Sprints
-
-### Sprint 1 — Fundamentos (Completado)
-**Duración:** 2 semanas · **Objetivo:** Entidades base y configuración. · **Story Points:** 35 pts (incluye las 10 HUs).
-*Alcance:* HU-01 a HU-10.
-
-### Sprint 2 — Horario Institucional y Docentes (En curso)
-**Duración:** 2 semanas · **Objetivo:** Generar el horario general utilizando CP-SAT. · **Story Points:** 34 pts.
-*Alcance:* HU-11 a HU-17.
-
-### Sprint 3 — Horario Estudiantes y Visualización (Planificado)
-**Duración:** 2 semanas · **Objetivo:** PMV Completo. · **Story Points:** 42 pts.
-*Alcance:* HU-18 a HU-26.
-
----
-
-## 6. Releases
-
-| Release | Sprint | Alcance | Fecha objetivo |
-|---|---|---|---|
-| **v0.1.0** | Sprint 1 | Base de datos, Auth JWT, CRUDs, configuración. | Fin Sprint 1 |
-| **v0.2.0** | Sprint 2 | Solver institucional (FastAPI/OR-Tools) funcional. | Fin Sprint 2 |
-| **v1.0.0** | Sprint 3 | Sistema completo: Matrícula estudiantes, exportación, UI interactiva. | Fin Sprint 3 |
-
----
-
-## 7. Cronograma y Ruta Crítica
-
-**Ruta Crítica (Dependencias fuertes):**
-`HU-07 (Cursos) + HU-08 (Aulas) + HU-06 (Disp. Docente)` → **`HU-11 (Solver)`** → `HU-12 (Ejecución)` → **`HU-20 (Horario Estudiante)`** → `HU-23 (Visualización)`.
-
-| Semana | Hito Principal | Sprint |
+| ID | Nombre | Sprint |
 |---|---|---|
-| 1-2 | Auth y CRUD de entidades básicas. | Sprint 1 |
-| 3 | Configuración del motor CSP en Python. | Sprint 2 |
-| 4 | Ejecución del Solver e integraciones. (Release v0.2.0) | Sprint 2 |
-| 5 | Validación de prerrequisitos y lógica de estudiante. | Sprint 3 |
-| 6 | Interfaz, PDF, y QA de Seguridad. (Release v1.0.0) | Sprint 3 |
+| **EP-01** | Gestión de Entidades Base | Sprint 1 |
+| **EP-02** | Autenticación y Control de Acceso | Sprint 1 |
+| **EP-03** | Configuración del Período Académico | Sprint 1 |
+| **EP-04** | Generación de Horario Institucional (Etapa 1) | Sprint 2 |
+| **EP-05** | Generación de Horario de Docentes (Etapa 2) | Sprint 2 |
+| **EP-06** | Generación de Horario de Estudiantes (Etapa 3) | Sprint 3 |
+| **EP-07** | Visualización y Exportación | Sprint 3 |
 
 ---
 
-## 8. Diagrama de Dependencias (Simplificado)
+## Desglose de Sprints y Tareas (HUs)
 
-```
-[HU-01] -> [HU-02] -> [HU-03]
-                        |-> [HU-04, 05, 07, 08, 09]
-                        
-[HU-05] -> [HU-06] \
-[HU-07] -----------> [HU-11 (Solver CSP)] -> [HU-12] -> [HU-13, 14, 16]
-[HU-08] -----------/                    \
-[HU-10] -----------/                     -> [HU-15]
+### Sprint 1: Fundamentos del Sistema (Completado)
+**Duración:** 2 Semanas
+**Objetivo:** Construir la base funcional del sistema (autenticación, gestión de entidades y configuración del período académico).
 
-[HU-04, 07] -> [HU-18] -> [HU-19] -> [HU-20 (Horario Estudiante)] -> [HU-22]
-                                                                        \
-                                                                  [HU-23 (Grilla)] -> [HU-24, 25]
-```
+| Epic | ID | Historia de Usuario | Estado Jira | Puntos | Responsable |
+|---|---|---|---|---|---|
+| EP-02 | HU-01 | Registro de Usuarios | ✅ Done | 3 | Edward Flores |
+| EP-02 | HU-02 | Inicio de Sesión | ✅ Done | 5 | Edward Flores |
+| EP-02 | HU-03 | Control de Acceso por Rol | ✅ Done | 3 | Edward Flores |
+| EP-01 | HU-04 | Gestión de Estudiantes | ✅ Done | 3 | Alberto Patiño |
+| EP-01 | HU-05 | Gestión de Docentes | ✅ Done | 3 | Alberto Patiño |
+| EP-01 | HU-06 | Gestión de Disponibilidad de Docentes | ✅ Done | 5 | Edward Flores |
+| EP-01 | HU-07 | Gestión de Cursos y Componentes | ✅ Done | 5 | Alberto Patiño |
+| EP-01 | HU-08 | Gestión de Aulas | ✅ Done | 3 | Alberto Patiño |
+| EP-03 | HU-09 | Configuración de Franjas Horarias | ✅ Done | 3 | Andre De La Torre |
+| EP-03 | HU-10 | Configuración de Tiempos de Traslado y Parámetros | ✅ Done | 2 | Andre De La Torre |
+
+**Total Puntos Sprint 1:** 35 pts
+
+---
+
+### Sprint 2: Generación de Horario Institucional y de Docentes (En Curso)
+**Duración:** 2 Semanas
+**Objetivo:** Implementar el motor OR-Tools, ejecución del algoritmo institucional, activación y ajuste manual.
+
+| Epic | ID | Historia de Usuario | Estado Jira | Puntos | Responsable |
+|---|---|---|---|---|---|
+| EP-04 | HU-11 | Modelado de Restricciones Duras en OR-Tools | 🔄 In Progress | 8 | Alberto Patiño |
+| EP-04 | HU-12 | Ejecución y Resultado de la Generación | 🔄 In Progress | 5 | Alberto Patiño |
+| EP-04 | HU-13 | Activación y Cancelación del Horario Institucional | 🔄 In Progress | 3 | Andre De La Torre |
+| EP-04 | HU-14 | Ajuste Manual de Asignaciones | 🔄 In Progress | 5 | Edward Flores |
+| EP-04 | HU-15 | Restricciones Blandas y Puntuación del Horario | ⬜ To Do | 5 | Alberto Patiño |
+| EP-05 | HU-16 | Generación de Vista de Horario por Docente | 🔄 In Progress | 5 | Edward Flores |
+| EP-05 | HU-17 | Consulta de Horario por el Docente | ⬜ To Do | 3 | Edward Flores |
+
+**Total Puntos Sprint 2:** 34 pts
+
+---
+
+### Sprint 3: Horario de Estudiantes, Visualización y Exportación (Planificado)
+**Duración:** 2 Semanas
+**Objetivo:** Generación automatizada de horario por estudiante, reportes y seguridad aplicativa.
+
+| Epic | ID | Historia de Usuario | Estado Jira | Puntos | Responsable |
+|---|---|---|---|---|---|
+| EP-06 | HU-18 | Validación de Prerrequisitos y Corequisitos | ⬜ To Do | 5 | Alberto Patiño |
+| EP-06 | HU-19 | Control de Carga Académica del Estudiante | ⬜ To Do | 5 | Alberto Patiño |
+| EP-06 | HU-20 | Generación Automática del Horario de Estudiantes | ⬜ To Do | 8 | Alberto Patiño |
+| EP-06 | HU-21 | Atomicidad de Cursos Compuestos | ⬜ To Do | 5 | Alberto Patiño |
+| EP-06 | HU-22 | Consulta de Horario por el Estudiante | ⬜ To Do | 3 | Edward Flores |
+| EP-07 | HU-23 | Grilla Semanal de Horario | ⬜ To Do | 5 | Bryams Vilchez |
+| EP-07 | HU-24 | Exportación del Horario en PDF | ⬜ To Do | 3 | Bryams Vilchez |
+| EP-07 | HU-25 | Exportación del Horario en Excel | ⬜ To Do | 3 | Bryams Vilchez |
+| EP-07 | HU-26 | Protección ante Vulnerabilidades OWASP | ⬜ To Do | 5 | Jack Perez |
+
+**Total Puntos Sprint 3:** 42 pts
+
+---
+
+## Carga por Integrante (Estimación Global)
+
+- **Alberto Patiño (Backend/CSP):** 45 pts (Mayormente concentrado en solver matemático S2/S3)
+- **Edward Flores (Backend/Auth):** 32 pts (Autenticación y endpoints)
+- **Bryams Vilchez (Frontend):** 11 pts (UI/Grillas y exportación)
+- **Andre De La Torre (Scrum Master):** 8 pts (Apoyo backend + franjas)
+- **Jack Perez (QA/DevOps):** 5 pts (Seguridad OWASP + Testing)
+- **Brianna Cortez (PO):** Validación y levantamiento de backlog (No asignada a HUs técnicas)

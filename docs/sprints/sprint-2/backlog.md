@@ -1,45 +1,53 @@
-## Sprint 2 Backlog - SGOHA
+# Backlog Detallado — Sprint 2
 
-**Nombre del Proyecto:** SGOHA (Sistema de Generación Óptima de Horarios Académicos)  
-**Dueño del Proyecto:** OptiHorario  
-**Gerente del Proyecto:** Grupo 05  
-
----
-
-### Información General
-
-- **Duración del Sprint:** 10 días  
-- **Task rows:** 5  
-- **Done days:** 9  
+**Proyecto:** SGOHA  
+**Sprint:** 2  
+**Objetivo:** Implementar las Etapas 1 y 2 del sistema: generación automática del horario institucional mediante OR-Tools, activación, ajuste manual y construcción de la vista de horario por docente.
 
 ---
 
-### Tendencia del Sprint
-
-| Día | Totales | Ideal | Tendencia |
-|-----|--------|-------|-----------|
-| 1   | 34     | 34    | 36.5     |
-| 2   | 34     | 30.6  | 32.2     |
-| 3   | 32     | 27.2  | 28.0     |
-| 4   | 29     | 23.8  | 23.8     |
-| 5   | 24     | 20.4  | 19.6     |
-| 6   | 19     | 17.0  | 15.4     |
-| 7   | 14     | 13.6  | 11.2     |
-| 8   | 9      | 10.2  | 7.0      |
-| 9   | 4      | 6.8   | 2.8      |
-| 10  | 0      | 3.4   | 0.0      |
+## HU-11: Modelado de Restricciones Duras en OR-Tools
+**Historia:** Como sistema, quiero que el motor OR-Tools tenga codificadas todas las restricciones duras D1–D9.  
+**Pts:** 8 | **Responsable:** Alberto Patiño | **Estado:** 🔄 En curso
 
 ---
 
-### Tareas del Sprint
-
-| ID  | Tarea                                          | Historia | Responsable | Estado      | Est | Día 1 | Día 2 | Día 3 | Día 4 | Día 5 | Día 6 | Día 7 | Día 8 | Día 9 | Día 10 |
-|-----|------------------------------------------------|----------|-------------|-------------|-----|------|------|------|------|------|------|------|------|------|-------|
-| 2.1 | Registrar disponibilidad docente               | US-06    | JHON        | En progreso | 5   | 5    | 5    | 4    | 3    | 2    | 1    | 0    | 0    | 0    | 0     |
-| 2.2 | Listar cursos con prerrequisitos               | US-08    | BRYAMS        | En progreso | 3   | 3    | 3    | 2    | 2    | 1    | 1    | 0    | 0    | 0    | 0     |
-| 2.3 | Validar prerrequisitos en tiempo real          | US-09    | ANDRE        | En progreso | 8   | 8    | 7    | 6    | 5    | 4    | 3    | 2    | 1    | 0    | 0     |
-| 2.4 | Contador de créditos (20-22)                   | US-10    | ALBERTO        | En progreso | 5   | 5    | 5    | 4    | 4    | 3    | 2    | 1    | 1    | 0    | 0     |
-| 2.5 | Implementar motor CSP con OR-Tools             | US-12    | JACK        | En progreso | 13  | 13   | 12   | 11   | 9    | 7    | 5    | 4    | 2    | 0    | 0     |
+## HU-12: Ejecución y Resultado de la Generación del Horario Institucional
+**Historia:** Como administrador, quiero ejecutar la generación automática del horario institucional y recibir el resultado.  
+**Pts:** 5 | **Responsable:** Alberto Patiño | **Estado:** 🔄 En curso
 
 ---
 
+## HU-13: Activación y Cancelación del Horario Institucional
+**Historia:** Como administrador, quiero activar o cancelar el horario institucional en estado BORRADOR.  
+**Pts:** 3 | **Responsable:** Andre De La Torre | **Estado:** 🔄 En curso
+
+---
+
+## HU-14: Ajuste Manual de Asignaciones
+**Historia:** Como administrador, quiero modificar manualmente las asignaciones del horario institucional en estado BORRADOR.  
+**Pts:** 5 | **Responsable:** Edward Flores | **Estado:** 🔄 En curso
+
+---
+
+## HU-15: Restricciones Blandas y Puntuación del Horario
+**Historia:** Como administrador, quiero que el motor OR-Tools optimice el horario generado según criterios de calidad (B1-B5).  
+**Pts:** 5 | **Responsable:** Alberto Patiño | **Estado:** ⬜ Pendiente
+
+---
+
+## HU-16: Generación de Vista de Horario por Docente
+**Historia:** Como administrador, quiero generar las vistas individuales de horario para cada docente a partir del horario activo.  
+**Pts:** 5 | **Responsable:** Edward Flores | **Estado:** 🔄 En curso
+
+---
+
+## HU-17: Consulta de Horario por el Docente
+**Historia:** Como docente, quiero consultar mi horario asignado para el período activo y verificar mis asignaciones.  
+**Pts:** 3 | **Responsable:** Edward Flores | **Estado:** ⬜ Pendiente
+
+---
+
+## Resumen del Sprint
+- **Total de Puntos:** 34 pts.
+- **Estado:** 🔄 En curso

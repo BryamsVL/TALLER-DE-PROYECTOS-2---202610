@@ -1,46 +1,71 @@
-## Backlog del Sprint 1 - SGOHA
+# Backlog Detallado — Sprint 1
 
-**Nombre del Proyecto:** SGOHA (Sistema de Generación Óptima de Horarios Académicos)  
-**Dueño del Proyecto:** OptiHorario  
-**Gerente del Proyecto:** Grupo 05  
-
----
-
-### Sprint 1 Backlog
-
-**Duración del Sprint:** 10 días  
-**Task rows:** 7  
-**Done days:** 8  
+**Proyecto:** SGOHA  
+**Sprint:** 1  
+**Objetivo:** Construir la base funcional del sistema: autenticación, gestión de entidades y configuración del período académico.
 
 ---
 
-### Tendencia del Sprint
-
-| Día | Totales | Ideal | Tendencia |
-|-----|--------|-------|-----------|
-| 1   | 24     | 24    | 26.1     |
-| 2   | 24     | 21.6  | 22.8     |
-| 3   | 22     | 19.2  | 19.5     |
-| 4   | 18     | 16.8  | 16.2     |
-| 5   | 14     | 14.4  | 12.9     |
-| 6   | 11     | 12    | 9.6      |
-| 7   | 8      | 9.6   | 6.3      |
-| 8   | 5      | 7.2   | 3.0      |
-| 9   | 2      | 4.8   | 0.0      |
-| 10  | 0      | 2.4   | 0.0      |
+## HU-01: Registro de Usuarios
+**Historia:** Como administrador, quiero registrar usuarios con roles para controlar el acceso al sistema.  
+**Pts:** 3 | **Responsable:** Edward Flores | **Estado:** ✅ Terminado
 
 ---
 
-### Tareas del Sprint
-
-| ID   | Tarea                                    | Historia | Responsable | Estado       | Est | Día 1 | Día 2 | Día 3 | Día 4 | Día 5 | Día 6 | Día 7 | Día 8 | Día 9 | Día 10 |
-|------|------------------------------------------|----------|-------------|--------------|-----|-----|------|------|------|------|------|------|------|------|-------|
-| 1.1  | Configurar repositorio y Docker          | US-01     | ALBERTO        | Terminado    | 3   | 3   | 2    | 1    | 0    | 0    | 0    | 0    | 0    | 0    | 0     |
-| 1.2  | Implementar autenticación JWT            | US-02     | ANDRE        | Terminado    | 5   | 5   | 4    | 3    | 2    | 1    | 0    | 0    | 0    | 0    | 0     |
-| 1.3  | CRUD de cursos                           | US-04     | JACK        | En progreso  | 5   | 5   | 5    | 4    | 3    | 2    | 1    | 0    | 0    | 0    | 0     |
-| 1.4  | CRUD de aulas                            | US-05     | JHON        | En progreso  | 3   | 3   | 3    | 2    | 2    | 1    | 1    | 0    | 0    | 0    | 0     |
-| 1.5  | Gestión de períodos académicos           | US-07     | BRYAMS        | En progreso  | 3   | 3   | 3    | 2    | 1    | 1    | 0    | 0    | 0    | 0    | 0     |
-| 1.6  | Editar y desactivar cuentas              | US-03     | ALBERTO        | En progreso  | 3   | 3   | 3    | 2    | 2    | 1    | 1    | 0    | 0    | 0    | 0     |
-| 1.7  | Desplegar Walking Skeleton en Railway    | -         | BRIANNA        | En progreso  | 2   | 2   | 2    | 2    | 1    | 1    | 0    | 0    | 0    | 0    | 0     |
+## HU-02: Inicio de Sesión
+**Historia:** Como usuario registrado, quiero iniciar sesión con mis credenciales para acceder a las funcionalidades.  
+**Pts:** 5 | **Responsable:** Edward Flores | **Estado:** ✅ Terminado
 
 ---
+
+## HU-03: Control de Acceso por Rol
+**Historia:** Como sistema, quiero restringir el acceso a cada endpoint según el rol del usuario autenticado.  
+**Pts:** 3 | **Responsable:** Edward Flores | **Estado:** ✅ Terminado
+
+---
+
+## HU-04: Gestión de Estudiantes
+**Historia:** Como administrador, quiero registrar, editar, consultar y eliminar estudiantes en el sistema.  
+**Pts:** 3 | **Responsable:** Alberto Patiño | **Estado:** ✅ Terminado
+
+---
+
+## HU-05: Gestión de Docentes
+**Historia:** Como administrador, quiero registrar, editar, consultar y eliminar docentes en el sistema.  
+**Pts:** 3 | **Responsable:** Alberto Patiño | **Estado:** ✅ Terminado
+
+---
+
+## HU-06: Gestión de Disponibilidad de Docentes
+**Historia:** Como administrador, quiero registrar y actualizar la disponibilidad horaria semanal de cada docente.  
+**Pts:** 5 | **Responsable:** Edward Flores | **Estado:** ✅ Terminado
+
+---
+
+## HU-07: Gestión de Cursos y Componentes
+**Historia:** Como administrador, quiero registrar cursos con sus componentes (GENERAL, TEORÍA o PRÁCTICA).  
+**Pts:** 5 | **Responsable:** Alberto Patiño | **Estado:** ✅ Terminado
+
+---
+
+## HU-08: Gestión de Aulas
+**Historia:** Como administrador, quiero registrar y administrar las aulas disponibles con su capacidad, tipo y franjas.  
+**Pts:** 3 | **Responsable:** Alberto Patiño | **Estado:** ✅ Terminado
+
+---
+
+## HU-09: Configuración de Franjas Horarias
+**Historia:** Como administrador, quiero definir el catálogo de franjas horarias del período académico activo.  
+**Pts:** 3 | **Responsable:** Andre De La Torre | **Estado:** ✅ Terminado
+
+---
+
+## HU-10: Configuración de Tiempos de Traslado y Parámetros
+**Historia:** Como administrador, quiero registrar los tiempos de traslado entre edificios y los límites del período.  
+**Pts:** 2 | **Responsable:** Andre De La Torre | **Estado:** ✅ Terminado
+
+---
+
+## Resumen del Sprint
+- **Total de Puntos:** 35 pts.
+- **Estado:** ✅ Completado al 100%
