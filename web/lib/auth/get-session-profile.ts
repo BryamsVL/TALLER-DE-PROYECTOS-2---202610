@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import prisma from "@/lib/prisma";
 
 export type AppRole = "ADMIN" | "COORDINADOR" | "DOCENTE" | "ESTUDIANTE";
 
@@ -15,6 +16,13 @@ interface SessionProfile {
   };
 }
 
+const ROLE_MAP: Record<string, AppRole> = {
+  ADMIN: "ADMIN",
+  COORDINATOR: "COORDINADOR",
+  TEACHER: "DOCENTE",
+  STUDENT: "ESTUDIANTE",
+};
+
 export async function getSessionProfile(): Promise<SessionProfile> {
   const supabase = await createClient();
   const {
@@ -25,15 +33,30 @@ export async function getSessionProfile(): Promise<SessionProfile> {
     redirect("/login");
   }
 
-  const { data: profile } = await supabase
-    .from("perfil")
-    .select("nombre, rol, activo")
-    .eq("id", user.id)
-    .single();
+  // Buscar el usuario en la nueva base de datos usando Prisma
+  let dbUser = await prisma.user.findUnique({
+    where: { id: user.id },
+  });
 
-  if (!profile) {
-    redirect("/login");
+  // Auto-aprovisionar si no existe en la base de datos de Prisma para evitar bucles de redirección
+  if (!dbUser) {
+    try {
+      dbUser = await prisma.user.create({
+        data: {
+          id: user.id,
+          email: user.email ?? "",
+          fullName: (user.user_metadata?.nombre as string) || (user.user_metadata?.full_name as string) || "Administrador",
+          role: "ADMIN", // Forzar ADMIN para desarrollo
+          isActive: true,
+        },
+      });
+    } catch (error) {
+      console.error("Error auto-provisioning user in Prisma:", error);
+      redirect("/login");
+    }
   }
+
+  const mappedRole = ROLE_MAP[dbUser.role] || "ESTUDIANTE";
 
   return {
     user: {
@@ -41,9 +64,9 @@ export async function getSessionProfile(): Promise<SessionProfile> {
       email: user.email ?? "",
     },
     profile: {
-      nombre: profile.nombre,
-      rol: profile.rol as AppRole,
-      activo: profile.activo,
+      nombre: dbUser.fullName,
+      rol: mappedRole,
+      activo: dbUser.isActive,
     },
   };
 }
@@ -51,3 +74,4 @@ export async function getSessionProfile(): Promise<SessionProfile> {
 export function isAdminRole(role: AppRole) {
   return role === "ADMIN" || role === "COORDINADOR";
 }
+

@@ -7,16 +7,7 @@ import { Input } from "@/components/ui/input";
 import { crearCurso } from "./actions";
 import { TIPO_AULA_OPTIONS } from "../catalog-options";
 
-interface CarreraOption {
-  id: number;
-  nombre: string;
-}
-
-interface CursoFormProps {
-  carreras: CarreraOption[];
-}
-
-export function CursoForm({ carreras }: CursoFormProps) {
+export function CursoForm({ carreras = [] }: { carreras?: any[] }) {
   const [state, action, pending] = useActionState(crearCurso, undefined);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -29,95 +20,88 @@ export function CursoForm({ carreras }: CursoFormProps) {
   return (
     <form ref={formRef} action={action} className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
       <div>
-        <select
-          name="carreraId"
-          required
-          defaultValue=""
-          className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring"
-          aria-invalid={state?.errors?.carreraId ? "true" : undefined}
-        >
-          <option value="" disabled>
-            Selecciona una carrera
-          </option>
-          {carreras.map((carrera) => (
-            <option key={carrera.id} value={carrera.id}>
-              {carrera.nombre}
-            </option>
-          ))}
-        </select>
-        {state?.errors?.carreraId && (
-          <p className="mt-1 text-xs text-destructive">{state.errors.carreraId[0]}</p>
-        )}
-      </div>
-
-      <div>
         <Input
-          name="codigo"
+          name="code"
           type="text"
-          placeholder="Codigo"
+          placeholder="Código"
           required
           minLength={2}
           maxLength={15}
-          aria-invalid={state?.errors?.codigo ? "true" : undefined}
+          aria-invalid={state?.errors?.code ? "true" : undefined}
         />
-        {state?.errors?.codigo && (
-          <p className="mt-1 text-xs text-destructive">{state.errors.codigo[0]}</p>
+        {state?.errors?.code && (
+          <p className="mt-1 text-xs text-destructive">{state.errors.code[0]}</p>
         )}
       </div>
 
       <div>
         <Input
-          name="nombre"
+          name="name"
           type="text"
           placeholder="Nombre del curso"
           required
           minLength={2}
           maxLength={100}
-          aria-invalid={state?.errors?.nombre ? "true" : undefined}
+          aria-invalid={state?.errors?.name ? "true" : undefined}
         />
-        {state?.errors?.nombre && (
-          <p className="mt-1 text-xs text-destructive">{state.errors.nombre[0]}</p>
+        {state?.errors?.name && (
+          <p className="mt-1 text-xs text-destructive">{state.errors.name[0]}</p>
         )}
       </div>
 
       <div>
         <Input
-          name="nivel"
+          name="cycle"
           type="number"
           min={1}
           max={10}
           step={1}
-          placeholder="Nivel"
+          placeholder="Ciclo"
           required
-          aria-invalid={state?.errors?.nivel ? "true" : undefined}
+          aria-invalid={state?.errors?.cycle ? "true" : undefined}
         />
-        {state?.errors?.nivel && (
-          <p className="mt-1 text-xs text-destructive">{state.errors.nivel[0]}</p>
+        {state?.errors?.cycle && (
+          <p className="mt-1 text-xs text-destructive">{state.errors.cycle[0]}</p>
         )}
       </div>
 
       <div>
         <Input
-          name="horasSemanales"
+          name="credits"
+          type="number"
+          min={1}
+          step={1}
+          placeholder="Créditos"
+          required
+          aria-invalid={state?.errors?.credits ? "true" : undefined}
+        />
+        {state?.errors?.credits && (
+          <p className="mt-1 text-xs text-destructive">{state.errors.credits[0]}</p>
+        )}
+      </div>
+
+      <div>
+        <Input
+          name="weeklyHours"
           type="number"
           min={1.5}
           step={1.5}
           placeholder="Horas semanales"
           required
-          aria-invalid={state?.errors?.horasSemanales ? "true" : undefined}
+          aria-invalid={state?.errors?.weeklyHours ? "true" : undefined}
         />
-        {state?.errors?.horasSemanales && (
-          <p className="mt-1 text-xs text-destructive">{state.errors.horasSemanales[0]}</p>
+        {state?.errors?.weeklyHours && (
+          <p className="mt-1 text-xs text-destructive">{state.errors.weeklyHours[0]}</p>
         )}
       </div>
 
       <div>
         <select
-          name="tipoAula"
+          name="requiredRoomType"
           required
           defaultValue="TEORIA"
           className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring"
-          aria-invalid={state?.errors?.tipoAula ? "true" : undefined}
+          aria-invalid={state?.errors?.requiredRoomType ? "true" : undefined}
         >
           {TIPO_AULA_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
@@ -125,20 +109,20 @@ export function CursoForm({ carreras }: CursoFormProps) {
             </option>
           ))}
         </select>
-        {state?.errors?.tipoAula && (
-          <p className="mt-1 text-xs text-destructive">{state.errors.tipoAula[0]}</p>
+        {state?.errors?.requiredRoomType && (
+          <p className="mt-1 text-xs text-destructive">{state.errors.requiredRoomType[0]}</p>
         )}
       </div>
 
-      <div className="xl:col-span-3">
-        <Button type="submit" disabled={pending || carreras.length === 0}>
-          <Plus className="h-4 w-4" />
+      <div className="xl:col-span-3 pt-2">
+        <Button type="submit" disabled={pending} className="bg-purple-600 hover:bg-purple-700 text-white font-medium">
+          <Plus className="h-4 w-4 mr-2" />
           {pending ? "Creando..." : "Crear curso"}
         </Button>
       </div>
 
       {state?.message && state.message !== "ok" && (
-        <p className="xl:col-span-3 text-xs text-destructive">{state.message}</p>
+        <p className="xl:col-span-3 text-xs font-medium text-red-600 bg-red-50 p-2 rounded-md">{state.message}</p>
       )}
     </form>
   );

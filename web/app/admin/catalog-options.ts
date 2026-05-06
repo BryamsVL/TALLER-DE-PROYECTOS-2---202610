@@ -1,7 +1,6 @@
 export const TIPO_AULA_OPTIONS = [
-  { value: "TEORIA", label: "Teoria" },
-  { value: "LABORATORIO", label: "Laboratorio" },
-  { value: "AUDITORIO", label: "Auditorio" },
+  { value: "GENERAL", label: "Teoría / General" },
+  { value: "LAB", label: "Laboratorio / Especial" },
 ] as const;
 
 export const TIPO_PROFESOR_OPTIONS = [

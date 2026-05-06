@@ -2,14 +2,15 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import prisma from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { mapAdminWriteErrorMessage } from "../action-errors";
 
 const CarreraSchema = z.object({
   nombre: z
     .string()
-    .min(2, { error: "Minimo 2 caracteres." })
-    .max(100, { error: "Maximo 100 caracteres." })
+    .min(2, { error: "Mínimo 2 caracteres." })
+    .max(100, { error: "Máximo 100 caracteres." })
     .trim(),
 });
 
@@ -19,6 +20,19 @@ export type CarreraFormState =
       message?: string;
     }
   | undefined;
+
+async function assertAdminCaller() {
+  const supabase = await createClient();
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) return false;
+
+  const user = await prisma.user.findUnique({
+    where: { id: userData.user.id },
+    select: { role: true },
+  });
+
+  return user?.role === "ADMIN" || user?.role === "COORDINATOR";
+}
 
 export async function crearCarrera(
   _prev: CarreraFormState,
@@ -32,17 +46,38 @@ export async function crearCarrera(
     return { errors: parsed.error.flatten().fieldErrors };
   }
 
-  const supabase = await createClient();
-  const { error } = await supabase.from("carrera").insert({
-    nombre: parsed.data.nombre,
-  });
+  if (!(await assertAdminCaller())) {
+    return { message: mapAdminWriteErrorMessage("42501") };
+  }
 
-  if (error) {
-    // Codigo 23505 = unique_violation (nombre ya existe)
-    if (error.code === "23505") {
+  try {
+    const code = parsed.data.nombre.toUpperCase().replace(/\s+/g, "-");
+
+    // Buscar o bootstrapear una Facultad por defecto
+    let facultad = await prisma.facultad.findFirst();
+    if (!facultad) {
+      facultad = await prisma.facultad.create({
+        data: {
+          code: "FING",
+          name: "Facultad de Ingeniería",
+          isActive: true,
+        }
+      });
+    }
+
+    await prisma.carrera.create({
+      data: {
+        code: code,
+        name: parsed.data.nombre,
+        facultadId: facultad.id,
+        isActive: true,
+      },
+    });
+  } catch (error: any) {
+    if (error.code === "P2002") {
       return { errors: { nombre: ["Ya existe una carrera con ese nombre."] } };
     }
-    return { message: mapAdminWriteErrorMessage(error.code, error.message) };
+    return { message: error.message || "Error al guardar la carrera." };
   }
 
   revalidatePath("/admin/carreras");
@@ -50,21 +85,39 @@ export async function crearCarrera(
 }
 
 export async function toggleActivoCarrera(formData: FormData): Promise<void> {
-  const id = Number(formData.get("id"));
+  const id = String(formData.get("id") ?? "");
   const activo = formData.get("activo") === "true";
 
-  if (!Number.isInteger(id) || id <= 0) return;
+  if (!id) return;
 
-  const supabase = await createClient();
-  await supabase.from("carrera").update({ activo: !activo }).eq("id", id);
+  if (!(await assertAdminCaller())) return;
+
+  try {
+    await prisma.carrera.update({
+      where: { id },
+      data: { isActive: !activo },
+    });
+  } catch (err) {
+    console.error("Error toggling career active state:", err);
+  }
+
   revalidatePath("/admin/carreras");
 }
 
 export async function eliminarCarrera(formData: FormData): Promise<void> {
-  const id = Number(formData.get("id"));
-  if (!Number.isInteger(id) || id <= 0) return;
+  const id = String(formData.get("id") ?? "");
 
-  const supabase = await createClient();
-  await supabase.from("carrera").delete().eq("id", id);
+  if (!id) return;
+
+  if (!(await assertAdminCaller())) return;
+
+  try {
+    await prisma.carrera.delete({
+      where: { id },
+    });
+  } catch (err) {
+    console.error("Error deleting career:", err);
+  }
+
   revalidatePath("/admin/carreras");
 }

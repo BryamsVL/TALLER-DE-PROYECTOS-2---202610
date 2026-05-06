@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import prisma from "@/lib/prisma";
 import {
   Card,
   CardContent,
@@ -8,171 +8,225 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { GenerarHorarioPanel } from "./GenerarHorarioPanel";
+import { 
+  CalendarClock, 
+  DoorOpen, 
+  BookMarked, 
+  Users, 
+  CheckCircle, 
+  AlertTriangle,
+  Play
+} from "lucide-react";
+
+export const dynamic = "force-dynamic";
 
 export default async function HorariosPage() {
-  const supabase = await createClient();
-
-  const { data: ciclo } = await supabase
-    .from("ciclo")
-    .select("id, nombre")
-    .eq("activo", true)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  const cicloId = ciclo?.id;
-
+  // Query statistics using Prisma Client
   const [
-    { data: nrcs },
-    { data: profesores },
-    { data: disp },
-    { count: aulas },
-    { count: bloques },
-    { data: sesionesActuales },
+    activePeriod,
+    classroomsTotal,
+    teachersTotal,
+    coursesTotal,
+    timeSlotsTotal,
+    coursesWithTeacher,
   ] = await Promise.all([
-    cicloId
-      ? supabase
-          .from("nrc")
-          .select("nrc, profesor_id")
-          .eq("ciclo_id", cicloId)
-      : Promise.resolve({ data: null }),
-    supabase.from("profesor").select("id"),
-    supabase.from("disponibilidad_profesor").select("profesor_id"),
-    supabase.from("aula").select("*", { count: "exact", head: true }).eq("activo", true),
-    supabase.from("bloque_horario").select("*", { count: "exact", head: true }),
-    cicloId
-      ? supabase
-          .from("sesion_nrc")
-          .select("nrc")
-          .in(
-            "nrc",
-            (
-              await supabase
-                .from("nrc")
-                .select("nrc")
-                .eq("ciclo_id", cicloId)
-            ).data?.map((r) => r.nrc) ?? [],
-          )
-      : Promise.resolve({ data: null }),
+    prisma.academicPeriod.findFirst({
+      where: { isActive: true },
+    }),
+    prisma.classroom.count({
+      where: { isActive: true },
+    }),
+    prisma.teacher.count({
+      where: { isActive: true },
+    }),
+    prisma.course.count({
+      where: { isActive: true },
+    }),
+    prisma.timeSlot.count({
+      where: { isActive: true },
+    }),
+    prisma.course.count({
+      where: {
+        isActive: true,
+        teacherCourses: {
+          some: {},
+        },
+      },
+    }),
   ]);
 
-  const totalNrcs = nrcs?.length ?? 0;
-  const nrcsConProfe = (nrcs ?? []).filter((n) => n.profesor_id).length;
-  const nrcsSinProfe = totalNrcs - nrcsConProfe;
-  const totalProfes = profesores?.length ?? 0;
-  const profesConDisp = new Set((disp ?? []).map((d) => d.profesor_id)).size;
-  const sinDisp = totalProfes - profesConDisp;
-  const sesionesYaProgramadas = sesionesActuales?.length ?? 0;
+  const coursesWithoutTeacher = coursesTotal - coursesWithTeacher;
+  const isReady = classroomsTotal > 0 && timeSlotsTotal > 0 && coursesWithTeacher > 0;
 
   return (
-    <div className="space-y-6">
-      <header>
-        <h1 className="font-display text-2xl font-bold tracking-tight md:text-3xl">
-          Generar horario
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {ciclo
-            ? `Resuelve dia / bloque / aula para los NRCs del ciclo ${ciclo.nombre}.`
-            : "No hay ciclo academico activo."}
-        </p>
-      </header>
+    <div className="space-y-8 max-w-7xl mx-auto p-4 md:p-6">
+      {/* Header section with clean design */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-700 p-6 md:p-8 text-white shadow-lg">
+        <div className="absolute right-0 top-0 -mr-12 -mt-12 h-40 w-40 rounded-full bg-white/10 blur-xl"></div>
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 text-indigo-100 text-sm font-semibold tracking-wider uppercase">
+              <CalendarClock className="h-4 w-4 text-indigo-300" />
+              Solver CSP de Inteligencia Artificial
+            </div>
+            <h1 className="mt-2 text-3xl font-extrabold tracking-tight md:text-4xl text-white">
+              Generar Horario Académico
+            </h1>
+            <p className="mt-2 text-indigo-100 max-w-2xl text-sm md:text-base">
+              {activePeriod
+                ? `Resuelve la asignación óptima de día, bloque y aula para los cursos del periodo activo: "${activePeriod.name}" (Límite: ${activePeriod.maxStudentCredits} créditos por estudiante).`
+                : "No se detectó un periodo académico activo en el sistema. Registra o activa uno antes de proceder."}
+            </p>
+          </div>
+          {activePeriod && (
+            <span className="self-start md:self-auto bg-white/20 backdrop-blur-md text-white border border-white/20 px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold tracking-wide">
+              Periodo Activo: {activePeriod.code}
+            </span>
+          )}
+        </div>
+      </div>
 
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>NRCs con docente</CardDescription>
-            <CardTitle className="font-display text-2xl">{nrcsConProfe}</CardTitle>
+      {/* Statistics section with premium icons & gradients */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Card className="border-none bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 shadow-md hover:shadow-lg transition-all duration-300">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <div className="space-y-1">
+              <CardDescription className="text-xs font-semibold text-gray-500 uppercase">Cursos con Docente</CardDescription>
+              <CardTitle className="text-3xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">
+                {coursesWithTeacher}
+              </CardTitle>
+            </div>
+            <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 rounded-2xl">
+              <BookMarked className="h-6 w-6" />
+            </div>
           </CardHeader>
         </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>NRCs sin docente</CardDescription>
-            <CardTitle className="font-display text-2xl">{nrcsSinProfe}</CardTitle>
+
+        <Card className="border-none bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 shadow-md hover:shadow-lg transition-all duration-300">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <div className="space-y-1">
+              <CardDescription className="text-xs font-semibold text-gray-500 uppercase">Cursos sin Docente</CardDescription>
+              <CardTitle className={`text-3xl font-bold tracking-tight ${coursesWithoutTeacher > 0 ? "text-amber-500" : "text-gray-400"}`}>
+                {coursesWithoutTeacher}
+              </CardTitle>
+            </div>
+            <div className={`p-3 rounded-2xl ${coursesWithoutTeacher > 0 ? "bg-amber-50 dark:bg-amber-950/40 text-amber-500" : "bg-gray-50 dark:bg-gray-800 text-gray-400"}`}>
+              <AlertTriangle className="h-6 w-6" />
+            </div>
           </CardHeader>
         </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Profes sin disponibilidad</CardDescription>
-            <CardTitle className="font-display text-2xl">{sinDisp}</CardTitle>
+
+        <Card className="border-none bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 shadow-md hover:shadow-lg transition-all duration-300">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <div className="space-y-1">
+              <CardDescription className="text-xs font-semibold text-gray-500 uppercase">Aulas Habilitadas</CardDescription>
+              <CardTitle className="text-3xl font-bold tracking-tight text-blue-600 dark:text-blue-400">
+                {classroomsTotal}
+              </CardTitle>
+            </div>
+            <div className="p-3 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 rounded-2xl">
+              <DoorOpen className="h-6 w-6" />
+            </div>
           </CardHeader>
         </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Sesiones programadas</CardDescription>
-            <CardTitle className="font-display text-2xl">{sesionesYaProgramadas}</CardTitle>
+
+        <Card className="border-none bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 shadow-md hover:shadow-lg transition-all duration-300">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <div className="space-y-1">
+              <CardDescription className="text-xs font-semibold text-gray-500 uppercase">Bloques Horarios</CardDescription>
+              <CardTitle className="text-3xl font-bold tracking-tight text-indigo-600 dark:text-indigo-400">
+                {timeSlotsTotal}
+              </CardTitle>
+            </div>
+            <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 rounded-2xl">
+              <CalendarClock className="h-6 w-6" />
+            </div>
           </CardHeader>
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-display text-base">Pre-flight</CardTitle>
-          <CardDescription>
-            Revisa los warnings antes de generar. El solver puede fallar si:
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-2 text-sm">
-          {nrcsSinProfe > 0 && (
-            <div className="flex items-center gap-2">
-              <Badge variant="outline">Aviso</Badge>
-              <span>
-                {nrcsSinProfe} NRC{nrcsSinProfe === 1 ? "" : "s"} sin docente seran
-                ignorados.
-              </span>
-            </div>
-          )}
-          {sinDisp > 0 && (
-            <div className="flex items-center gap-2">
-              <Badge variant="outline">Aviso</Badge>
-              <span>
-                {sinDisp} docente{sinDisp === 1 ? "" : "s"} sin horario preferente
-                marcado: NRCs asignados a ellos no se podran programar.
-              </span>
-            </div>
-          )}
-          {(aulas ?? 0) === 0 && (
-            <div className="flex items-center gap-2">
-              <Badge variant="destructive">Bloqueador</Badge>
-              <span>No hay aulas activas. Registra al menos una en /admin/aulas.</span>
-            </div>
-          )}
-          {(bloques ?? 0) === 0 && (
-            <div className="flex items-center gap-2">
-              <Badge variant="destructive">Bloqueador</Badge>
-              <span>No hay bloques horarios. Esto deberia venir del seed.</span>
-            </div>
-          )}
-          {nrcsConProfe === 0 && (
-            <div className="flex items-center gap-2">
-              <Badge variant="destructive">Bloqueador</Badge>
-              <span>
-                No hay NRCs con docente asignado. Crea NRCs en /admin/cursos y asigna
-                docentes elegibles primero.
-              </span>
-            </div>
-          )}
-          {nrcsConProfe > 0 &&
-            sinDisp === 0 &&
-            (aulas ?? 0) > 0 &&
-            (bloques ?? 0) > 0 && (
-              <p className="text-muted-foreground">
-                Todo listo. Click en Generar para resolver el horario.
-              </p>
-            )}
-        </CardContent>
-      </Card>
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Generate / Execute Panel (Full width) */}
+        <Card className="lg:col-span-3 border-none shadow-md bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
+          <CardHeader className="border-b border-gray-100 dark:border-gray-800 pb-4">
+            <CardTitle className="font-display text-lg font-bold flex items-center gap-2 text-gray-800 dark:text-gray-100">
+              <Play className="h-5 w-5 text-indigo-500" />
+              Resolución y Resultados del Horario
+            </CardTitle>
+            <CardDescription className="text-xs">
+              Ejecuta el Solver CSP de Python para compilar y visualizar el calendario óptimo.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <GenerarHorarioPanel />
+          </CardContent>
+        </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-display text-base">Ejecutar</CardTitle>
-          <CardDescription>
-            Borra las sesiones previas del ciclo activo y resuelve de cero.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <GenerarHorarioPanel />
-        </CardContent>
-      </Card>
+        {/* Pre-flight Checks (Bottom, full width) */}
+        <Card className="lg:col-span-3 border-none shadow-md bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
+          <CardHeader className="border-b border-gray-100 dark:border-gray-800 pb-4">
+            <CardTitle className="font-display text-lg font-bold flex items-center gap-2 text-gray-800 dark:text-gray-100">
+              <CheckCircle className="h-5 w-5 text-indigo-500" />
+              Verificación Pre-Flight
+            </CardTitle>
+            <CardDescription className="text-xs">
+              Validaciones críticas del Solver de horarios antes de ejecutar el cómputo.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6 space-y-4">
+            {coursesWithoutTeacher > 0 && (
+              <div className="flex items-start gap-3 p-3.5 bg-amber-500/10 border border-amber-500/20 rounded-xl text-xs md:text-sm text-amber-700 dark:text-amber-400">
+                <AlertTriangle className="h-5 w-5 mt-0.5 shrink-0 text-amber-500" />
+                <div>
+                  <span className="font-bold block mb-0.5">Cursos sin docente asignado</span>
+                  Un total de {coursesWithoutTeacher} curso(s) no registran profesores elegibles y serán omitidos de la programación.
+                </div>
+              </div>
+            )}
+
+            {classroomsTotal === 0 && (
+              <div className="flex items-start gap-3 p-3.5 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs md:text-sm text-rose-700 dark:text-rose-400">
+                <AlertTriangle className="h-5 w-5 mt-0.5 shrink-0 text-rose-500" />
+                <div>
+                  <span className="font-bold block mb-0.5">Sin aulas registradas</span>
+                  No existen aulas activas en el sistema. Debes registrar al menos una aula en el panel correspondiente.
+                </div>
+              </div>
+            )}
+
+            {timeSlotsTotal === 0 && (
+              <div className="flex items-start gap-3 p-3.5 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs md:text-sm text-rose-700 dark:text-rose-400">
+                <AlertTriangle className="h-5 w-5 mt-0.5 shrink-0 text-rose-500" />
+                <div>
+                  <span className="font-bold block mb-0.5">Sin bloques configurados</span>
+                  No se detectaron bloques horarios (time slots) de Lunes a Viernes. Ejecuta el script de seeding para inicializarlos.
+                </div>
+              </div>
+            )}
+
+            {coursesWithTeacher === 0 && (
+              <div className="flex items-start gap-3 p-3.5 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs md:text-sm text-rose-700 dark:text-rose-400">
+                <AlertTriangle className="h-5 w-5 mt-0.5 shrink-0 text-rose-500" />
+                <div>
+                  <span className="font-bold block mb-0.5">Faltan asignaciones de docente</span>
+                  No hay ningún curso con docente elegible asignado. Agrega relaciones en el módulo "Curso ↔ Profesor".
+                </div>
+              </div>
+            )}
+
+            {isReady && (
+              <div className="flex flex-col items-center justify-center p-6 text-center border-2 border-dashed border-emerald-500/30 rounded-2xl bg-emerald-500/5">
+                <CheckCircle className="h-10 w-10 text-emerald-500 mb-2" />
+                <h4 className="font-bold text-emerald-700 dark:text-emerald-400 text-sm">¡Todo Listo!</h4>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-[200px]">
+                  La base de datos cumple con todos los requisitos para realizar el cálculo matemático.
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
+

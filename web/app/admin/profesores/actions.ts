@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import prisma from "@/lib/prisma";
 import { mapAdminWriteErrorMessage } from "../action-errors";
 
 const ProfesorSchema = z.object({
@@ -41,13 +42,12 @@ async function assertAdminCaller() {
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) return false;
 
-  const { data: perfil } = await supabase
-    .from("perfil")
-    .select("rol")
-    .eq("id", userData.user.id)
-    .single();
+  const user = await prisma.user.findUnique({
+    where: { id: userData.user.id },
+    select: { role: true },
+  });
 
-  return perfil?.rol === "ADMIN" || perfil?.rol === "COORDINADOR";
+  return user?.role === "ADMIN" || user?.role === "COORDINATOR";
 }
 
 export async function crearProfesor(
@@ -93,24 +93,47 @@ export async function crearProfesor(
 
   const userId = created.user.id;
 
-  // El trigger on_auth_user_created creo `perfil` con rol ESTUDIANTE; lo promovemos.
-  const { error: perfilError } = await admin
-    .from("perfil")
-    .update({ nombre: parsed.data.nombre, rol: "DOCENTE", activo: true })
-    .eq("id", userId);
+  try {
+    // Generamos un código único para el docente
+    const code = "DOC" + Math.floor(10000 + Math.random() * 90000);
 
-  if (perfilError) {
-    await admin.auth.admin.deleteUser(userId);
-    return { message: mapAdminWriteErrorMessage(perfilError.code, perfilError.message) };
-  }
+    await prisma.$transaction(async (tx) => {
+      // Sincronizamos / creamos el registro de User en Prisma
+      await tx.user.upsert({
+        where: { id: userId },
+        update: {
+          email: parsed.data.email,
+          fullName: parsed.data.nombre,
+          role: "TEACHER",
+          isActive: true,
+        },
+        create: {
+          id: userId,
+          email: parsed.data.email,
+          fullName: parsed.data.nombre,
+          role: "TEACHER",
+          isActive: true,
+        },
+      });
 
-  const { error: profesorError } = await admin
-    .from("profesor")
-    .insert({ id: userId, tipo: parsed.data.tipo });
-
-  if (profesorError) {
-    await admin.auth.admin.deleteUser(userId);
-    return { message: mapAdminWriteErrorMessage(profesorError.code, profesorError.message) };
+      // Creamos el registro del Teacher asociado
+      await tx.teacher.create({
+        data: {
+          userId: userId,
+          code: code,
+          fullName: parsed.data.nombre,
+          specialty: parsed.data.tipo === "TIEMPO_COMPLETO" ? "Tiempo Completo" : "Medio Tiempo",
+          isActive: true,
+        },
+      });
+    });
+  } catch (dbError: any) {
+    try {
+      await admin.auth.admin.deleteUser(userId);
+    } catch (delErr) {
+      console.error("Error al borrar usuario tras fallo DB:", delErr);
+    }
+    return { message: dbError.message || "Error al registrar el profesor en la base de datos." };
   }
 
   revalidatePath("/admin/profesores");
@@ -123,8 +146,29 @@ export async function toggleActivoProfesor(formData: FormData): Promise<void> {
 
   if (!id) return;
 
-  const supabase = await createClient();
-  await supabase.from("perfil").update({ activo: !activo }).eq("id", id);
+  if (!(await assertAdminCaller())) return;
+
+  try {
+    const teacher = await prisma.teacher.findUnique({
+      where: { id },
+      select: { userId: true },
+    });
+
+    await prisma.teacher.update({
+      where: { id },
+      data: { isActive: !activo },
+    });
+
+    if (teacher?.userId) {
+      await prisma.user.update({
+        where: { id: teacher.userId },
+        data: { isActive: !activo },
+      });
+    }
+  } catch (err) {
+    console.error("Error toggling active state:", err);
+  }
+
   revalidatePath("/admin/profesores");
 }
 
@@ -134,14 +178,31 @@ export async function eliminarProfesor(formData: FormData): Promise<void> {
 
   if (!(await assertAdminCaller())) return;
 
-  let admin;
   try {
-    admin = createAdminClient();
-  } catch {
-    return;
+    const teacher = await prisma.teacher.findUnique({
+      where: { id },
+      select: { userId: true },
+    });
+
+    if (teacher?.userId) {
+      try {
+        const admin = createAdminClient();
+        await admin.auth.admin.deleteUser(teacher.userId);
+      } catch (authErr) {
+        console.error("Error deleting from Supabase Auth:", authErr);
+      }
+
+      await prisma.user.delete({
+        where: { id: teacher.userId },
+      });
+    } else {
+      await prisma.teacher.delete({
+        where: { id },
+      });
+    }
+  } catch (err) {
+    console.error("Error deleting teacher:", err);
   }
 
-  // ON DELETE CASCADE en perfil/profesor limpia todo al borrar el auth.user.
-  await admin.auth.admin.deleteUser(id);
   revalidatePath("/admin/profesores");
 }

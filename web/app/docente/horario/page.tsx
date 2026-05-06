@@ -60,9 +60,10 @@ export default async function DocenteHorarioPage() {
     return {
       dia: s.dia,
       bloque_id: s.bloque_id,
-      titulo: curso?.codigo ?? s.nrc,
-      subtitulo: aulaPorId.get(s.aula_id) ?? "?",
-      detalle: cohorte ? `Nivel ${cohorte.nivel}-${cohorte.seccion}` : undefined,
+      cursoNombre: curso?.nombre ?? s.nrc,
+      nrc: s.nrc,
+      aula: aulaPorId.get(s.aula_id) ?? "?",
+      docente: cohorte ? `Ciclo ${cohorte.nivel}-${cohorte.seccion}` : undefined,
     };
   });
 

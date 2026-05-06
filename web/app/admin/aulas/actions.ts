@@ -2,21 +2,22 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import prisma from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { mapAdminWriteErrorMessage } from "../action-errors";
 
 const AulaSchema = z.object({
   nombre: z
     .string()
-    .min(2, { error: "Minimo 2 caracteres." })
-    .max(50, { error: "Maximo 50 caracteres." })
+    .min(2, { error: "Mínimo 2 caracteres." })
+    .max(50, { error: "Máximo 50 caracteres." })
     .trim(),
-  tipo: z.enum(["TEORIA", "LABORATORIO", "AUDITORIO"], {
-    error: "Selecciona un tipo valido.",
+  tipo: z.enum(["GENERAL", "LAB"], {
+    error: "Selecciona un tipo válido.",
   }),
   capacidad: z.coerce
     .number()
-    .int({ error: "Debe ser un numero entero." })
+    .int({ error: "Debe ser un número entero." })
     .min(1, { error: "La capacidad debe ser mayor a 0." }),
 });
 
@@ -30,6 +31,19 @@ export type AulaFormState =
       message?: string;
     }
   | undefined;
+
+async function assertAdminCaller() {
+  const supabase = await createClient();
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) return false;
+
+  const user = await prisma.user.findUnique({
+    where: { id: userData.user.id },
+    select: { role: true },
+  });
+
+  return user?.role === "ADMIN" || user?.role === "COORDINATOR";
+}
 
 export async function crearAula(
   _prev: AulaFormState,
@@ -45,14 +59,27 @@ export async function crearAula(
     return { errors: parsed.error.flatten().fieldErrors };
   }
 
-  const supabase = await createClient();
-  const { error } = await supabase.from("aula").insert(parsed.data);
+  if (!(await assertAdminCaller())) {
+    return { message: mapAdminWriteErrorMessage("42501") };
+  }
 
-  if (error) {
-    if (error.code === "23505") {
+  try {
+    const code = parsed.data.nombre.toUpperCase().replace(/\s+/g, "-");
+
+    await prisma.classroom.create({
+      data: {
+        code: code,
+        name: parsed.data.nombre,
+        roomType: parsed.data.tipo,
+        capacity: parsed.data.capacidad,
+        isActive: true,
+      },
+    });
+  } catch (error: any) {
+    if (error.code === "P2002") {
       return { errors: { nombre: ["Ya existe un aula con ese nombre."] } };
     }
-    return { message: mapAdminWriteErrorMessage(error.code, error.message) };
+    return { message: error.message || "Error al guardar el aula." };
   }
 
   revalidatePath("/admin/aulas");
@@ -60,22 +87,39 @@ export async function crearAula(
 }
 
 export async function toggleActivoAula(formData: FormData): Promise<void> {
-  const id = Number(formData.get("id"));
+  const id = String(formData.get("id") ?? "");
   const activo = formData.get("activo") === "true";
 
-  if (!Number.isInteger(id) || id <= 0) return;
+  if (!id) return;
 
-  const supabase = await createClient();
-  await supabase.from("aula").update({ activo: !activo }).eq("id", id);
+  if (!(await assertAdminCaller())) return;
+
+  try {
+    await prisma.classroom.update({
+      where: { id },
+      data: { isActive: !activo },
+    });
+  } catch (err) {
+    console.error("Error toggling classroom active state:", err);
+  }
+
   revalidatePath("/admin/aulas");
 }
 
 export async function eliminarAula(formData: FormData): Promise<void> {
-  const id = Number(formData.get("id"));
+  const id = String(formData.get("id") ?? "");
 
-  if (!Number.isInteger(id) || id <= 0) return;
+  if (!id) return;
 
-  const supabase = await createClient();
-  await supabase.from("aula").delete().eq("id", id);
+  if (!(await assertAdminCaller())) return;
+
+  try {
+    await prisma.classroom.delete({
+      where: { id },
+    });
+  } catch (err) {
+    console.error("Error deleting classroom:", err);
+  }
+
   revalidatePath("/admin/aulas");
 }
