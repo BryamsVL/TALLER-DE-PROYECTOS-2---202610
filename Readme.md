@@ -9,7 +9,7 @@
 ![Node.js](https://img.shields.io/badge/Backend-Node.js_Express-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/CSP_Engine-FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
 ![OR-Tools](https://img.shields.io/badge/Solver-Google_OR--Tools-4285F4?style=for-the-badge&logo=google&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/Database-Supabase-336791?style=for-the-badge&logo=supabase&logoColor=white)
+![SupabaseL](https://img.shields.io/badge/Database-Supabase-336791?style=for-the-badge&logo=supabase&logoColor=white)
 
 ---
 </div>
@@ -53,7 +53,7 @@ Elegimos una arquitectura desacoplada orientada a microservicios para dividir la
 | **Frontend** | React 18 + Vite | SPA ultrarrápida, ruteo con TanStack, UI con Shadcn/ui. |
 | **Backend Core** | Node.js + Express | API transaccional, middleware JWT y validación Zod. |
 | **Motor CSP** | FastAPI (Python 3.11)| Microservicio de alto rendimiento dedicado a OR-Tools. |
-| **Base de Datos** | PostgreSQL (Supabase)| Persistencia relacional, seguridad RLS. |
+| **Base de Datos** |Supabase| Persistencia relacional, seguridad RLS. |
 | **ORM** | Prisma 5 | Tipado estricto de base de datos a TypeScript. |
 | **Contenedores** | Docker | Orquestación aislada de entornos. |
 
@@ -89,7 +89,7 @@ El corazón de SGOHA es el solver basado en **Google OR-Tools**. El problema est
 ```mermaid
 graph TD
     UI[Frontend - React] <-->|JSON / HTTPS| API[Backend - Express]
-    API <-->|Prisma ORM| DB[(PostgreSQL)]
+    API <-->|Prisma ORM| DB[(Subapase)]
     API <-->|REST POST /solve| CSP[Microservicio FastAPI]
     CSP -->|Ejecuta CP-SAT| ORT[Google OR-Tools]
 ```
