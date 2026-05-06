@@ -74,9 +74,17 @@ def solve(request: SolveRequest) -> SolveResponse:
 
         for teacher_id in course.teacher_ids:
             ti = teacher_idx[teacher_id]
+            
+            t_avail_slots = request.teacher_availabilities.get(teacher_id)
+            if t_avail_slots is not None:
+                t_avail_keys = {_slot_key(s) for s in t_avail_slots}
+                allowed_slots_keys = valid_slots_keys.intersection(t_avail_keys)
+            else:
+                allowed_slots_keys = valid_slots_keys
+
             for classroom_id in course.classroom_ids:
                 ai = classroom_idx[classroom_id]
-                for slot_key in valid_slots_keys:
+                for slot_key in allowed_slots_keys:
                     si = slot_idx[slot_key]
                     assign[(ci, ti, ai, si)] = model.new_bool_var(
                         f"x_c{ci}_t{ti}_a{ai}_s{si}"

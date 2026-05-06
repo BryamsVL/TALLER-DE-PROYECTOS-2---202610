@@ -123,6 +123,11 @@ function Sidebar({
         <form action={signOut}>
           <button
             type="submit"
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                localStorage.removeItem("sgoha_horario_generado");
+              }
+            }}
             className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-sidebar-muted transition-colors hover:bg-sidebar-active/60 hover:text-sidebar-active-foreground"
           >
             <LogOut className="h-4 w-4" />

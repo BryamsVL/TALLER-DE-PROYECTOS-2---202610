@@ -4,7 +4,7 @@ import { PrismaClient } from "@prisma/client";
 const router = Router();
 const prisma = new PrismaClient();
 
-const CSP_SERVICE_URL = process.env.CSP_SERVICE_URL || "http://localhost:8001";
+const CSP_SERVICE_URL = process.env.CSP_SERVICE_URL || "http://localhost:8002";
 
 router.post("/generate", async (req: Request, res: Response) => {
   try {
@@ -30,7 +30,15 @@ router.post("/generate", async (req: Request, res: Response) => {
       }
     });
 
-    const teachers = await prisma.teacher.findMany({ where: { isActive: true } });
+    const teachers = await prisma.teacher.findMany({ 
+      where: { isActive: true },
+      include: {
+        availability: {
+          where: { isAvailable: true },
+          include: { timeSlot: true }
+        }
+      }
+    });
     const classrooms = await prisma.classroom.findMany({ where: { isActive: true } });
     
     // Transform into the format expected by Python CSP service
@@ -46,19 +54,36 @@ router.post("/generate", async (req: Request, res: Response) => {
         credits: c.credits,
         teacher_ids: c.teacherCourses.map(tc => tc.teacherId),
         classroom_ids: classrooms.filter(cr => cr.roomType === c.requiredRoomType || cr.roomType === "GENERAL").map(cr => cr.id),
-        // Bloques reales de la universidad (Turno Mañana, Tarde, Noche)
-        available_slots: [1, 2, 3, 4, 5].flatMap(day => [
-          { day, start_minute: 420, end_minute: 510 }, // 7:00-8:30
-          { day, start_minute: 520, end_minute: 610 }, // 8:40-10:10
-          { day, start_minute: 620, end_minute: 710 }, // 10:20-11:50
-          { day, start_minute: 720, end_minute: 780 }, // 12:00-13:00
-          { day, start_minute: 840, end_minute: 930 }, // 14:00-15:30
-          { day, start_minute: 940, end_minute: 1030 }, // 15:40-17:10
-          { day, start_minute: 1040, end_minute: 1130 }, // 17:20-18:50
-          { day, start_minute: 1140, end_minute: 1230 }, // 19:00-20:30
-          { day, start_minute: 1240, end_minute: 1330 }, // 20:40-22:10
+        // Bloques de 1 hora y media (90 minutos) con soporte de Lunes a Sábado (Días 1 a 6)
+        available_slots: [1, 2, 3, 4, 5, 6].flatMap(day => [
+          { day, start_minute: 420, end_minute: 510 }, // 07:00-08:30 (Bloque 1)
+          { day, start_minute: 520, end_minute: 610 }, // 08:40-10:10 (Bloque 2)
+          { day, start_minute: 620, end_minute: 710 }, // 10:20-11:50 (Bloque 3)
+          { day, start_minute: 720, end_minute: 810 }, // 12:00-13:30 (Bloque 4)
+          { day, start_minute: 840, end_minute: 930 }, // 14:00-15:30 (Bloque 5)
+          { day, start_minute: 940, end_minute: 1030 }, // 15:40-17:10 (Bloque 6)
+          { day, start_minute: 1040, end_minute: 1130 }, // 17:20-18:50 (Bloque 7)
+          { day, start_minute: 1140, end_minute: 1230 }, // 19:00-20:30 (Bloque 8)
+          { day, start_minute: 1240, end_minute: 1330 }, // 20:40-22:10 (Bloque 9)
         ]) 
-      }))
+      })),
+      teacher_availabilities: teachers.reduce((acc, t) => {
+        if (t.availability && t.availability.length > 0) {
+          acc[t.id] = t.availability.map(a => {
+            const dStart = new Date(a.timeSlot.startTime);
+            const dEnd = new Date(a.timeSlot.endTime);
+            const dayMap: Record<string, number> = {
+              MONDAY: 1, TUESDAY: 2, WEDNESDAY: 3, THURSDAY: 4, FRIDAY: 5, SATURDAY: 6, SUNDAY: 7
+            };
+            return {
+              day: dayMap[a.timeSlot.dayOfWeek as string] || 1,
+              start_minute: dStart.getUTCHours() * 60 + dStart.getUTCMinutes(),
+              end_minute: dEnd.getUTCHours() * 60 + dEnd.getUTCMinutes()
+            };
+          });
+        }
+        return acc;
+      }, {} as Record<string, any[]>)
     };
 
     // 2. Call Python CSP Service
@@ -73,7 +98,7 @@ router.post("/generate", async (req: Request, res: Response) => {
       return res.status(500).json({ error: "CSP Service Error", details: errorText });
     }
 
-    const result = await response.json();
+    const result: any = await response.json();
 
     // 3. Process the result and store assignments
     const enrichedAssignments = (result.assignments || []).map((assignment: any) => {

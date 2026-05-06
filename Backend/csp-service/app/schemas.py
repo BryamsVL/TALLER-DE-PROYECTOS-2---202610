@@ -29,6 +29,7 @@ class SolveRequest(BaseModel):
 
     period_id: str
     courses: list[CourseRequest]
+    teacher_availabilities: dict[str, list[TimeSlot]] = Field(default_factory=dict)
     timeout_seconds: int = Field(default=30, ge=1, le=120)
 
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { 
   Sparkles, 
   Calendar, 
@@ -42,6 +42,21 @@ export function GenerarHorarioPanel() {
   const [result, setResult] = useState<SolverResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("sgoha_horario_generado");
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          setResult(parsed);
+          // Opcional: auto-seleccionar si queremos mantener los filtros, pero ya recuperamos el resultado principal.
+        } catch (e) {
+          console.error("Error al cargar horario guardado:", e);
+        }
+      }
+    }
+  }, []);
+
   // Filter States
   const [filterType, setFilterType] = useState<"all" | "classroom" | "teacher">("all");
   const [selectedClassroomId, setSelectedClassroomId] = useState<string>("");
@@ -53,6 +68,7 @@ export function GenerarHorarioPanel() {
     { key: 3, label: "Miércoles" },
     { key: 4, label: "Jueves" },
     { key: 5, label: "Viernes" },
+    { key: 6, label: "Sábado" },
   ];
 
   const BLOCKS = [
@@ -100,6 +116,9 @@ export function GenerarHorarioPanel() {
         }
 
         setResult(data);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("sgoha_horario_generado", JSON.stringify(data));
+        }
 
         // Auto-select first options if available
         if (data.assignments && data.assignments.length > 0) {
@@ -194,18 +213,20 @@ export function GenerarHorarioPanel() {
       )}
 
       {/* Success View Result */}
-      {result && result.status === "OPTIMAL" && (
+      {result && (result.status === "OPTIMAL" || result.status === "INFEASIBLE") && (
         <div className="space-y-6">
           {/* Quick Metrics & Actions Bar */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl gap-4">
+          <div className={`flex flex-col md:flex-row md:items-center justify-between p-4 ${result.status === "OPTIMAL" ? "bg-emerald-500/5 border-emerald-500/10" : "bg-amber-500/5 border-amber-500/20"} border rounded-2xl gap-4`}>
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-emerald-500/10 rounded-xl text-emerald-600 dark:text-emerald-400">
-                <Activity className="h-5 w-5" />
+              <div className={`p-2 rounded-xl ${result.status === "OPTIMAL" ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-amber-500/10 text-amber-600 dark:text-amber-400"}`}>
+                {result.status === "OPTIMAL" ? <Activity className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
               </div>
               <div>
-                <h4 className="font-bold text-emerald-800 dark:text-emerald-400 text-sm">✅ Horario Compilado Exitosamente</h4>
-                <p className="text-xs text-emerald-700/80 dark:text-emerald-400/70 mt-0.5">
-                  Asignaciones procesadas sin traslapes ni colisiones: <span className="font-bold">{result.assignments.length} sesiones</span>.
+                <h4 className={`font-bold text-sm ${result.status === "OPTIMAL" ? "text-emerald-800 dark:text-emerald-400" : "text-amber-800 dark:text-amber-500"}`}>
+                  {result.status === "OPTIMAL" ? "✅ Horario Compilado Exitosamente" : "⚠️ Horario Generado con Conflictos (Incompleto)"}
+                </h4>
+                <p className={`text-xs mt-0.5 ${result.status === "OPTIMAL" ? "text-emerald-700/80 dark:text-emerald-400/70" : "text-amber-700/80 dark:text-amber-400/70"}`}>
+                  Asignaciones procesadas: <span className="font-bold">{result.assignments.length} sesiones</span>.
                 </p>
               </div>
             </div>
@@ -221,6 +242,17 @@ export function GenerarHorarioPanel() {
               </Button>
             </div>
           </div>
+
+          {result.status === "INFEASIBLE" && result.conflicts && result.conflicts.length > 0 && (
+            <div className="p-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-xl space-y-2">
+              <h5 className="font-bold text-amber-800 dark:text-amber-500 text-sm">Conflictos Detectados:</h5>
+              <ul className="list-disc list-inside text-xs text-amber-700 dark:text-amber-400/90 space-y-1">
+                {result.conflicts.map((c, i) => (
+                  <li key={i}>{c}</li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* Dynamic Interactive Filters */}
           <div className="p-4 bg-white dark:bg-gray-950 border border-gray-100 dark:border-gray-900 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
@@ -306,9 +338,8 @@ export function GenerarHorarioPanel() {
             </div>
           </div>
 
-          {/* Elegant Weekly Calendar Grid */}
           <div className="overflow-x-auto rounded-2xl border border-gray-100 dark:border-gray-900 bg-white dark:bg-gray-950 shadow-sm">
-            <div className="grid min-w-[1000px] grid-cols-[110px_repeat(5,minmax(0,1fr))] divide-y divide-gray-100 dark:divide-gray-900">
+            <div className="grid min-w-[1200px] grid-cols-[110px_repeat(6,minmax(0,1fr))] divide-y divide-gray-100 dark:divide-gray-900">
               {/* Header Grid Row */}
               <div className="contents bg-gray-50 dark:bg-gray-900/50">
                 <div className="px-4 py-4 text-xs font-bold uppercase tracking-wider text-gray-400 text-center border-r border-gray-100 dark:border-gray-900">
@@ -329,7 +360,7 @@ export function GenerarHorarioPanel() {
               {BLOCKS.map((block) => (
                 <div key={block.id} className="contents">
                   {/* Time Label Cell */}
-                  <div className="px-2 py-4 text-center flex flex-col items-center justify-center border-r border-gray-100 dark:border-gray-900 bg-gray-50/[0.3] dark:bg-gray-900/[0.1]">
+                  <div className="px-2 py-4 text-center flex flex-col items-center justify-center border-r border-b border-gray-100 dark:border-gray-900 bg-gray-50/[0.3] dark:bg-gray-900/[0.1]">
                     <span className="text-[10px] font-bold text-gray-400 tracking-wider">BLOQUE {block.id}</span>
                     <span className="text-xs font-medium text-gray-500 mt-1 whitespace-nowrap">
                       {block.label}
@@ -345,7 +376,7 @@ export function GenerarHorarioPanel() {
                     return (
                       <div 
                         key={`${day.key}-${block.id}`} 
-                        className="min-h-[110px] p-2 flex flex-col gap-2 border-l border-gray-100 dark:border-gray-900 transition-colors duration-150 hover:bg-gray-500/[0.01] bg-white dark:bg-gray-950"
+                        className="min-h-[110px] p-2 flex flex-col gap-2 border-l border-b border-gray-100 dark:border-gray-900 transition-colors duration-150 hover:bg-gray-500/[0.01] bg-white dark:bg-gray-950"
                       >
                         {items.map((item, idx) => {
                           const palette = stableColor(item.course_id);
@@ -360,12 +391,6 @@ export function GenerarHorarioPanel() {
                               }}
                             >
                               <div>
-                                <span 
-                                  className="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wide uppercase mb-1.5"
-                                  style={{ backgroundColor: palette.badgeBackground }}
-                                >
-                                  {item.course_id.replace("cur-", "").toUpperCase()}
-                                </span>
                                 <h5 className="text-[11px] font-extrabold leading-tight tracking-tight mb-2 group-hover:text-black dark:group-hover:text-white transition-colors duration-200">
                                   {item.course_name}
                                 </h5>

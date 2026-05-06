@@ -5,6 +5,7 @@ import { getSessionProfile, isAdminRole } from "@/lib/auth/get-session-profile";
 const NAV_ADMIN: NavItem[] = [
   { href: "/admin", label: "Inicio", icon: "layoutDashboard", exact: true },
   { href: "/admin/usuarios", label: "Usuarios", icon: "userCog" },
+  { href: "/admin/profesores", label: "Profesores", icon: "users" },
   { href: "/admin/carreras", label: "Carreras", icon: "building" },
   { href: "/admin/aulas", label: "Aulas", icon: "door" },
   { href: "/admin/cursos", label: "Cursos", icon: "bookMarked" },
@@ -12,6 +13,7 @@ const NAV_ADMIN: NavItem[] = [
   { href: "/admin/asignaciones", label: "Curso ↔ Profesor", icon: "link" },
   { href: "/admin/horarios", label: "Generar horario", icon: "calendarClock" },
 ];
+
 
 export default async function AdminLayout({
   children,

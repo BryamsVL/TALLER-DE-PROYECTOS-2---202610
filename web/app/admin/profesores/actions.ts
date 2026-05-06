@@ -206,3 +206,95 @@ export async function eliminarProfesor(formData: FormData): Promise<void> {
 
   revalidatePath("/admin/profesores");
 }
+
+export async function editarProfesor(
+  teacherId: string,
+  nombre: string,
+  specialty: string,
+  courseIds: string[],
+  timeSlotIds: string[]
+): Promise<{ success: boolean; error?: string }> {
+  if (!(await assertAdminCaller())) {
+    return { success: false, error: "No autorizado." };
+  }
+
+  if (!teacherId || !nombre.trim() || !specialty.trim()) {
+    return { success: false, error: "Datos de entrada inválidos o incompletos." };
+  }
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      // 1. Obtener profesor para ver si tiene userId
+      const teacher = await tx.teacher.findUnique({
+        where: { id: teacherId },
+        select: { userId: true },
+      });
+
+      if (!teacher) {
+        throw new Error("Profesor no encontrado.");
+      }
+
+      // 2. Actualizar el docente (nombre completo y especialidad/carrera)
+      await tx.teacher.update({
+        where: { id: teacherId },
+        data: {
+          fullName: nombre.trim(),
+          specialty: specialty.trim(),
+        },
+      });
+
+      // 3. Si tiene userId, sincronizar el User también para mantener consistencia en login/perfiles
+      if (teacher.userId) {
+        await tx.user.update({
+          where: { id: teacher.userId },
+          data: {
+            fullName: nombre.trim(),
+          },
+        });
+      }
+
+      // 4. Gestión de Cursos (TeacherCourse)
+      // Primero eliminamos las asignaciones anteriores
+      await tx.teacherCourse.deleteMany({
+        where: { teacherId: teacherId },
+      });
+
+      // Insertamos las nuevas asignaciones
+      if (courseIds.length > 0) {
+        await tx.teacherCourse.createMany({
+          data: courseIds.map((courseId) => ({
+            teacherId: teacherId,
+            courseId: courseId,
+          })),
+        });
+      }
+
+      // 5. Gestión de Disponibilidad (TeacherAvailability)
+      // Primero eliminamos la disponibilidad horaria preferida anterior
+      await tx.teacherAvailability.deleteMany({
+        where: { teacherId: teacherId },
+      });
+
+      // Insertamos los nuevos bloques seleccionados
+      if (timeSlotIds.length > 0) {
+        await tx.teacherAvailability.createMany({
+          data: timeSlotIds.map((timeSlotId) => ({
+            teacherId: teacherId,
+            timeSlotId: timeSlotId,
+            isAvailable: true,
+          })),
+        });
+      }
+    });
+
+    revalidatePath("/admin/profesores");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error editing teacher:", error);
+    return {
+      success: false,
+      error: error.message || "Error al actualizar el profesor en la base de datos.",
+    };
+  }
+}
+
