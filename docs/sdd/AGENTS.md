@@ -25,65 +25,79 @@ Estado actual: **Sprint 1 Completado / Sprint 2 En curso**
 
 ---
 
-## Estructura Actual
+## i. Principios del Sistema
 
-```
-SGOHA/
-├── Backend/
-│   ├── src/
-│   │   ├── index.ts              # Arranque de la app Express
-│   │   ├── routes/health.ts      # GET /health
-│   │   ├── middleware/auth.ts    # requireAuth, requireRole (JWT)
-│   │   └── lib/prisma.ts         # Singleton de PrismaClient
-│   ├── prisma/schema.prisma      # User, Period, Course, Classroom
-│   ├── csp-service/              # Microservicio FastAPI
-│   │   └── app/
-│   │       ├── main.py           # Entrypoint de FastAPI, POST /solve
-│   │       ├── solver.py         # Motor CP-SAT (Sprint 2)
-│   │       └── schemas.py        # SolveRequest / SolveResponse
-│   └── README.md
-├── Frontend/
-│   └── src/
-│       ├── routes/               # Rutas basadas en archivos (TanStack Router)
-│       │   ├── index.tsx         # Dashboard
-│       │   ├── scheduler.tsx     # Interfaz del generador de horarios
-│       │   ├── calendar.tsx      # Vista de calendario semanal
-│       │   ├── enrollment.tsx    # Módulo de matrícula
-│       │   ├── courses.tsx       # CRUD de Cursos
-│       │   ├── classrooms.tsx    # CRUD de Aulas
-│       │   ├── periods.tsx       # Períodos académicos
-│       │   ├── reports.tsx       # Reportes / exportación
-│       │   ├── audit.tsx         # Log de auditoría
-│       │   └── login.tsx         # Autenticación
-│       └── components/
-│           ├── layout/           # AppLayout, PageHeader
-│           └── ui/               # shadcn/ui + custom (StatCard, SectionCard)
-├── docs/                         # Toda la documentación de la Rúbrica
-├── scripts/                      # Scripts de utilidad
-└── otros/
-```
-
-No inventar una nueva estructura raíz a menos que se solicite explícitamente.
+1. **La Factibilidad ante todo:** Un horario con cruces reales (restricciones duras) es inválido. Si el modelo no converge, preferimos un `INFEASIBLE` transparente antes que una asignación corrupta.
+2. **SSOT (Single Source of Truth):** El esquema de Prisma y el contrato `SolveRequest/SolveResponse` rigen el modelo de datos. Ningún otro archivo puede contradecirlos.
+3. **Fail Fast:** Todos los inputs se validan en la capa más externa (Zod en Node, Pydantic en FastAPI). Un dato malo nunca llega al solver.
+4. **Modularidad:** El motor matemático (`solver.py`) no sabe de HTTP. Solo recibe y devuelve estructuras Pydantic. El backend no sabe de matemáticas, solo delega.
+5. **Trazabilidad:** Cada historia de usuario (HU) debe tener commits, tests y documentación asociada. Sin trazabilidad, la HU no está "Terminada".
 
 ---
 
-## Fuente de la Verdad
+## ii. Reglas Globales
 
-Al trabajar en este proyecto, priorizar estos archivos:
+### Gestión de Ramas (Git Flow)
+- `main`: Código en producción (solo releases).
+- `develop`: Entorno de integración (QA).
+- `feature/HU-XX-nombre`: Ramas para desarrollo de historias de usuario.
+- `bugfix/HU-XX-nombre`: Para correcciones puntuales.
 
-- `Backend/src/index.ts` — Bootstrap de Express y configuración de middleware.
-- `Backend/prisma/schema.prisma` — Esquema de la base de datos (fuente de verdad para modelos).
-- `Backend/csp-service/app/schemas.py` — Contrato API del CSP (SolveRequest/SolveResponse).
-- `Backend/csp-service/app/solver.py` — Motor CSP.
-- `Frontend/src/routes/__root.tsx` — Layout raíz y enrutamiento.
-- `docs/arquitectura/ARC42.md` — Decisiones de arquitectura.
+### Commits Semánticos
+Formato estricto: `tipo(scope): descripción`
+- `feat(HU-11): añadir solver básico CP-SAT`
+- `fix(HU-02): resolver expiración de JWT a 8h`
+- `docs(agents): actualizar reglas globales`
+
+### Pull Requests (PR)
+- Ningún código entra a `develop` sin PR.
+- Requiere revisión de al menos **1 integrante** del equipo distinto al autor.
+- Debe referenciar la HU correspondiente (`Closes #12`).
+
+### Estándares por Capa
+- **Backend Express:** Separación lógica rutas/controladores. Zod en la primera línea del request.
+- **FastAPI/Python:** Tipos Pydantic estrictos. El solver es puro algoritmo, sin lógica HTTP.
+- **React/TypeScript:** TanStack Router para navegación. shadcn/ui para componentes. Prohibido instalar librerías de UI adicionales.
+
+### Estrategia de Desarrollo
+- Implementar un solo cambio significativo a la vez.
+- Verificar cada cambio antes de continuar.
+- Preferir ediciones pequeñas y seguras sobre reescrituras masivas.
+- No mezclar refactorizaciones de backend y frontend en un solo paso.
+- No codificar de forma rígida la URL del servicio CSP — siempre usar `process.env.CSP_SERVICE_URL`.
+
+---
+
+## iii. Restricciones Duras y Blandas
+
+### Restricciones Duras (D) — Inviolables
+El motor CP-SAT debe rechazar cualquier asignación que viole estas restricciones. No existe excepción posible.
+
+| ID | Nombre | Definición Formal |
+|---|---|---|
+| **D1** | Unicidad Docente | Un docente no puede estar asignado a dos componentes de curso distintos en la misma franja horaria y día. |
+| **D2** | Unicidad Aula | Un aula no puede albergar dos componentes de curso distintos en la misma franja horaria y día. |
+| **D3** | Capacidad Física | El número de estudiantes matriculados en un componente no puede superar el aforo registrado del aula asignada. |
+| **D4** | Prerrequisitos Académicos | Un estudiante no puede matricularse en un curso si no ha aprobado sus prerrequisitos registrados en el sistema. |
+| **D5** | Límite de Créditos | Un estudiante debe llevar entre 20 y 22 créditos por período. No se permite salir de ese rango. |
+| **D6** | Disponibilidad Docente | Un docente solo puede ser asignado a franjas horarias declaradas como disponibles en su perfil. |
+| **D7** | Atomicidad de Componentes | Los componentes TEORÍA y PRÁCTICA del mismo curso deben asignarse al mismo estudiante de forma completa (no se puede matricular solo uno de los dos). |
+
+### Restricciones Blandas (B) — Optimizables
+El solver intenta minimizar las penalizaciones asociadas. Su violación no invalida el horario, pero reduce la puntuación de calidad de la solución.
+
+| ID | Nombre | Definición |
+|---|---|---|
+| **B1** | Carga Horaria Continua | Minimizar los huecos (ventanas libres) en el horario diario de un docente. Preferir bloques continuos. |
+| **B2** | Turno Preferido del Docente | Priorizar la asignación de clases en el turno (mañana/tarde/noche) declarado por el docente. |
+| **B3** | Distribución Semanal | Distribuir la carga horaria de un mismo curso a lo largo de la semana (evitar clases del mismo curso en días consecutivos). |
+| **B4** | Minimizar Traslados | Evitar que un docente deba cambiar de edificio entre clases consecutivas cuando el tiempo de traslado supera 10 minutos. |
 
 ---
 
 ## Alcance Funcional
 
 **Planeado e Implementado (Sprint 1 - 3):**
-
 - `POST /auth/login`, `POST /auth/register` (Seguridad JWT).
 - Rutas CRUD: cursos, aulas, docentes, períodos.
 - Lógica de matrícula con validación de créditos (20-22).
@@ -92,7 +106,6 @@ Al trabajar en este proyecto, priorizar estos archivos:
 - Exportación de reportes PDF/Excel.
 
 **Fuera del alcance (A menos que se solicite expresamente):**
-
 - Actualizaciones en tiempo real (WebSockets).
 - Portal de autogestión de pagos para estudiantes.
 - Configuración dinámica del motor desde la interfaz de usuario.
@@ -153,56 +166,3 @@ Al trabajar en este proyecto, priorizar estos archivos:
   "elapsed_seconds": 4.7,
   "conflicts": []
 }
-```
-
----
-
-## Estrategia de Desarrollo
-
-Reglas estrictas de desarrollo:
-- Implementar un solo cambio significativo a la vez.
-- Verificar cada cambio antes de continuar.
-- Preferir ediciones pequeñas y seguras sobre reescrituras masivas.
-- No mezclar refactorizaciones de backend y frontend en un solo paso.
-
----
-
-## Reglas del Backend (Node.js / Express)
-
-- Usar `Express` con archivos de ruta modulares bajo `src/routes/`.
-- Usar Prisma para todo el acceso a base de datos — nada de SQL crudo sin justificación.
-- Usar `zod` para la validación de entradas en cada manejador de rutas.
-- Usar middleware de autenticación JWT (`requireAuth` / `requireRole`).
-- No codificar de forma rígida (hardcode) la URL del servicio CSP — siempre usar `process.env.CSP_SERVICE_URL`.
-
----
-
-## Reglas del Microservicio CSP (FastAPI + OR-Tools)
-
-- Usar `FastAPI` para la exposición de la API.
-- Usar `CP-SAT` como el único motor de resolución — no reemplazar con heurísticas ad-hoc.
-- Mantener la estructura modular: `main.py` (enrutamiento) / `solver.py` (modelo) / `schemas.py` (tipos Pydantic).
-- Modelar las restricciones duras (Hard Constraints) explícitamente con comentarios que referencien la especificación oficial.
-- Añadir salida temprana en estado de `TIMEOUT` (30s).
-
----
-
-## Límites de Seguridad
-
-Bajo ninguna circunstancia:
-- Eliminar la ruta `/health` de ningún servicio.
-- Modificar `prisma/schema.prisma` sin crear una migración de base de datos.
-- Romper el contrato `SolveRequest` / `SolveResponse`.
-- Romper la cadena de conexión Frontend ↔ Backend ↔ Servicio CSP.
-- Comprometer archivos `.env` (solo usar `.env.example`).
-
----
-
-## Definición de "Hecho" (Definition of Done)
-
-Una tarea está terminada cuando:
-- El cambio solicitado está implementado y funciona.
-- El comportamiento fuera del alcance de la tarea se mantiene inalterado.
-- El código TypeScript y Python no tiene errores (Build exitoso).
-- La documentación afectada (Rúbrica, Spec) ha sido actualizada.
-- No se han subido archivos de variables de entorno con credenciales reales al repositorio.
