@@ -14,7 +14,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - run: cd backend && npm ci && npm run build
+      - run: cd Backend && npm ci && npm run build
 
   csp-service:
     runs-on: ubuntu-latest
