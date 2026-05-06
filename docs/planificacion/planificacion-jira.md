@@ -82,6 +82,22 @@ El proyecto está dividido en 7 Épicas y 3 Sprints.
 
 ---
 
+## Cronograma, Dependencias y Ruta Crítica
+
+El proyecto sigue una secuencia de ejecución lineal donde el entregable de una fase es prerrequisito estricto de la siguiente.
+
+### Ruta Crítica
+La ruta crítica del proyecto está trazada por el desarrollo del Motor CSP y la interfaz de visualización:
+1. **Paso 1:** Gestión de Aulas, Docentes y Franjas (S1).
+2. **Paso 2:** Modelado D1-D9 en OR-Tools (HU-11, S2). *[Punto de Bloqueo Mayor]*
+3. **Paso 3:** Ejecución del algoritmo institucional (HU-12, S2).
+4. **Paso 4:** Generación de horarios individuales de Estudiantes (HU-20, S3).
+5. **Paso 5:** Renderizado interactivo en la Grilla Semanal (HU-23, S3).
+
+Cualquier desviación de tiempo en HU-11 impactará en cadena a todo el Sprint 3, por lo que es la principal variable de riesgo controlada (ver registro de riesgos).
+
+---
+
 ## Carga por Integrante (Estimación Global)
 
 - **Alberto Patiño (Backend/CSP):** 45 pts (Mayormente concentrado en solver matemático S2/S3)

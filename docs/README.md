@@ -21,9 +21,12 @@ Artefactos ágiles y de trazabilidad.
 
 ### 3. [Gestión y Control (`/gestion`)](./gestion)
 Control del proyecto, presupuestos y riesgos.
-- [Presupuesto General](./gestion/presupuesto.md)
-- [Riesgos y Oportunidades](./gestion/riesgos-oportunidades.md)
-- [Costo Acumulado](./gestion/costo-acumulado.md)
+- [Registro de Riesgos y Oportunidades](./gestion/riesgos-oportunidades.md)
+- [Fuentes de Costo (RRHH, Infra, Indirectos)](./gestion/costos-fuentes.md)
+- [Costos a lo largo del tiempo](./gestion/costos-tiempo.md)
+- [Costos por Sprint](./gestion/costos-por-sprint.md)
+- [Costo Acumulado (Curva S)](./gestion/costo-acumulado.md)
+- [Análisis de Sostenibilidad y Complejidad (Green Software)](./gestion/analisis-sostenibilidad.md)
 
 ### 4. [Arquitectura Técnica (`/arquitectura`)](./arquitectura)
 Documentación para el equipo de desarrollo.

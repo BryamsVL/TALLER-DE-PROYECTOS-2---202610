@@ -1,4 +1,4 @@
-# 🗓️ SGOHA: Sistema de Generación Óptima de Horarios Académicos
+# 📅 SGOHA: Sistema de Generación Óptima de Horarios Académicos
 
 <div align="center">
 
@@ -11,139 +11,75 @@ _Sistema inteligente de optimización para la planificación académica universi
 ---
 </div>
 
-## 📖 Índice de Documentación
+## 📌 1. Descripción del Sistema y Arquitectura
 
-Toda la documentación está organizada por fases del proyecto siguiendo el estándar **arc42** y la metodología **Scrum**.
+**SGOHA** aborda un **Problema Complejo de Ingeniería** de naturaleza combinatoria (**CSP — Constraint Satisfaction Problem**). Utiliza un motor de satisfacción de restricciones con **OR-Tools CP-SAT** para automatizar la creación de horarios académicos, resolviendo conflictos de solapamiento y optimizando el uso de infraestructura física.
 
----
-
-### **1. 🔎 Definición del Problema**
-> _¿Qué problema resolvemos y por qué es complejo?_
-
-- [📄 Documento Inicial del Problema](docs/inicio/Documento%20inicial%20del%20problema%20(primer%20borrador).md) — Análisis de complejidad, naturaleza NP-completa y ambigüedades del UTP.
-- [✨ Declaración de la Visión](docs/inicio/Declaracion%20de%20la%20vision%20del%20proyecto.md) — Propuesta de valor, misión del producto y valor por actor.
-- [🛠️ Selección del Enfoque Técnico](docs/inicio/Documento%20de%20seleccion%20del%20enfoque%20del%20proyecto.md) — Justificación de tecnologías, stack y metodología Scrum.
+* **Arquitectura:** SPA (React 18) + API REST (Node.js/Express) + Microservicio CSP (FastAPI + Python).
+* **Documentación Arquitectónica:** Diagramas C4 y decisiones técnicas detalladas en el [Documento Maestro ARC42](docs/arquitectura/ARC42.md).
 
 ---
 
-### **2. 📋 Requerimientos y Alcance**
-> _¿Qué debe hacer el sistema?_
+## 🚀 2. Guía de Instalación y Ejecución
 
-- [📋 Lista de Requerimientos SMART](docs/inicio/Lista%20preliminar%20de%20requerimientos%20funcionales%20y%20no%20funcionales.md) — RF, RNF y Matriz de Trazabilidad.
-- [📌 Registro de Supuestos y Restricciones](docs/inicio/Registro%20de%20supuestos%20y%20restricciones.md) — Marco lógico del proyecto.
-- [📜 Project Charter](docs/inicio/Project%20Charter.md) — Acta de constitución, hitos, stakeholders y riesgos iniciales.
+> Requisito: tener **Docker** y **Docker Compose** instalados.
 
----
-
-### **3. 🏗️ Arquitectura del Sistema (arc42)**
-> _¿Cómo está construido el sistema?_
-
-- [🏗️ Documento Maestro ARC42](docs/seguimiento_control/ARC42.md) — Estructura completa de la arquitectura del sistema SGOHA (contexto, decisiones, despliegue, vistas de componentes).
-
----
-
-### **4. 📅 Planificación y Costos**
-> _¿Cómo organizamos el trabajo y los recursos?_
-
-- [📌 Backlog Detallado del Producto](docs/planificacion/Backlog%20Detallado%20del%20Proyecto.md)
-- [🏃 Backlog del Sprint 1](docs/planificacion/Backlog%20del%20Sprint%201.md)
-- [🏃 Backlog del Sprint 2](docs/planificacion/Backlog%20del%20Sprint%202.md)
-- [💰 Fuentes de Costos del Proyecto](docs/planificacion/Fuentes%20de%20Costos%20del%20Proyecto.md) — Costos por tarea, horas hombre y materiales.
-- [📈 Costos a lo Largo del Tiempo](docs/planificacion/Costos%20a%20lo%20largo%20del%20tiempo.md) — Distribución de gastos por semana y fase.
-- [🔢 Costos por Sprint](docs/planificacion/Costos%20por%20Sprint.md) — Detalle económico de cada sprint.
-- [📊 Costo Acumulado del Proyecto](docs/planificacion/Costo%20acumulado%20del%20proyecto.md) — Curva S proyectada vs. real.
-- [⚠️ Registro de Riesgos](docs/planificacion/Registro%20de%20Riesgos.md) — 13 riesgos identificados con estrategias de respuesta y contingencias.
-
----
-
-### **5. ⚙️ Ejecución del Sistema**
-> _Documentación técnica del backend en marcha_
-
-- [📄 Backend — README](docs/ejecucion/backend/README.md) — Stack, endpoints, variables de entorno y guía de arranque.
-- [🔬 Microservicio CSP Explicado](docs/ejecucion/backend/CSP_SERVICE_EXPLAINED.md) — Internals de OR-Tools CP-SAT, variables, restricciones y función objetivo.
-- [🧪 Guía de Testing](docs/ejecucion/backend/testing.md) — Tests implementados, cómo ejecutarlos y cobertura por sprint.
-
----
-
-### **6. 👥 Equipo y Gestión**
-> _¿Quiénes somos y cómo trabajamos?_
-
-- [🤝 Declaración del Equipo](docs/inicio/Declaracion%20del%20equipo%20del%20proyecto.md) — Roles Scrum, responsabilidades y normas de trabajo.
-- [🚀 Repositorio GitHub Operativo](docs/inicio/Repositorio%20Github%20operativo.md) — Estructura de carpetas, convención de ramas y guía de versiones.
-
----
-
-## 🚀 Presentación del Proyecto
-
-**SGOHA** aborda un **Problema Complejo de Ingeniería** de naturaleza combinatoria (**CSP — Constraint Satisfaction Problem**). El sistema utiliza un motor de satisfacción de restricciones con **OR-Tools CP-SAT** para automatizar la creación de horarios académicos, eliminando el error humano, resolviendo conflictos de solapamiento y optimizando el uso de infraestructura física.
-
-### **Puntos Clave del Desarrollo**
-- **SMART Compliance:** Todos los requerimientos están validados bajo criterios específicos, medibles y temporales.
-- **CSP Engine:** Motor capaz de resolver instancias de hasta 50 cursos, 30 docentes y 20 aulas en ≤ 30 segundos.
-- **Arquitectura desacoplada:** SPA (React) + API REST (Node.js/Express) + Microservicio CSP (FastAPI + OR-Tools).
-- **Green Software:** Caché de resultados CSP con TTL de 24 h para reducir cómputo innecesario en ≥ 40%.
-
----
-
-## ⚙️ Especificaciones Técnicas
-
-| Criterio | Valor objetivo |
-|----------|---------------|
-| Rendimiento CSP (50 cursos) | ≤ 30 segundos |
-| Latencia API (p95) | < 500 ms |
-| Carga inicial del calendario | < 3 segundos |
-| Reducción de cómputo (caché) | ≥ 40% |
-
-**Stack:** React 18 + TypeScript · Express + Node.js · FastAPI + OR-Tools · Supabase
-
----
-
-## 🛠️ Guía de Ejecución Rápida
-
-> Requisito previo: tener **Docker** y **Docker Compose** instalados.
-
-### Ejecución completa con Docker
+### Ejecución completa (Recomendado)
 ```bash
 cp .env.example .env
 docker-compose up --build
 ```
 
-### Backend — API REST (Node.js)
-```bash
-cd Backend
-npm install
-npm run dev
-```
+*(Si se desea correr individualmente: Ejecutar `npm run dev` en `/Backend` y `/Frontend`, y `uvicorn app.main:app` en `/Backend/csp-service`).*
 
-### Microservicio CSP (FastAPI + OR-Tools)
-```bash
-cd Backend/csp-service
-pip install -r requirements.txt
-uvicorn app.main:app --reload
-```
+---
 
-### Frontend (React + TypeScript)
-```bash
-cd Frontend
-npm install
-npm run dev
-```
+## 📚 3. Entregables de la Rúbrica de Evaluación
+
+Toda la documentación del repositorio ha sido estructurada para responder **exactamente a los criterios de evaluación académica**. A continuación se enlazan los artefactos correspondientes:
+
+### 3.1. Planificación del Proyecto (Jira)
+* 📋 **[Backlog del Producto](docs/planificacion/backlog-producto.md):** Historias de usuario, priorización y relación con restricciones del problema (CSP).
+* 🏗️ **[Estructuración del Trabajo y Gestión Temporal](docs/planificacion/planificacion-jira.md):** Épicas, Sprints, Cronograma y **Ruta Crítica**.
+* 📊 **[Métricas Ágiles y Análisis](docs/planificacion/metricas-agiles.md):** Gráficos Burnup/Burndown, Velocidad, Control y análisis de estabilidad/cuellos de botella.
+
+### 3.2. Presupuesto del Proyecto
+* 💰 **[Fuentes de Costos](docs/gestion/costos-fuentes.md):** Recursos Humanos, Infraestructura Tecnológica y Costos Indirectos.
+* 📈 **[Evolución de Costos en el Tiempo](docs/gestion/costos-tiempo.md):** Gasto distribuido a lo largo de las 6 semanas.
+* 🔄 **[Costos por Sprint](docs/gestion/costos-por-sprint.md):** Análisis del costo incremental por iteración.
+* 📈 **[Costo Acumulado](docs/gestion/costo-acumulado.md):** Curva S de gasto del proyecto.
+* 🍃 **[Análisis de Sostenibilidad](docs/gestion/analisis-sostenibilidad.md):** Relación complejidad/costo, factores de incremento y evaluación **Green Software**.
+
+### 3.3. Gestión de Riesgos y Oportunidades
+* ⚠️ **[Registro y Análisis de Riesgos/Oportunidades](docs/gestion/riesgos-oportunidades.md):** Probabilidad, impacto, mitigación y su relación directa con las limitaciones técnicas y restricciones CSP.
+
+### 3.4. Spec-Driven Development (SDD)
+* 🤖 **[AGENTS.md (Constitution)](docs/sdd/AGENTS.md):** Principios del sistema, reglas globales para desarrolladores y agentes IA.
+* 📄 **[Spec.md (Especificación Formal)](docs/sdd/spec.md):** Entradas, salidas, casos límite, restricciones duras y blandas.
+
+### 3.5. Gestión del Repositorio en GitHub
+* 🔗 **[Matriz de Trazabilidad](docs/planificacion/trazabilidad.md):** Coherencia total entre Backlog, Commits, requerimientos CSP y funcionalidades implementadas.
+* 🔄 **Desarrollo Incremental:** Evidenciado en el flujo de los Sprints:
+  * [Sprint 1: Base de Entidades y Auth](docs/sprints/sprint-1/backlog.md)
+  * [Sprint 2: Motor de Optimización CSP](docs/sprints/sprint-2/backlog.md)
+  * [Sprint 3: PMV Final y Grillas](docs/sprints/sprint-3/backlog.md)
+
+*(La estrategia de Git Flow, Commits Semánticos y Pull Requests con revisión se evidencia directamente en el historial de `git log` y la pestaña de Pull Requests de este repositorio).*
 
 ---
 
 ## 👥 Equipo de Desarrollo
 
-| Rol Scrum | Integrante | Módulos |
+| Rol Scrum | Integrante | Responsabilidad Principal |
 |-----------|-----------|---------|
-| Product Owner | Brianna Cortez Ponce | Documentación, criterios de aceptación |
-| Scrum Master | Andre De La Torre Segura | Git workflow, gestión del proyecto |
-| Dev — Backend / CSP | Alberto Patiño Reynoso | Motor CSP, microservicio FastAPI |
-| Dev — Backend / Auth | Edward Flores Rodriguez | API REST, autenticación JWT, matrícula |
-| Dev — Frontend / UI | Bryams Vilchez Lazaro | SPA React, calendario, UI |
-| Dev — QA / DevOps | Jack Perez Lizarbe | Pruebas, CI/CD, Docker, reportes |
-
----
+| Product Owner | Brianna Cortez Ponce | Backlog, Criterios de aceptación |
+| Scrum Master | Andre De La Torre Segura | Riesgos, Jira, Git Flow |
+| Dev — Backend / CSP | Alberto Patiño Reynoso | Algoritmo NP-Completo (FastAPI/OR-Tools) |
+| Dev — Backend / Auth | Edward Flores Rodriguez | API REST Node.js y Seguridad |
+| Dev — Frontend / UI | Bryams Vilchez Lazaro | Grillas interactivas React |
+| Dev — QA / DevOps | Jack Perez Lizarbe | CI/CD GitHub Actions, Docker |
 
 <div align="center">
-  <sub>Taller de Proyectos 2 · Universidad Continental · Huancayo, Perú · 2026</sub>
+  <br>
+  <sub>Taller de Proyectos 2 — Universidad Continental — Huancayo, Perú — 2026</sub>
 </div>
