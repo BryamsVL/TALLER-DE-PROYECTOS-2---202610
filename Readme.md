@@ -148,28 +148,28 @@ docker-compose up --build
 
 Toda la documentación está estructurada bajo metodologías ágiles y **Spec-Driven Development**, cumpliendo rigurosamente los entregables del curso.
 
-### 1. Planificación (Jira)
+### 3.1. Planificación del Proyecto (Jira)
 * 📋 **[Backlog del Producto](docs/planificacion/backlog-producto.md)**
 * 🏗️ **[Estructuración y Ruta Crítica](docs/planificacion/planificacion-jira.md)**
 * 📊 **[Métricas Ágiles (Burnup, Burndown, Velocidad)](docs/planificacion/metricas-agiles.md)**
 
-### 2. Presupuesto y Viabilidad
+### 3.2. Presupuesto del Proyecto
 * 💰 **[Fuentes de Costos (RRHH e Infraestructura)](docs/gestion/costos-fuentes.md)**
 * 📈 **[Evolución de Costos en el Tiempo](docs/gestion/costos-tiempo.md)**
 * 🔄 **[Costos Desglosados por Sprint](docs/gestion/costos-por-sprint.md)**
 * 📈 **[Costo Acumulado (Curva S)](docs/gestion/costo-acumulado.md)**
 * 🍃 **[Análisis de Complejidad y Green Software](docs/gestion/analisis-sostenibilidad.md)**
 
-### 3. Control y Calidad
+### 3.3. Gestión de Riesgos y Oportunidades
 * ⚠️ **[Matriz de Riesgos y Oportunidades](docs/gestion/riesgos-oportunidades.md)**
-* 🔗 **[Matriz de Trazabilidad Total](docs/planificacion/trazabilidad.md)**
 
-### 4. Spec-Driven Development (SDD)
+### 3.4. Spec-Driven Development (SDD)
 * 🤖 **[Principios del Sistema (Constitution)](docs/sdd/AGENTS.md)**
 * 📄 **[Especificación Formal (Restricciones y Casos)](docs/sdd/spec.md)**
 * 🔎 **[Análisis SDD (Coherencia y Ambigüedad)](docs/sdd/analisis-sdd.md)**
 
-### 5. Repositorio e Histórico de Sprints
+### 3.5. Gestión del Repositorio en GitHub
+* 🔗 **[Matriz de Trazabilidad Total](docs/planificacion/trazabilidad.md)**
 * 🟢 **[Sprint 1: Base de Entidades y Auth](docs/sprints/sprint-1/backlog.md)**
 * 🟡 **[Sprint 2: Motor de Optimización CSP](docs/sprints/sprint-2/backlog.md)**
 * ⚪ **[Sprint 3: PMV Final y Grillas](docs/sprints/sprint-3/backlog.md)**

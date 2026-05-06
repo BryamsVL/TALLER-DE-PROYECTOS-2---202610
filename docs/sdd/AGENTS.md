@@ -1,146 +1,127 @@
-# AGENT.md
+# AGENTS.md (Constitución para Agentes IA)
 
-## Purpose
+## Propósito
 
-This file is a compact Spec-Driven Development guide for agents working on this repository.
-Read it before making any change to the codebase.
+Este archivo es una guía compacta de Spec-Driven Development para los desarrolladores y agentes IA que trabajan en este repositorio.
+Debe leerse antes de realizar cualquier cambio en el código fuente.
 
 ---
 
-## Project Overview
+## Resumen del Proyecto
 
-**SGOHA** (Sistema de Generación Óptima de Horarios Académicos) automates academic schedule generation for universities with flexible curricula using constraint satisfaction optimization.
+**SGOHA** (Sistema de Generación Óptima de Horarios Académicos) automatiza la generación de horarios para universidades con currículo flexible mediante optimización y satisfacción de restricciones (CSP).
 
-Current stack:
+Stack actual:
 
 - `Frontend/`: React 18 + TypeScript + Vite + TanStack Router + shadcn/ui
 - `Backend/`: Node.js 20 + TypeScript + Express 4 + Prisma 5 + Supabase
 - `Backend/csp-service/`: FastAPI + Python 3.11 + OR-Tools CP-SAT
 
-Current status: **Sprint 0 / Sprint 1**
+Estado actual: **Sprint 1 Completado / Sprint 2 En curso**
 
-- Backend exposes only `/health` — business routes are pending (Sprint 1+)
-- CSP solver (`Backend/csp-service/app/solver.py`) is a stub that returns `INFEASIBLE`
-- Frontend has all routes scaffolded with mock data; real API calls are pending
+- El backend expone `/health` y las rutas base de entidades.
+- El solver CSP (`Backend/csp-service/app/solver.py`) está en desarrollo.
+- El frontend tiene las rutas generadas y datos simulados; pendiente la integración total de API.
 
 ---
 
-## Current Structure
+## Estructura Actual
 
 ```
 SGOHA/
 ├── Backend/
 │   ├── src/
-│   │   ├── index.ts              # Express app bootstrap
-│   │   ├── routes/health.ts      # GET /health (only route implemented)
+│   │   ├── index.ts              # Arranque de la app Express
+│   │   ├── routes/health.ts      # GET /health
 │   │   ├── middleware/auth.ts    # requireAuth, requireRole (JWT)
-│   │   └── lib/prisma.ts        # singleton PrismaClient
+│   │   └── lib/prisma.ts         # Singleton de PrismaClient
 │   ├── prisma/schema.prisma      # User, Period, Course, Classroom
-│   ├── csp-service/              # FastAPI microservice
+│   ├── csp-service/              # Microservicio FastAPI
 │   │   └── app/
-│   │       ├── main.py           # FastAPI entrypoint, POST /solve
-│   │       ├── solver.py         # CP-SAT stub (implement Sprint 2-3)
+│   │       ├── main.py           # Entrypoint de FastAPI, POST /solve
+│   │       ├── solver.py         # Motor CP-SAT (Sprint 2)
 │   │       └── schemas.py        # SolveRequest / SolveResponse
 │   └── README.md
 ├── Frontend/
 │   └── src/
-│       ├── routes/               # TanStack Router file-based routes
-│       │   ├── index.tsx         # Dashboard (mock data)
-│       │   ├── scheduler.tsx     # Schedule generator UI
-│       │   ├── calendar.tsx      # Weekly calendar view
-│       │   ├── enrollment.tsx    # Enrollment module
-│       │   ├── courses.tsx       # Courses CRUD
-│       │   ├── classrooms.tsx    # Classrooms CRUD
-│       │   ├── periods.tsx       # Academic periods
-│       │   ├── reports.tsx       # Reports / export
-│       │   ├── audit.tsx         # Audit log
-│       │   └── login.tsx         # Auth
+│       ├── routes/               # Rutas basadas en archivos (TanStack Router)
+│       │   ├── index.tsx         # Dashboard
+│       │   ├── scheduler.tsx     # Interfaz del generador de horarios
+│       │   ├── calendar.tsx      # Vista de calendario semanal
+│       │   ├── enrollment.tsx    # Módulo de matrícula
+│       │   ├── courses.tsx       # CRUD de Cursos
+│       │   ├── classrooms.tsx    # CRUD de Aulas
+│       │   ├── periods.tsx       # Períodos académicos
+│       │   ├── reports.tsx       # Reportes / exportación
+│       │   ├── audit.tsx         # Log de auditoría
+│       │   └── login.tsx         # Autenticación
 │       └── components/
 │           ├── layout/           # AppLayout, PageHeader
 │           └── ui/               # shadcn/ui + custom (StatCard, SectionCard)
-├── docs/
-│   ├── inicio/                   # Charter, vision, requirements, team
-│   ├── planificacion/            # Backlogs, costs, risk register
-│   ├── seguimiento_control/      # ARC42.md
-│   ├── ejecucion/                # Technical execution docs
-│   └── cierre/                   # Closure documents
-├── scripts/                      # Utility scripts (seed, etc.)
+├── docs/                         # Toda la documentación de la Rúbrica
+├── scripts/                      # Scripts de utilidad
 └── otros/
 ```
 
-Do not invent a new root structure unless explicitly requested.
+No inventar una nueva estructura raíz a menos que se solicite explícitamente.
 
 ---
 
-## Source of Truth
+## Fuente de la Verdad
 
-When working on this project, prioritize these files:
+Al trabajar en este proyecto, priorizar estos archivos:
 
-- `Backend/src/index.ts` — Express bootstrap and middleware setup
-- `Backend/prisma/schema.prisma` — database schema (source of truth for models)
-- `Backend/csp-service/app/schemas.py` — CSP API contract (SolveRequest/SolveResponse)
-- `Backend/csp-service/app/solver.py` — CSP solver (stub → implement in Sprint 2-3)
-- `Frontend/src/routes/__root.tsx` — root layout and routing
-- `docs/seguimiento_control/ARC42.md` — architecture decisions
-
----
-
-## Functional Scope
-
-**Implemented (Sprint 0):**
-
-- Express server with CORS, helmet, JSON body parsing
-- `GET /health` returns `{ status, service, timestamp }`
-- Prisma schema: `User` (4 roles), `Period`, `Course`, `Classroom`
-- JWT middleware (`requireAuth`, `requireRole`) — wired but no routes use it yet
-- FastAPI CSP service with `/health` and `/solve` (stub)
-- Frontend scaffolded with all routes, mock data in Dashboard
-
-**Planned (Sprint 1+):**
-
-- `POST /auth/login`, `POST /auth/register` (RF-02)
-- CRUD routes: courses, classrooms, teachers, periods (RF-01, RF-03, RF-13)
-- Enrollment logic with credit validation (RF-04, RF-05, RF-06)
-- CP-SAT solver implementation (RF-07, RF-08) — Sprint 2-3
-- Conflict detection and audit log (RF-08, RF-15)
-- PDF/Excel report export (RF-09, RF-10)
-
-**Out of scope unless explicitly requested:**
-
-- Real-time updates (WebSockets)
-- Student self-service portal
-- Production deployment (CI/CD is configured but not production-ready)
-- Dynamic solver configuration from UI
+- `Backend/src/index.ts` — Bootstrap de Express y configuración de middleware.
+- `Backend/prisma/schema.prisma` — Esquema de la base de datos (fuente de verdad para modelos).
+- `Backend/csp-service/app/schemas.py` — Contrato API del CSP (SolveRequest/SolveResponse).
+- `Backend/csp-service/app/solver.py` — Motor CSP.
+- `Frontend/src/routes/__root.tsx` — Layout raíz y enrutamiento.
+- `docs/arquitectura/ARC42.md` — Decisiones de arquitectura.
 
 ---
 
-## System Behavior
+## Alcance Funcional
 
-**Express backend (port 3001):**
+**Planeado e Implementado (Sprint 1 - 3):**
 
-- validates requests with `zod`
-- delegates schedule generation to CSP service via HTTP (`CSP_SERVICE_URL`)
-- handles auth with JWT (`requireAuth` middleware)
-- persists data to Supabase
+- `POST /auth/login`, `POST /auth/register` (Seguridad JWT).
+- Rutas CRUD: cursos, aulas, docentes, períodos.
+- Lógica de matrícula con validación de créditos (20-22).
+- Implementación del motor CP-SAT (Algoritmo CSP).
+- Detección de conflictos y log de auditoría.
+- Exportación de reportes PDF/Excel.
 
-**CSP microservice (port 8000):**
+**Fuera del alcance (A menos que se solicite expresamente):**
 
-- receives `SolveRequest` (period_id, courses with teacher_ids/classroom_ids/slots, timeout)
-- runs CP-SAT model with boolean variables per (course, teacher, classroom, timeslot)
-- returns `SolveResponse` with status (`OPTIMAL|FEASIBLE|INFEASIBLE|TIMEOUT`), assignments, elapsed time
-- target: 50 courses resolved in ≤ 30 seconds (RNF-01)
-
-**Frontend (port 5173):**
-
-- calls backend API endpoints (not CSP service directly)
-- renders weekly calendar grid from schedule assignments
-- provides filters by teacher, room, course, period
+- Actualizaciones en tiempo real (WebSockets).
+- Portal de autogestión de pagos para estudiantes.
+- Configuración dinámica del motor desde la interfaz de usuario.
 
 ---
 
-## API Contract (CSP Microservice)
+## Comportamiento del Sistema
 
-`POST /solve` — do not change without updating both `solver.py` and `schemas.py`:
+**Backend Express (puerto 3001):**
+- Valida peticiones con `zod`.
+- Delega la generación de horarios al servicio CSP vía HTTP (`CSP_SERVICE_URL`).
+- Maneja la autenticación con JWT (`requireAuth`).
+- Persiste los datos en PostgreSQL (Supabase).
+
+**Microservicio CSP (puerto 8000):**
+- Recibe un `SolveRequest` (period_id, cursos con teacher_ids/classroom_ids/slots, timeout).
+- Ejecuta el modelo CP-SAT con variables booleanas por (curso, docente, aula, franja).
+- Retorna un `SolveResponse` con estado (`OPTIMAL|FEASIBLE|INFEASIBLE|TIMEOUT`), asignaciones y tiempo transcurrido.
+- Objetivo de rendimiento: Resolver 50 cursos en ≤ 30 segundos.
+
+**Frontend (puerto 5173):**
+- Llama a los endpoints del API del backend (nunca al servicio CSP directamente).
+- Renderiza la grilla de calendario semanal basándose en las asignaciones.
+
+---
+
+## Contrato API (Microservicio CSP)
+
+`POST /solve` — No cambiar sin actualizar tanto `solver.py` como `schemas.py`:
 
 ```json
 // Request
@@ -176,151 +157,52 @@ When working on this project, prioritize these files:
 
 ---
 
-## Development Strategy
+## Estrategia de Desarrollo
 
-Work incrementally.
-
-Rules:
-
-- implement one meaningful change at a time
-- verify each change before moving on
-- prefer small safe edits over broad rewrites
-- do not mix backend and frontend refactors in one step
+Reglas estrictas de desarrollo:
+- Implementar un solo cambio significativo a la vez.
+- Verificar cada cambio antes de continuar.
+- Preferir ediciones pequeñas y seguras sobre reescrituras masivas.
+- No mezclar refactorizaciones de backend y frontend en un solo paso.
 
 ---
 
-## Backend Rules (Node.js / Express)
+## Reglas del Backend (Node.js / Express)
 
-Use and preserve:
-
-- `Express` with modular route files under `src/routes/`
-- Prisma for all database access — no raw SQL unless justified
-- `zod` for input validation in every route handler
-- JWT auth via `requireAuth` / `requireRole` middleware
-- `helmet` + `cors` already configured in `src/index.ts` — do not remove
-
-When adding a new route:
-
-1. Create `src/routes/<module>.ts`
-2. Export a `Router`
-3. Mount it in `src/index.ts` with a versioned prefix (e.g. `/api/v1/courses`)
-4. Add corresponding Prisma model if needed
-
-Do not hardcode CSP service URL — always use `process.env.CSP_SERVICE_URL`.
+- Usar `Express` con archivos de ruta modulares bajo `src/routes/`.
+- Usar Prisma para todo el acceso a base de datos — nada de SQL crudo sin justificación.
+- Usar `zod` para la validación de entradas en cada manejador de rutas.
+- Usar middleware de autenticación JWT (`requireAuth` / `requireRole`).
+- No codificar de forma rígida (hardcode) la URL del servicio CSP — siempre usar `process.env.CSP_SERVICE_URL`.
 
 ---
 
-## CSP Microservice Rules (FastAPI + OR-Tools)
+## Reglas del Microservicio CSP (FastAPI + OR-Tools)
 
-Use and preserve:
-
-- `FastAPI` for API exposure
-- `CP-SAT` as the only solver — do not replace with heuristics
-- Pydantic schemas in `schemas.py` as the single contract definition
-- modular structure: `main.py` (routing) / `solver.py` (model) / `schemas.py` (types)
-
-When implementing the solver (Sprint 2-3):
-
-- use boolean decision variables: `x[course, teacher, classroom, slot]`
-- model hard constraints explicitly with comments referencing the RF
-- keep objective terms readable and named
-- add early-exit on `TIMEOUT` status
-- target: ≤ 30 seconds for 50 courses, 30 teachers, 20 classrooms (RNF-01)
+- Usar `FastAPI` para la exposición de la API.
+- Usar `CP-SAT` como el único motor de resolución — no reemplazar con heurísticas ad-hoc.
+- Mantener la estructura modular: `main.py` (enrutamiento) / `solver.py` (modelo) / `schemas.py` (tipos Pydantic).
+- Modelar las restricciones duras (Hard Constraints) explícitamente con comentarios que referencien la especificación oficial.
+- Añadir salida temprana en estado de `TIMEOUT` (30s).
 
 ---
 
-## Frontend Rules (React + TypeScript + TanStack Router)
+## Límites de Seguridad
 
-Use and preserve:
-
-- file-based routing under `src/routes/` (TanStack Router convention)
-- `PascalCase` for components, `camelCase` for variables and hooks
-- shadcn/ui components for all UI primitives — do not add new component libraries
-- `StatCard` and `SectionCard` custom components for dashboard blocks
-- explicit TypeScript types for all API response shapes
-
-Avoid:
-
-- embedding business logic inside visual components
-- changing route file names without updating `routeTree.gen.ts`
-- bypassing the TanStack Router `createFileRoute` pattern
+Bajo ninguna circunstancia:
+- Eliminar la ruta `/health` de ningún servicio.
+- Modificar `prisma/schema.prisma` sin crear una migración de base de datos.
+- Romper el contrato `SolveRequest` / `SolveResponse`.
+- Romper la cadena de conexión Frontend ↔ Backend ↔ Servicio CSP.
+- Comprometer archivos `.env` (solo usar `.env.example`).
 
 ---
 
-## Documentation Rules
+## Definición de "Hecho" (Definition of Done)
 
-When behavior changes, update the relevant doc:
-
-- `Backend/README.md` — backend commands, env vars, implemented routes
-- `Backend/csp-service/README.md` — CSP solver contract, status, examples
-- `docs/ejecucion/CSP_ORTOOLS.md` — solver design and constraint explanation
-- `docs/ejecucion/TESTING.md` — how to run tests
-
----
-
-## Coding Standards
-
-Python (CSP service):
-
-- follow simple, explicit function design
-- keep model-building code easy to explain to non-CS audience
-- comment each constraint with its RF reference
-
-TypeScript / React:
-
-- `camelCase` for variables and functions
-- `PascalCase` for components and types
-- keep types explicit when they improve clarity
-- prefer `const` over `let`
-
----
-
-## Safety Boundaries
-
-Do not:
-
-- remove the `/health` route from either service
-- modify `prisma/schema.prisma` without creating a migration
-- change the `SolveRequest` / `SolveResponse` contract without updating both services
-- replace `CP-SAT` with ad-hoc heuristics unless explicitly requested
-- break the frontend ↔ backend ↔ CSP service connection chain
-- commit `.env` files — only `.env.example`
-
----
-
-## Validation Checklist
-
-Before finishing any task, verify:
-
-- [ ] Backend starts: `npm run dev` in `Backend/` → `http://localhost:3001/health` responds
-- [ ] CSP service starts: `uvicorn app.main:app` in `Backend/csp-service/` → `http://localhost:8000/health` responds
-- [ ] Frontend starts: `npm run dev` in `Frontend/` → `http://localhost:5173` renders
-- [ ] No TypeScript errors: `npm run build` in `Backend/` and `Frontend/`
-- [ ] Affected docs updated
-
----
-
-## Prompt Template for Another Agent
-
-> You are working on SGOHA (Sistema de Generación Óptima de Horarios Académicos).
-> The architecture has three layers: `Frontend/` (React + Vite + TanStack Router),
-> `Backend/` (Express + TypeScript + Prisma + Supabase), and
-> `Backend/csp-service/` (FastAPI + OR-Tools CP-SAT).
-> The project is in Sprint 0-1: only `/health` is implemented in the backend and the
-> CSP solver is a stub returning INFEASIBLE.
-> Make the smallest safe change that solves the task.
-> Preserve the CP-SAT modeling style, the Prisma schema, and the SolveRequest/SolveResponse contract.
-> Do not break existing routes or the frontend rendering.
-> Update affected docs when behavior changes.
-
----
-
-## Definition of Done
-
-A task is done when:
-
-- the requested change is implemented and working
-- behavior outside the task scope is preserved
-- TypeScript and Python code have no errors
-- affected docs are updated
-- no `.env` files are committed
+Una tarea está terminada cuando:
+- El cambio solicitado está implementado y funciona.
+- El comportamiento fuera del alcance de la tarea se mantiene inalterado.
+- El código TypeScript y Python no tiene errores (Build exitoso).
+- La documentación afectada (Rúbrica, Spec) ha sido actualizada.
+- No se han subido archivos de variables de entorno con credenciales reales al repositorio.
