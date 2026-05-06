@@ -146,33 +146,105 @@ docker-compose up --build
 
 ## 📚 Documentación Académica (Rúbrica)
 
-Toda la documentación está estructurada bajo metodologías ágiles y **Spec-Driven Development**, cumpliendo rigurosamente los entregables del curso.
+Toda la documentación está estructurada bajo metodologías ágiles y **Spec-Driven Development**, cumpliendo rigurosamente los entregables del curso. A continuación se presentan los artefactos alineados exactamente a la consigna académica:
 
 ### 3.1. Planificación del Proyecto (Jira)
-* 📋 **[Backlog del Producto](docs/planificacion/backlog-producto.md)**
-* 🏗️ **[Estructuración y Ruta Crítica](docs/planificacion/planificacion-jira.md)**
-* 📊 **[Métricas Ágiles (Burnup, Burndown, Velocidad)](docs/planificacion/metricas-agiles.md)**
+**a. Artefactos requeridos**
+* **1º Backlog del producto** ➔ [Ver Documento](docs/planificacion/backlog-producto.md)
+  * i. Historias de usuario correctamente formuladas
+  * ii. Priorización basada en valor, riesgo y complejidad
+  * iii. Relación con restricciones del problema (CSP)
+* **2º Estructuración del trabajo** ➔ [Ver Documento](docs/planificacion/planificacion-jira.md)
+  * i. Épicas alineadas a funcionalidades críticas
+  * ii. Versiones (releases) coherentes con entregables
+  * iii. Sprints definidos con objetivos claros
+* **3º Gestión temporal** ➔ [Ver Documento](docs/planificacion/planificacion-jira.md)
+  * i. Cronograma del proyecto
+  * ii. Identificación de dependencias y ruta crítica
+* **4º Métricas ágiles (obligatorio incluir análisis)** ➔ [Ver Documento](docs/planificacion/metricas-agiles.md)
+  * i. Gráfico de trabajo hecho (Burnup)
+  * ii. Gráfico de trabajo pendiente (Burndown)
+  * iii. Gráfico de velocidad
+  * iv. Gráfico de control
+
+**b. Análisis esperado** ➔ [Ver Análisis de Métricas](docs/planificacion/metricas-agiles.md)
+* 1º Interpretación de la evolución del proyecto
+* 2º Identificación de cuellos de botella
+* 3º Evaluación de la estabilidad del equipo (variabilidad de velocidad)
+* 4º Coherencia entre planificación y complejidad del problema
 
 ### 3.2. Presupuesto del Proyecto
-* 💰 **[Fuentes de Costos (RRHH e Infraestructura)](docs/gestion/costos-fuentes.md)**
-* 📈 **[Evolución de Costos en el Tiempo](docs/gestion/costos-tiempo.md)**
-* 🔄 **[Costos Desglosados por Sprint](docs/gestion/costos-por-sprint.md)**
-* 📈 **[Costo Acumulado (Curva S)](docs/gestion/costo-acumulado.md)**
-* 🍃 **[Análisis de Complejidad y Green Software](docs/gestion/analisis-sostenibilidad.md)**
+**a. Elementos requeridos**
+* **1º Fuente de costos** ➔ [Ver Documento](docs/gestion/costos-fuentes.md)
+  * i. Recursos humanos (roles, horas estimadas)
+  * ii. Infraestructura tecnológica
+  * iii. Costos indirectos
+* **2º Evolución de costos**
+  * i. Costos a lo largo del tiempo ➔ [Ver Documento](docs/gestion/costos-tiempo.md)
+  * ii. Costos por Sprint ➔ [Ver Documento](docs/gestion/costos-por-sprint.md)
+  * iii. Costo acumulado del proyecto ➔ [Ver Documento](docs/gestion/costo-acumulado.md)
+
+**b. Análisis esperado** ➔ [Ver Análisis Sostenibilidad](docs/gestion/analisis-sostenibilidad.md)
+* 1º Relación entre complejidad del problema y costo del sistema
+* 2º Identificación de factores de incremento de costos
+* 3º Evaluación de sostenibilidad (enfoque Green Software)
 
 ### 3.3. Gestión de Riesgos y Oportunidades
-* ⚠️ **[Matriz de Riesgos y Oportunidades](docs/gestion/riesgos-oportunidades.md)**
+**a. Registros obligatorios** ➔ [Ver Matriz Completa](docs/gestion/riesgos-oportunidades.md)
+* **1º Registro de riesgos**
+  * i. Descripción del riesgo
+  * ii. Probabilidad e impacto
+  * iii. Estrategia de mitigación
+* **2º Registro de oportunidades**
+  * i. Impacto positivo esperado
+  * ii. Estrategia de aprovechamiento
+
+**b. Análisis esperado** ➔ [Ver Análisis de Riesgos](docs/gestion/riesgos-oportunidades.md)
+* 1º Relación de riesgos con:
+  * i. Restricciones del problema (CSP)
+  * ii. Limitaciones técnicas
+  * iii. Dependencias externas
 
 ### 3.4. Spec-Driven Development (SDD)
-* 🤖 **[Principios del Sistema (Constitution)](docs/sdd/AGENTS.md)**
-* 📄 **[Especificación Formal (Restricciones y Casos)](docs/sdd/spec.md)**
-* 🔎 **[Análisis SDD (Coherencia y Ambigüedad)](docs/sdd/analisis-sdd.md)**
+**a. Artefactos requeridos**
+* **1º Agents.md o constitution.md** ➔ [Ver Documento](docs/sdd/AGENTS.md)
+  * i. Principios del sistema
+  * ii. Reglas globales
+  * iii. Restricciones duras y blandas
+* **2º Spec.md** ➔ [Ver Documento](docs/sdd/spec.md)
+  * i. Especificación formal del sistema
+  * ii. Definición de: Entradas, Salidas, Reglas de negocio, Casos límite
+
+**b. Análisis esperado** ➔ [Ver Análisis SDD](docs/sdd/analisis-sdd.md)
+* 1º Coherencia entre:
+  * i. Especificación
+  * ii. Modelado del problema
+  * iii. Implementación
+* 2º Reducción de ambigüedad en requerimientos
+* 3º Anticipación de conflictos (ej. solapamientos de horarios)
 
 ### 3.5. Gestión del Repositorio en GitHub
-* 🔗 **[Matriz de Trazabilidad Total](docs/planificacion/trazabilidad.md)**
-* 🟢 **[Sprint 1: Base de Entidades y Auth](docs/sprints/sprint-1/backlog.md)**
-* 🟡 **[Sprint 2: Motor de Optimización CSP](docs/sprints/sprint-2/backlog.md)**
-* ⚪ **[Sprint 3: PMV Final y Grillas](docs/sprints/sprint-3/backlog.md)**
+**b. Elementos obligatorios** *(Evidenciados en Historial Git)*
+* 1º Estrategia de ramas (Git Flow o equivalente)
+* 2º Commits semánticos
+* 3º Pull Requests con revisión
+* 4º Desarrollo incremental ➔ [S1](docs/sprints/sprint-1/backlog.md) | [S2](docs/sprints/sprint-2/backlog.md) | [S3](docs/sprints/sprint-3/backlog.md)
+
+**c. Artefactos mínimos**
+* **1º README.md completo:** *(Este mismo archivo)*
+  * i. Descripción del sistema
+  * ii. Instrucciones de instalación
+  * iii. Arquitectura
+* **2º Evidencia de:**
+  * i. Integración de funcionalidades ➔ [Ver Trazabilidad](docs/planificacion/trazabilidad.md)
+  * ii. Evolución del sistema ➔ [Ver Trazabilidad](docs/planificacion/trazabilidad.md)
+
+**d. Análisis esperado** ➔ [Ver Matriz de Trazabilidad](docs/planificacion/trazabilidad.md)
+* 1º Trazabilidad entre:
+  * i. Backlog (Jira)
+  * ii. Commits
+  * iii. Funcionalidades implementadas
+* 2º Evidencia de trabajo colaborativo real *(Ver Insights de GitHub)*
 
 ---
 
