@@ -9,8 +9,6 @@ const NAV_ADMIN: NavItem[] = [
   { href: "/admin/carreras", label: "Carreras", icon: "building" },
   { href: "/admin/aulas", label: "Aulas", icon: "door" },
   { href: "/admin/cursos", label: "Cursos", icon: "bookMarked" },
-  { href: "/admin/cohortes", label: "Cohortes", icon: "graduationCap" },
-  { href: "/admin/asignaciones", label: "Curso ↔ Profesor", icon: "link" },
   { href: "/admin/horarios", label: "Generar horario", icon: "calendarClock" },
 ];
 

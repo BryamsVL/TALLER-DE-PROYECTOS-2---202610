@@ -41,6 +41,9 @@ export function GenerarHorarioPanel() {
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<SolverResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  
+  // Sub-schedule Partitioning State (-1 = Unified View, 0 = Horario 1, 1 = Horario 2, etc.)
+  const [selectedScheduleIndex, setSelectedScheduleIndex] = useState<number>(0);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -49,7 +52,9 @@ export function GenerarHorarioPanel() {
         try {
           const parsed = JSON.parse(saved);
           setResult(parsed);
-          // Opcional: auto-seleccionar si queremos mantener los filtros, pero ya recuperamos el resultado principal.
+          if (parsed.assignments && parsed.assignments.length > 0) {
+            setSelectedScheduleIndex(0);
+          }
         } catch (e) {
           console.error("Error al cargar horario guardado:", e);
         }
@@ -122,6 +127,7 @@ export function GenerarHorarioPanel() {
 
         // Auto-select first options if available
         if (data.assignments && data.assignments.length > 0) {
+          setSelectedScheduleIndex(0);
           const firstAula = data.assignments[0].classroom_id;
           const firstProfe = data.assignments[0].teacher_id;
           setSelectedClassroomId(firstAula);
@@ -132,6 +138,32 @@ export function GenerarHorarioPanel() {
       }
     });
   }
+
+  // Partition assignments into mutually exclusive, collision-free sub-schedules
+  const subSchedules = result?.assignments
+    ? (() => {
+        const partitioned: Assignment[][] = [];
+        for (const a of result.assignments) {
+          let placed = false;
+          for (const list of partitioned) {
+            const collision = list.some(
+              (item) =>
+                item.slot.day === a.slot.day &&
+                item.slot.start_minute === a.slot.start_minute
+            );
+            if (!collision) {
+              list.push(a);
+              placed = true;
+              break;
+            }
+          }
+          if (!placed) {
+            partitioned.push([a]);
+          }
+        }
+        return partitioned;
+      })()
+    : [];
 
   // Extract unique classrooms and teachers for dropdown filters
   const uniqueClassrooms = result?.assignments
@@ -146,18 +178,29 @@ export function GenerarHorarioPanel() {
       ).map(([id, name]) => ({ id, name }))
     : [];
 
-  // Filter assignments based on dropdown choices
-  const filteredAssignments = result?.assignments
-    ? result.assignments.filter((a) => {
-        if (filterType === "classroom") {
-          return a.classroom_id === selectedClassroomId;
-        }
-        if (filterType === "teacher") {
-          return a.teacher_id === selectedTeacherId;
-        }
-        return true;
-      })
-    : [];
+  // Filter assignments based on dropdown choices and selected sub-schedule
+  const filteredAssignments = (() => {
+    if (!result?.assignments) return [];
+
+    let baseAssignments = result.assignments;
+    if (filterType === "all") {
+      if (selectedScheduleIndex === -1) {
+        baseAssignments = result.assignments;
+      } else if (subSchedules[selectedScheduleIndex]) {
+        baseAssignments = subSchedules[selectedScheduleIndex];
+      }
+    }
+
+    return baseAssignments.filter((a) => {
+      if (filterType === "classroom") {
+        return a.classroom_id === selectedClassroomId;
+      }
+      if (filterType === "teacher") {
+        return a.teacher_id === selectedTeacherId;
+      }
+      return true;
+    });
+  })();
 
   return (
     <div className="space-y-6">
@@ -337,6 +380,62 @@ export function GenerarHorarioPanel() {
               )}
             </div>
           </div>
+
+          {/* Sub-Schedule Selector Bar (only visible when in 'Vista General') */}
+          {filterType === "all" && subSchedules.length > 0 && (
+            <div className="p-4 bg-indigo-500/[0.02] dark:bg-indigo-950/[0.05] border border-indigo-100 dark:border-indigo-950/30 rounded-2xl space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-indigo-500" />
+                  <span className="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    Subdivisión de Horarios (Sin Cruces)
+                  </span>
+                </div>
+                <span className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">
+                  Se subdividieron {result?.assignments.length} materias en {subSchedules.length} horarios independientes sin colisiones de bloques.
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {subSchedules.map((schedule, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedScheduleIndex(index)}
+                    className={`px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 border ${
+                      selectedScheduleIndex === index
+                        ? "bg-indigo-600 border-indigo-600 text-white shadow-sm shadow-indigo-100 dark:shadow-none"
+                        : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 hover:border-indigo-200 dark:hover:border-indigo-950 hover:bg-indigo-50/[0.3] dark:hover:bg-indigo-950/[0.1]"
+                    }`}
+                  >
+                    Horario {index + 1}
+                    <span className={`ml-1.5 px-1.5 py-0.5 rounded-full text-[9px] ${
+                      selectedScheduleIndex === index
+                        ? "bg-white/20 text-white"
+                        : "bg-gray-100 dark:bg-gray-800 text-gray-500"
+                    }`}>
+                      {schedule.length} clases
+                    </span>
+                  </button>
+                ))}
+                <button
+                  onClick={() => setSelectedScheduleIndex(-1)}
+                  className={`px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 border ${
+                    selectedScheduleIndex === -1
+                      ? "bg-indigo-600 border-indigo-600 text-white shadow-sm shadow-indigo-100 dark:shadow-none"
+                      : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 hover:border-indigo-200 dark:hover:border-indigo-950 hover:bg-indigo-50/[0.3] dark:hover:bg-indigo-950/[0.1]"
+                  }`}
+                >
+                  Vista Unificada
+                  <span className={`ml-1.5 px-1.5 py-0.5 rounded-full text-[9px] ${
+                    selectedScheduleIndex === -1
+                      ? "bg-white/20 text-white"
+                      : "bg-gray-100 dark:bg-gray-800 text-gray-500"
+                  }`}>
+                    {result?.assignments.length} total
+                  </span>
+                </button>
+              </div>
+            </div>
+          )}
 
           <div className="overflow-x-auto rounded-2xl border border-gray-100 dark:border-gray-900 bg-white dark:bg-gray-950 shadow-sm">
             <div className="grid min-w-[1200px] grid-cols-[110px_repeat(6,minmax(0,1fr))] divide-y divide-gray-100 dark:divide-gray-900">
