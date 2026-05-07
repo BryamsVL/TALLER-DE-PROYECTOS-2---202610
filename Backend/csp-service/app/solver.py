@@ -60,35 +60,57 @@ def solve(request: SolveRequest) -> SolveResponse:
     slot_idx: dict[tuple, int] = {s: i for i, s in enumerate(all_slots)}
 
     # ------------------------------------------------------------------ #
-    #  Construir el modelo CSP                                            #
+    #  Construir el modelo CSP + índices inversos en un solo paso        #
     # ------------------------------------------------------------------ #
     model = cp_model.CpModel()
 
     # assign[(ci, ti, ai, si)] = True  ⟺  el curso ci se asigna al docente ti,
     # en el aula ai, en la franja horaria si.
-    # Solo se crean variables para combinaciones validas segun los datos del curso.
     assign: dict[tuple[int, int, int, int], cp_model.IntVar] = {}
 
-    for ci, course in enumerate(courses):
+    # Índices inversos: O(1) lookup al construir restricciones en lugar de
+    # O(N) scan sobre todo assign por cada curso/docente/aula+franja.
+    vars_by_course:         dict[int, list]            = {ci: [] for ci in range(len(courses))}
+    vars_by_teacher_slot:   dict[tuple[int, int], list] = {}
+    vars_by_classroom_slot: dict[tuple[int, int], list] = {}
+
+    # Cursos más restringidos primero: mejora la poda del árbol de búsqueda de CP-SAT.
+    course_order = sorted(
+        range(len(courses)),
+        key=lambda ci: (
+            len(courses[ci].teacher_ids)
+            * len(courses[ci].classroom_ids)
+            * len(courses[ci].available_slots)
+        ),
+    )
+
+    for ci in course_order:
+        course = courses[ci]
         valid_slots_keys = {_slot_key(s) for s in course.available_slots}
 
         for teacher_id in course.teacher_ids:
             ti = teacher_idx[teacher_id]
-            
             t_avail_slots = request.teacher_availabilities.get(teacher_id)
-            if t_avail_slots is not None:
-                t_avail_keys = {_slot_key(s) for s in t_avail_slots}
-                allowed_slots_keys = valid_slots_keys.intersection(t_avail_keys)
-            else:
-                allowed_slots_keys = valid_slots_keys
+            allowed_slots_keys = (
+                valid_slots_keys & {_slot_key(s) for s in t_avail_slots}
+                if t_avail_slots is not None
+                else valid_slots_keys
+            )
 
             for classroom_id in course.classroom_ids:
                 ai = classroom_idx[classroom_id]
                 for slot_key in allowed_slots_keys:
                     si = slot_idx[slot_key]
-                    assign[(ci, ti, ai, si)] = model.new_bool_var(
-                        f"x_c{ci}_t{ti}_a{ai}_s{si}"
-                    )
+                    var = model.new_bool_var(f"x_{ci}_{ti}_{ai}_{si}")
+                    assign[(ci, ti, ai, si)] = var
+
+                    vars_by_course[ci].append(var)
+
+                    key_ts = (ti, si)
+                    vars_by_teacher_slot.setdefault(key_ts, []).append(var)
+
+                    key_as = (ai, si)
+                    vars_by_classroom_slot.setdefault(key_as, []).append(var)
 
     # ------------------------------------------------------------------ #
     #  Restriccion 1: Cada curso debe asignarse exactamente una vez       #
@@ -96,17 +118,16 @@ def solve(request: SolveRequest) -> SolveResponse:
     conflicts: list[str] = []
 
     for ci, course in enumerate(courses):
-        course_vars = [v for (c, _t, _a, _s), v in assign.items() if c == ci]
-        if not course_vars:
+        cvars = vars_by_course[ci]
+        if not cvars:
             conflicts.append(
                 f"Curso '{course.name}' ({course.id}) no tiene ninguna combinacion "
                 "docente-aula-franja valida. Revisa disponibilidad."
             )
             continue
-        model.add_exactly_one(course_vars)
+        model.add_exactly_one(cvars)
 
     if conflicts:
-        # Si algun curso no tiene variables, el problema es infeasible de entrada.
         return SolveResponse(
             status="INFEASIBLE",
             assignments=[],
@@ -116,35 +137,28 @@ def solve(request: SolveRequest) -> SolveResponse:
 
     # ------------------------------------------------------------------ #
     #  Restriccion 2: Un docente no puede estar en dos cursos al mismo    #
-    #  tiempo (sin solapamiento de docente).                              #
+    #  tiempo. Itera solo sobre (docente, franja) que tienen variables.   #
     # ------------------------------------------------------------------ #
-    for ti in range(len(all_teachers)):
-        for si in range(len(all_slots)):
-            teacher_slot_vars = [
-                v for (c, t, a, s), v in assign.items() if t == ti and s == si
-            ]
-            if len(teacher_slot_vars) > 1:
-                model.add_at_most_one(teacher_slot_vars)
+    for vars_list in vars_by_teacher_slot.values():
+        if len(vars_list) > 1:
+            model.add_at_most_one(vars_list)
 
     # ------------------------------------------------------------------ #
-    #  Restriccion 3: Un aula no puede tener dos cursos al mismo tiempo   #
-    #  (sin solapamiento de aula).                                        #
+    #  Restriccion 3: Un aula no puede tener dos cursos al mismo tiempo.  #
+    #  Itera solo sobre (aula, franja) que tienen variables.              #
     # ------------------------------------------------------------------ #
-    for ai in range(len(all_classrooms)):
-        for si in range(len(all_slots)):
-            classroom_slot_vars = [
-                v for (c, t, a, s), v in assign.items() if a == ai and s == si
-            ]
-            if len(classroom_slot_vars) > 1:
-                model.add_at_most_one(classroom_slot_vars)
+    for vars_list in vars_by_classroom_slot.values():
+        if len(vars_list) > 1:
+            model.add_at_most_one(vars_list)
 
     # ------------------------------------------------------------------ #
     #  Resolver                                                           #
     # ------------------------------------------------------------------ #
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = float(request.timeout_seconds)
-    # Buscar solucion optima (minimizar tiempo de busqueda para instancias pequenas)
-    solver.parameters.num_search_workers = 4
+    solver.parameters.num_search_workers = 8
+    # Encuentra la primera solución feasible más rápido antes de optimizar.
+    solver.parameters.search_branching = cp_model.PORTFOLIO_WITH_QUICK_RESTART_SEARCH
 
     status_code = solver.solve(model)
 
