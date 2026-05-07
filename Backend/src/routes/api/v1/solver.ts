@@ -1,8 +1,27 @@
 import { Router, Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../../../lib/prisma.js";
+
+interface CspTimeSlot {
+  day: number;
+  start_minute: number;
+  end_minute: number;
+}
+
+interface CspAssignment {
+  course_id: string;
+  teacher_id: string;
+  classroom_id: string;
+  slot: CspTimeSlot;
+}
+
+interface CspSolveResponse {
+  status: "OPTIMAL" | "FEASIBLE" | "INFEASIBLE" | "TIMEOUT";
+  assignments: CspAssignment[];
+  elapsed_seconds: number;
+  conflicts?: string[];
+}
 
 const router = Router();
-const prisma = new PrismaClient();
 
 const CSP_SERVICE_URL = process.env.CSP_SERVICE_URL || "http://localhost:8002";
 
@@ -83,7 +102,7 @@ router.post("/generate", async (req: Request, res: Response) => {
           });
         }
         return acc;
-      }, {} as Record<string, any[]>)
+      }, {} as Record<string, CspTimeSlot[]>)
     };
 
     // 2. Call Python CSP Service
@@ -98,10 +117,10 @@ router.post("/generate", async (req: Request, res: Response) => {
       return res.status(500).json({ error: "CSP Service Error", details: errorText });
     }
 
-    const result: any = await response.json();
+    const result = await response.json() as CspSolveResponse;
 
     // 3. Process the result and store assignments
-    const enrichedAssignments = (result.assignments || []).map((assignment: any) => {
+    const enrichedAssignments = (result.assignments ?? []).map((assignment) => {
       const course = courses.find(c => c.id === assignment.course_id);
       const teacher = teachers.find(t => t.id === assignment.teacher_id);
       const classroom = classrooms.find(cr => cr.id === assignment.classroom_id);

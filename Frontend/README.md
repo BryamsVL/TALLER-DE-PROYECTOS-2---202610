@@ -1,85 +1,36 @@
-# SGOHA Frontend
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Single Page Application (SPA) del Sistema de Generacion Optima de Horarios Academicos.
+## Getting Started
 
-## Stack
-
-- **React 19** + **TypeScript**
-- **TanStack Start** (file-based routing, SSR ready)
-- **Vite 7** (bundler/dev server)
-- **Tailwind CSS v4**
-- **shadcn/ui** + **Radix UI** (componentes accesibles)
-- **react-hook-form** + **zod** (formularios y validacion)
-- **TanStack Query** (estado servidor)
-
-## Setup
+First, run the development server:
 
 ```bash
-cd Frontend
-npm install
 npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-Abre http://localhost:5173
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Scripts disponibles
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-| Comando | Descripcion |
-|---------|-------------|
-| `npm run dev` | Servidor de desarrollo con HMR |
-| `npm run build` | Build de produccion |
-| `npm run build:dev` | Build con sourcemaps de desarrollo |
-| `npm run preview` | Preview del build de produccion |
-| `npm run lint` | ESLint sobre todo el proyecto |
-| `npm run format` | Prettier --write |
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Estructura
+## Learn More
 
-```
-src/
-|-- router.tsx          # Configuracion del router
-|-- routeTree.gen.ts    # Generado por TanStack Router (no editar)
-|-- styles.css          # Tailwind base + variables shadcn
-|-- routes/             # Rutas file-based
-|   |-- __root.tsx      # Layout raiz
-|   |-- index.tsx       # Dashboard
-|   |-- login.tsx       # RF-02: Autenticacion
-|   |-- enrollment.tsx  # RF-04/05/06: Matricula
-|   |-- scheduler.tsx   # RF-07/08/09: Motor CSP UI
-|   |-- calendar.tsx    # RF-10/11: Vista calendario
-|   |-- audit.tsx       # RF-15: Logs
-|   `-- ...
-|-- components/
-|   |-- layout/         # AppLayout, sidebars
-|   `-- ui/             # Componentes shadcn
-|-- hooks/              # Custom hooks
-`-- lib/                # Utilidades (cn, etc.)
-```
+To learn more about Next.js, take a look at the following resources:
 
-## Variables de entorno
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-El frontend consume el backend via `VITE_API_URL`. Crear `.env.local`:
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-```
-VITE_API_URL=http://localhost:3001
-```
+## Deploy on Vercel
 
-## Convenciones
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-- **Imports**: usar alias `@/...` (configurado en `tsconfig.json` y `vite.config.ts`).
-- **Componentes shadcn**: agregar via `npx shadcn@latest add <component>`.
-- **Formato**: Prettier corre en pre-commit (configurar hook si aplica).
-- **Tipos estrictos**: el `tsconfig.json` tiene `strict: true`.
-
-## Requerimientos relacionados
-
-| RF / RNF | Modulo |
-|----------|--------|
-| RF-02 | `routes/login.tsx` |
-| RF-04, RF-05, RF-06 | `routes/enrollment.tsx` |
-| RF-07, RF-08, RF-09 | `routes/scheduler.tsx` |
-| RF-10, RF-11 | `routes/calendar.tsx` |
-| RF-12, RF-14 | `routes/reports.tsx` |
-| RF-15 | `routes/audit.tsx` |
-| RNF-03 (WCAG 2.1 AA) | shadcn/ui + Radix |
-| RNF-08 (Chrome/Firefox/Edge) | configuracion Vite |
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

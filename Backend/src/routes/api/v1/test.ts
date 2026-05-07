@@ -1,8 +1,7 @@
 import { Router, Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../../../lib/prisma.js";
 
 const router = Router();
-const prisma = new PrismaClient();
 const CSP_SERVICE_URL = process.env.CSP_SERVICE_URL || "http://localhost:8001";
 
 router.post("/", async (req: Request, res: Response) => {
