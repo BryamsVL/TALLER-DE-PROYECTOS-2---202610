@@ -146,112 +146,83 @@ docker-compose up --build
 
 ## 📚 Documentación Académica (Rúbrica)
 
-Toda la documentación está estructurada bajo metodologías ágiles y **Spec-Driven Development**, cumpliendo rigurosamente los entregables del curso. A continuación se presentan los artefactos alineados exactamente a la consigna académica:
+> Cada criterio de evaluación está mapeado directamente al artefacto que lo evidencia.
 
-### 3.1. Planificación del Proyecto (Jira)
-**a. Artefactos requeridos**
-* **1º Backlog del producto** ➔ [Ver Backlog](docs/planificacion/backlog-producto.md)
-  * i. Historias de usuario correctamente formuladas
-  * ii. Priorización basada en valor, riesgo y complejidad
-  * iii. Relación con restricciones del problema (CSP)
-* **2º Estructuración del trabajo** ➔ [Ver Planificación Jira](docs/planificacion/planificacion-jira.md)
-  * i. Épicas alineadas a funcionalidades críticas
-  * ii. Versiones (releases) coherentes con entregables
-  * iii. Sprints definidos con objetivos claros
-* **3º Gestión temporal** *(ver sección "Cronograma, Dependencias y Ruta Crítica" en [Planificación Jira](docs/planificacion/planificacion-jira.md))*
-  * i. Cronograma del proyecto
-  * ii. Identificación de dependencias y ruta crítica
-* **4º Métricas ágiles** ➔ [Ver Métricas Ágiles](docs/planificacion/metricas-agiles.md)
-  * i. Gráfico de trabajo hecho (Burnup)
-  * ii. Gráfico de trabajo pendiente (Burndown)
-  * iii. Gráfico de velocidad
-  * iv. Gráfico de control
+---
 
-**b. Análisis esperado** *(incluido en el mismo documento de métricas — secciones 2 a 7)*
-* 1º Interpretación de la evolución del proyecto
-* 2º Identificación de cuellos de botella
-* 3º Evaluación de la estabilidad del equipo (variabilidad de velocidad)
-* 4º Coherencia entre planificación y complejidad del problema
+### 📋 3.1 — Planificación del Proyecto (Jira)
 
-### 3.2. Presupuesto del Proyecto
-**a. Elementos requeridos**
-* **1º Fuente de costos** ➔ [Ver Documento](docs/gestion/costos-fuentes.md)
-  * i. Recursos humanos (roles, horas estimadas)
-  * ii. Infraestructura tecnológica
-  * iii. Costos indirectos
-* **2º Evolución de costos**
-  * i. Costos a lo largo del tiempo ➔ [Ver Documento](docs/gestion/costos-tiempo.md)
-  * ii. Costos por Sprint ➔ [Ver Documento](docs/gestion/costos-por-sprint.md)
-  * iii. Costo acumulado del proyecto ➔ [Ver Documento](docs/gestion/costo-acumulado.md)
+| Artefacto requerido | Documento |
+|---|---|
+| **Backlog del producto** — HU formuladas, priorización por valor/riesgo/complejidad, relación con CSP | [📄 backlog-producto.md](docs/planificacion/backlog-producto.md) |
+| **Estructuración del trabajo** — Épicas, releases y sprints con objetivos claros | [📄 planificacion-jira.md](docs/planificacion/planificacion-jira.md) |
+| **Gestión temporal** — Cronograma, dependencias y ruta crítica | [📄 planificacion-jira.md § Cronograma](docs/planificacion/planificacion-jira.md) |
+| **Métricas ágiles** — Burndown, Burnup, Velocidad y Control | [📄 metricas-agiles.md](docs/planificacion/metricas-agiles.md) |
+| **Análisis** — Evolución del proyecto, cuellos de botella, estabilidad del equipo | [📄 metricas-agiles.md § Análisis](docs/planificacion/metricas-agiles.md) |
 
-**b. Análisis esperado** ➔ [Ver Análisis Sostenibilidad](docs/gestion/analisis-sostenibilidad.md)
-* 1º Relación entre complejidad del problema y costo del sistema
-* 2º Identificación de factores de incremento de costos
-* 3º Evaluación de sostenibilidad (enfoque Green Software)
+**Artefactos de Sprint:**
+| Sprint | Backlog | Retrospectiva | Informe |
+|---|---|---|---|
+| Sprint 1 ✅ | [backlog.md](docs/sprints/sprint-1/backlog.md) | [retrospectiva.md](docs/sprints/sprint-1/retrospectiva.md) | [project-charter.md](docs/sprints/sprint-1/project-charter.md) |
+| Sprint 2 🔄 | [backlog.md](docs/sprints/sprint-2/backlog.md) | [retrospectiva.md](docs/sprints/sprint-2/retrospectiva.md) | [informe-estado.md](docs/sprints/sprint-2/informe-estado.md) |
+| Sprint 3 ⬜ | [backlog.md](docs/sprints/sprint-3/backlog.md) | — | [planificacion.md](docs/sprints/sprint-3/planificacion.md) |
 
-### 3.3. Gestión de Riesgos y Oportunidades
-**a. Registros obligatorios**
-* **1º Registro de riesgos** ➔ [Ver Documento](docs/gestion/registro-riesgos.md)
-  * i. Descripción del riesgo
-  * ii. Probabilidad e impacto
-  * iii. Estrategia de mitigación
-* **2º Registro de oportunidades** ➔ [Ver Documento](docs/gestion/registro-oportunidades.md)
-  * i. Impacto positivo esperado
-  * ii. Estrategia de aprovechamiento
+---
 
-**b. Análisis esperado** ➔ [Ver Documento](docs/gestion/analisis-riesgos.md)
-* 1º Relación de riesgos con:
-  * i. Restricciones del problema (CSP)
-  * ii. Limitaciones técnicas
-  * iii. Dependencias externas
+### 💰 3.2 — Presupuesto del Proyecto
 
-### 3.4. Spec-Driven Development (SDD)
-**a. Artefactos requeridos**
-* **1º Agents.md o constitution.md** ➔ [Ver Documento](docs/sdd/AGENTS.md)
-  * i. Principios del sistema
-  * ii. Reglas globales
-  * iii. Restricciones duras y blandas
-* **2º Spec.md** ➔ [Ver Documento](docs/sdd/spec.md)
-  * i. Especificación formal del sistema
-  * ii. Definición de: Entradas, Salidas, Reglas de negocio, Casos límite
+| Artefacto requerido | Documento |
+|---|---|
+| **Fuente de costos** — RRHH, infraestructura tecnológica, costos indirectos | [📄 costos-fuentes.md](docs/gestion/costos-fuentes.md) |
+| **Resumen presupuestal** — Tabla completa del proyecto | [📄 presupuesto.md](docs/gestion/presupuesto.md) |
+| **Costos a lo largo del tiempo** | [📄 costos-tiempo.md](docs/gestion/costos-tiempo.md) |
+| **Costos por Sprint** | [📄 costos-por-sprint.md](docs/gestion/costos-por-sprint.md) |
+| **Costo acumulado del proyecto** | [📄 costo-acumulado.md](docs/gestion/costo-acumulado.md) |
+| **Análisis** — Complejidad vs. costo, drivers de incremento, Green Software | [📄 analisis-sostenibilidad.md](docs/gestion/analisis-sostenibilidad.md) |
 
-**b. Análisis esperado** ➔ [Ver Análisis SDD](docs/sdd/analisis-sdd.md)
-* 1º Coherencia entre:
-  * i. Especificación
-  * ii. Modelado del problema
-  * iii. Implementación
-* 2º Reducción de ambigüedad en requerimientos
-* 3º Anticipación de conflictos (ej. solapamientos de horarios)
+---
 
-### 3.5. Gestión del Repositorio en GitHub
-**a. Estrategia de desarrollo** *(Evidenciada en Historial Git)*
-* 1º Estrategia de ramas (Git Flow o equivalente)
-* 2º Commits semánticos
-* 3º Pull Requests con revisión
-* 4º Desarrollo incremental — Backlogs por sprint:
-  * [Sprint 1 — Completado](docs/sprints/sprint-1/backlog.md)
-  * [Sprint 2 — En curso](docs/sprints/sprint-2/backlog.md)
-  * [Sprint 3 — Planificado](docs/sprints/sprint-3/backlog.md)
+### ⚠️ 3.3 — Gestión de Riesgos y Oportunidades
 
-**b. Artefactos mínimos**
-* **1º README.md completo:** *(Este mismo archivo)*
-  * i. Descripción del sistema
-  * ii. Instrucciones de instalación
-  * iii. Arquitectura
-* **2º Trazabilidad y evolución del sistema** ➔ [Ver Matriz de Trazabilidad](docs/planificacion/trazabilidad.md)
-  * i. Integración de funcionalidades
-  * ii. Evolución del sistema
-* **3º Documentación de arquitectura:**
-  * i. Vistas y decisiones del sistema ➔ [Ver ARC42](docs/arquitectura/ARC42.md)
-  * ii. Motor de optimización CSP ➔ [Ver Algoritmo CSP con OR TOOLS](docs/arquitectura/Algoritmo%20CSP%20con%20OR%20TOOLS.md)
-  * iii. Pruebas del backend ➔ [Ver Guía de Testing](docs/arquitectura/Gu%C3%ADa%20de%20Pruebas%20(Testing)%20-%20Backend%20SGOHA.md)
+| Artefacto requerido | Documento |
+|---|---|
+| **Registro de riesgos** — Descripción, probabilidad × impacto, estrategia de mitigación | [📄 registro-riesgos.md](docs/gestion/registro-riesgos.md) |
+| **Registro de oportunidades** — Impacto positivo y estrategia de aprovechamiento | [📄 registro-oportunidades.md](docs/gestion/registro-oportunidades.md) |
+| **Análisis** — Relación riesgos ↔ CSP, limitaciones técnicas y dependencias externas | [📄 analisis-riesgos.md](docs/gestion/analisis-riesgos.md) |
 
-**c. Análisis de trazabilidad** *(incluido en [Matriz de Trazabilidad](docs/planificacion/trazabilidad.md) — secciones 1 y 2)*
-* 1º Trazabilidad entre:
-  * i. Backlog (Jira)
-  * ii. Commits
-  * iii. Funcionalidades implementadas
-* 2º Evidencia de trabajo colaborativo real *(Ver Insights de GitHub)*
+---
+
+### 🧠 3.4 — Spec-Driven Development (SDD)
+
+| Artefacto requerido | Documento |
+|---|---|
+| **AGENTS.md** — Principios del sistema, reglas globales, restricciones duras y blandas | [📄 AGENTS.md](docs/sdd/AGENTS.md) |
+| **constitution.md** — Complemento de principios y restricciones del sistema | [📄 constitution.md](docs/sdd/constitution.md) |
+| **Spec.md** — Especificación formal: Entradas, Salidas, Reglas de negocio, Casos límite | [📄 spec.md](docs/sdd/spec.md) |
+| **Análisis de coherencia** — Spec ↔ modelo CSP ↔ implementación, anticipación de conflictos | [📄 analisis-sdd.md](docs/sdd/analisis-sdd.md) |
+| **Decisiones técnicas** — Trade-offs, justificación de arquitectura | [📄 decisiones-tecnicas.md](docs/sdd/decisiones-tecnicas.md) |
+
+---
+
+### 🗂️ 3.5 — Gestión del Repositorio en GitHub
+
+| Artefacto requerido | Evidencia |
+|---|---|
+| **Estrategia de ramas** (Git Flow) | Ver rama `main` / `develop` / `feature/*` en historial Git |
+| **Commits semánticos** | Ver [historial de commits](https://github.com/BryamsVL/TALLER-DE-PROYECTOS-2---202610/commits/main) |
+| **Pull Requests con revisión** | Ver [Pull Requests](https://github.com/BryamsVL/TALLER-DE-PROYECTOS-2---202610/pulls) |
+| **Desarrollo incremental** | Backlogs de sprint en tabla de arriba (§ 3.1) |
+| **README.md completo** — Descripción, instalación y arquitectura | Este mismo archivo |
+| **Integración de funcionalidades** — Trazabilidad RF → HU → commit | [📄 trazabilidad.md](docs/planificacion/trazabilidad.md) |
+| **Evolución del sistema** — Progreso sprint a sprint | [📄 trazabilidad.md § Evolución](docs/planificacion/trazabilidad.md) |
+| **Documentación de arquitectura** (ARC42) | [📄 ARC42.md](docs/arquitectura/ARC42.md) |
+| **Motor CSP con OR-Tools** | [📄 Algoritmo CSP con OR TOOLS](docs/arquitectura/Algoritmo%20CSP%20con%20OR%20TOOLS.md) |
+| **Guía de pruebas del backend** | [📄 Guía de Testing](docs/arquitectura/Gu%C3%ADa%20de%20Pruebas%20(Testing)%20-%20Backend%20SGOHA.md) |
+| **Análisis de trazabilidad** — Backlog ↔ commits ↔ funcionalidades + colaboración | [📄 trazabilidad.md § Trazabilidad](docs/planificacion/trazabilidad.md) |
+
+
+
+
 
 ---
 
