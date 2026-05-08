@@ -138,11 +138,13 @@
 **Relación CSP:** NÚCLEO CSP (D1, D2, D3, D4).
 
 #### HU-12 — Ejecución del Horario Institucional
-**Historia:** Como coordinador, quiero ejecutar el motor para obtener el horario general.
+**Historia:** Como administrador, quiero ejecutar la generación automática del horario institucional y recibir el resultado (solución completa o reporte de conflictos) para decidir si activarlo o ajustarlo.
 **Criterios de aceptación:** 
-- 1. El solver ejecuta en un worker/proceso separado para no bloquear la API REST.
-- 2. Aplica un Timeout estricto de 30 segundos (Abortar búsqueda).
-- 3. Retorna payload con estado `OPTIMAL` o `FEASIBLE` con array de asignaciones.
+- 1. El endpoint de generación ejecuta el solver de OR-Tools con los datos del período activo.
+- 2. El resultado se produce en <= 30 segundos bajo el escenario base del PMV (100 estudiantes, 20 docentes, 20 cursos, 10 aulas).
+- 3. Si el solver encuentra solución completa, retorna el horario en estado BORRADOR.
+- 4.  Si el solver no encuentra solución o agota el tiempo límite (30 s), retorna los conflictos identificados sin persistir ningún horario inválido.
+- 5. Cada conflicto reportado identifica el recurso afectado y la restricción violada 
 **Priorización:** Crítica (Valor 5, Riesgo 5, Complejidad 4)
 **Relación CSP:** Función Objetivo y Exploración.
 
