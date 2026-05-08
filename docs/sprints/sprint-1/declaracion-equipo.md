@@ -6,8 +6,8 @@
 |---------------------|------------|-------------------------------|-------------------|
 | Product Owner | Alberto Patiño | Priorizar el Product Backlog, validar que los entregables cumplan los criterios de aceptación, representar los intereses del negocio. | Documentación, criterios de aceptación, visión del producto. |
 | Scrum Master | Andre De La Torre | Facilitar las ceremonias Scrum, remover impedimentos, asegurar que el equipo siga el proceso ágil y mantener el repositorio GitHub organizado. | Git workflow, gestión del proyecto, dailies. |
-| Dev — Backend / CSP | Brianna Cortez | Implementar el motor CSP con OR-Tools y desarrollar el microservicio especializado en FastAPI encargado de la generación de horarios. | RF-07 Motor CSP, RF-08 Conflictos, API REST. |
-| Dev — Backend / Auth | Edward Flores | Diseñar y desarrollar la API REST principal con Express + Node.js, incluyendo autenticación JWT, módulo de registro de entidades (estudiantes, docentes, cursos, aulas), validaciones de matrícula. | RF-01 Registro, RF-02 Auth, RF-04/05/06 Matrícula. |
+| Dev — Backend / CSP | Edward Flores | Implementar el motor CSP con OR-Tools y desarrollar el microservicio especializado en FastAPI encargado de la generación de horarios. | RF-07 Motor CSP, RF-08 Conflictos, API REST. |
+| Dev — Backend / Auth | Brianna Cortez | Diseñar y desarrollar la API REST principal con Express + Node.js, incluyendo autenticación JWT, módulo de registro de entidades (estudiantes, docentes, cursos, aulas), validaciones de matrícula. | RF-01 Registro, RF-02 Auth, RF-04/05/06 Matrícula. |
 | Dev — Frontend / UI | Bryams Vilchez | Implementar la SPA con React + TypeScript, vistas de calendario, formularios de registro y módulo de matrícula, integración con la API REST. | RF-10 Vista, RF-11 Filtros, RF-06 UI matrícula. |
 | Dev — QA / DevOps | Jack Perez | Escribir pruebas unitarias y de integración (Pytest + Vitest), configurar Docker Compose, CI/CD con GitHub Actions, exportación de reportes. | RF-12 Exportación, RF-14 Reportes, RF-15 Auditoría. |
 

@@ -25,7 +25,7 @@ Los resultados muestran una tendencia hacia valores altos (4–5), lo que indica
 | Frontend (SPA) | React 18 + TypeScript (Vite) | Vue 3 | Se selecciona React por su amplio ecosistema, compatibilidad con librerías especializadas como FullCalendar y el uso de TypeScript para reducir errores en aplicaciones complejas. |
 | Backend (API REST) | Express + Node.js | FastAPI | Express permite mantener consistencia con el entorno JavaScript del frontend y facilita la integración general del sistema. |
 | Microservicio CSP | FastAPI + OR-Tools | Backtracking en Node.js | Se descarta la implementación en JavaScript puro debido a limitaciones de rendimiento, optando por OR-Tools por su capacidad para resolver problemas CSP de mayor escala de forma eficiente. |
-| Base de datos | PostgreSQL 16 | MySQL | PostgreSQL ofrece mayor robustez y mejor soporte para consultas complejas y estructuras de datos avanzadas. |
+| Base de datos | Supabase | MySQL | Supabase ofrece mayor robustez y mejor soporte para consultas complejas y estructuras de datos avanzadas. |
 | ORM | Prisma | Sequelize | Prisma proporciona tipado nativo con TypeScript, lo que reduce errores y mejora la mantenibilidad del sistema. |
 | Cache | node-cache | Redis | Se opta por node-cache por su simplicidad de implementación en memoria, suficiente para los requerimientos actuales del sistema. |
 | Generación de reportes | PDFKit + ExcelJS | Librerías manuales de generación | Estas herramientas permiten generar documentos estructurados en PDF y Excel de forma eficiente y con menor complejidad de implementación. |
