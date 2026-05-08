@@ -156,7 +156,7 @@ docker-compose up --build
 |---|---|
 | **Backlog del producto** — HU formuladas, priorización por valor/riesgo/complejidad, relación con CSP | [📄 backlog-producto.md](docs/planificacion/backlog-producto.md) |
 | **Estructuración del trabajo** — Épicas, releases y sprints con objetivos claros | [📄 planificacion-jira.md](docs/planificacion/planificacion-jira.md) |
-| **Gestión temporal** — Cronograma, dependencias y ruta crítica | [📄 planificacion-jira.md § Cronograma](docs/planificacion/planificacion-jira.md) |
+| **Gestión temporal** — Cronograma, dependencias y ruta crítica | [📄 cronograma.md](docs/planificacion/cronograma.md) |
 | **Métricas ágiles** — Tablas de Burndown, Burnup, Velocidad y Control por sprint | [📄 metricas-agiles.md](docs/planificacion/metricas-agiles.md) |
 | **Análisis de métricas** — Evolución del proyecto, cuellos de botella, estabilidad del equipo | [📄 analisis-metricas.md](docs/planificacion/analisis-metricas.md) |
 
