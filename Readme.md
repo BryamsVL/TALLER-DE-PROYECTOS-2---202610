@@ -157,8 +157,8 @@ docker-compose up --build
 | **Backlog del producto** — HU formuladas, priorización por valor/riesgo/complejidad, relación con CSP | [📄 backlog-producto.md](docs/planificacion/backlog-producto.md) |
 | **Estructuración del trabajo** — Épicas, releases y sprints con objetivos claros | [📄 planificacion-jira.md](docs/planificacion/planificacion-jira.md) |
 | **Gestión temporal** — Cronograma, dependencias y ruta crítica | [📄 planificacion-jira.md § Cronograma](docs/planificacion/planificacion-jira.md) |
-| **Métricas ágiles** — Burndown, Burnup, Velocidad y Control | [📄 metricas-agiles.md](docs/planificacion/metricas-agiles.md) |
-| **Análisis** — Evolución del proyecto, cuellos de botella, estabilidad del equipo | [📄 metricas-agiles.md § Análisis](docs/planificacion/metricas-agiles.md) |
+| **Métricas ágiles** — Tablas de Burndown, Burnup, Velocidad y Control por sprint | [📄 metricas-agiles.md](docs/planificacion/metricas-agiles.md) |
+| **Análisis de métricas** — Evolución del proyecto, cuellos de botella, estabilidad del equipo | [📄 analisis-metricas.md](docs/planificacion/analisis-metricas.md) |
 
 **Artefactos de Sprint:**
 | Sprint | Backlog | Retrospectiva | Informe |
@@ -213,12 +213,12 @@ docker-compose up --build
 | **Pull Requests con revisión** | Ver [Pull Requests](https://github.com/BryamsVL/TALLER-DE-PROYECTOS-2---202610/pulls) |
 | **Desarrollo incremental** | Backlogs de sprint en tabla de arriba (§ 3.1) |
 | **README.md completo** — Descripción, instalación y arquitectura | Este mismo archivo |
-| **Integración de funcionalidades** — Trazabilidad RF → HU → commit | [📄 trazabilidad.md](docs/planificacion/trazabilidad.md) |
-| **Evolución del sistema** — Progreso sprint a sprint | [📄 trazabilidad.md § Evolución](docs/planificacion/trazabilidad.md) |
+| **Matriz de trazabilidad** — RF → HU → commit (tabla RWD completa) | [📄 trazabilidad.md](docs/planificacion/trazabilidad.md) |
+| **Integración de funcionalidades y evolución del sistema** — Por sprint y capa | [📄 evolucion-sistema.md](docs/planificacion/evolucion-sistema.md) |
 | **Documentación de arquitectura** (ARC42) | [📄 ARC42.md](docs/arquitectura/ARC42.md) |
 | **Motor CSP con OR-Tools** | [📄 Algoritmo CSP con OR TOOLS](docs/arquitectura/Algoritmo%20CSP%20con%20OR%20TOOLS.md) |
 | **Guía de pruebas del backend** | [📄 Guía de Testing](docs/arquitectura/Gu%C3%ADa%20de%20Pruebas%20(Testing)%20-%20Backend%20SGOHA.md) |
-| **Análisis de trazabilidad** — Backlog ↔ commits ↔ funcionalidades + colaboración | [📄 trazabilidad.md § Trazabilidad](docs/planificacion/trazabilidad.md) |
+| **Análisis de trazabilidad** — Backlog ↔ commits ↔ funcionalidades + colaboración real | [📄 analisis-trazabilidad.md](docs/planificacion/analisis-trazabilidad.md) |
 
 
 
