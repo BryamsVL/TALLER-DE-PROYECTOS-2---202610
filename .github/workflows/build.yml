@@ -23,7 +23,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: cd backend/csp-service && pip install -r requirements.txt
+      - run: cd Backend/csp-service && pip install -r requirements.txt
 
   frontend:
     runs-on: ubuntu-latest
@@ -32,4 +32,4 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - run: cd frontend && npm ci && npm run build
+      - run: cd Frontend && npm ci && npm run build
