@@ -21,7 +21,7 @@ Para que el Sprint 3 inicie sin bloqueos, las siguientes piezas del Sprint 2 son
 ## 3. Diagrama de Dependencias (Ruta Crítica)
 
 ```ascii
-[Sprint 2 Terminado]
+[Sprint 2 — En curso (prerequisito para Sprint 3)]
       │
       ▼
  [HU-18: Prerreq] ────┐

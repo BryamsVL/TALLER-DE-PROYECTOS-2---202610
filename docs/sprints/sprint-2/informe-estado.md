@@ -1,4 +1,4 @@
-# Informe de Estado — Cierre del Sprint 2
+# Informe de Estado — Sprint 2 (En Curso)
 
 **Fecha de corte:** 07/05/2026
 **Sprint Actual:** Sprint 2 (23/04/2026 – 07/05/2026)
@@ -20,9 +20,10 @@ El Sprint 2 se encuentra actualmente en curso. El equipo está trabajando fuerte
 | HU-16 | Vista horario por docente | Brianna Cortez | 5 | 🔄 En curso |
 | HU-17 | Consulta horario por el docente | Brianna Cortez | 3 | ⬜ Pendiente |
 
-## 3. Métricas del Sprint
-- **Puntos Planificados vs Completados:** 34 / 34 (100%).
-- **Velocidad del Sprint:** 34 puntos (mantenida consistente con el Sprint 1).
+## 3. Métricas del Sprint (Parciales — Sprint en curso)
+- **Puntos Planificados:** 34 pts.
+- **Puntos Completados:** [En curso — pendiente cierre del sprint].
+- **Velocidad proyectada:** 34 pts (estimación basada en velocidad del Sprint 1).
 
 **Burndown (Parcial - Sprint 2):**
 | Día 1 | Día 2 | Día 3 | Día 4 | Día 5 | Día 6 | Día 7 | Día 8 | Día 9 | Día 10 |

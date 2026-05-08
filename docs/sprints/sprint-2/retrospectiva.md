@@ -37,10 +37,10 @@ El Sprint 2 se encuentra en ejecución. El equipo está trabajando en dotar de "
 | Implementar memoización (`useMemo`, `React.memo`) en los componentes de las grillas. | Bryams Vilchez | 10/05/2026 |
 | Usar un endpoint optimizado (bulk) para la re-validación de cruces de la HU-14. | Brianna Cortez | 12/05/2026 |
 
-## 6. Comparación de Velocidad S1 vs S2
+## 6. Comparación de Velocidad S1 vs S2 (Parcial)
 - **Sprint 1:** 35 pts (CRUDs y Auth, alta cantidad de tareas de baja complejidad).
-- **Sprint 2:** 34 pts (Solver y algoritmos, baja cantidad de tareas de extrema complejidad).
-*Análisis:* La velocidad numérica se mantuvo estable, pero la fatiga mental del equipo fue mayor en el S2 debido a la complejidad de depurar restricciones matemáticas invisibles.
+- **Sprint 2:** [En curso] — Velocidad proyectada: 34 pts (Solver y algoritmos, baja cantidad de tareas de extrema complejidad).
+*Análisis:* La velocidad numérica se mantiene estable en estimación, pero la fatiga mental del equipo es mayor en el S2 debido a la complejidad de depurar restricciones matemáticas invisibles.
 
 ## 7. Acuerdos para el Sprint 3
 - Dado que el Sprint 3 tiene 42 puntos (la carga más alta), las dailys serán estrictas de 15 minutos enfocadas únicamente en bloqueos.

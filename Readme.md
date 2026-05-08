@@ -150,24 +150,24 @@ Toda la documentación está estructurada bajo metodologías ágiles y **Spec-Dr
 
 ### 3.1. Planificación del Proyecto (Jira)
 **a. Artefactos requeridos**
-* **1º Backlog del producto** ➔ [Ver Documento](docs/planificacion/backlog-producto.md)
+* **1º Backlog del producto** ➔ [Ver Backlog](docs/planificacion/backlog-producto.md)
   * i. Historias de usuario correctamente formuladas
   * ii. Priorización basada en valor, riesgo y complejidad
   * iii. Relación con restricciones del problema (CSP)
-* **2º Estructuración del trabajo** ➔ [Ver Documento](docs/planificacion/planificacion-jira.md)
+* **2º Estructuración del trabajo** ➔ [Ver Planificación Jira](docs/planificacion/planificacion-jira.md)
   * i. Épicas alineadas a funcionalidades críticas
   * ii. Versiones (releases) coherentes con entregables
   * iii. Sprints definidos con objetivos claros
-* **3º Gestión temporal** ➔ [Ver Documento](docs/planificacion/planificacion-jira.md)
+* **3º Gestión temporal** *(ver sección "Cronograma, Dependencias y Ruta Crítica" en [Planificación Jira](docs/planificacion/planificacion-jira.md))*
   * i. Cronograma del proyecto
   * ii. Identificación de dependencias y ruta crítica
-* **4º Métricas ágiles (obligatorio incluir análisis)** ➔ [Ver Documento](docs/planificacion/metricas-agiles.md)
+* **4º Métricas ágiles** ➔ [Ver Métricas Ágiles](docs/planificacion/metricas-agiles.md)
   * i. Gráfico de trabajo hecho (Burnup)
   * ii. Gráfico de trabajo pendiente (Burndown)
   * iii. Gráfico de velocidad
   * iv. Gráfico de control
 
-**b. Análisis esperado** ➔ [Ver Análisis de Métricas](docs/planificacion/metricas-agiles.md)
+**b. Análisis esperado** *(incluido en el mismo documento de métricas — secciones 2 a 7)*
 * 1º Interpretación de la evolución del proyecto
 * 2º Identificación de cuellos de botella
 * 3º Evaluación de la estabilidad del equipo (variabilidad de velocidad)
@@ -224,27 +224,29 @@ Toda la documentación está estructurada bajo metodologías ágiles y **Spec-Dr
 * 3º Anticipación de conflictos (ej. solapamientos de horarios)
 
 ### 3.5. Gestión del Repositorio en GitHub
-**b. Elementos obligatorios** *(Evidenciados en Historial Git)*
+**a. Estrategia de desarrollo** *(Evidenciada en Historial Git)*
 * 1º Estrategia de ramas (Git Flow o equivalente)
 * 2º Commits semánticos
 * 3º Pull Requests con revisión
-* 4º Desarrollo incremental ➔ [S1](docs/sprints/sprint-1/backlog.md) | [S2](docs/sprints/sprint-2/backlog.md) | [S3](docs/sprints/sprint-3/backlog.md)
+* 4º Desarrollo incremental — Backlogs por sprint:
+  * [Sprint 1 — Completado](docs/sprints/sprint-1/backlog.md)
+  * [Sprint 2 — En curso](docs/sprints/sprint-2/backlog.md)
+  * [Sprint 3 — Planificado](docs/sprints/sprint-3/backlog.md)
 
-**c. Artefactos mínimos**
+**b. Artefactos mínimos**
 * **1º README.md completo:** *(Este mismo archivo)*
   * i. Descripción del sistema
   * ii. Instrucciones de instalación
   * iii. Arquitectura
-* **2º Evidencia de:**
-  * i. Integración de funcionalidades ➔ [Ver Trazabilidad](docs/planificacion/trazabilidad.md)
-  * ii. Evolución del sistema ➔ [Ver Trazabilidad](docs/planificacion/trazabilidad.md)
+* **2º Trazabilidad y evolución del sistema** ➔ [Ver Matriz de Trazabilidad](docs/planificacion/trazabilidad.md)
+  * i. Integración de funcionalidades
+  * ii. Evolución del sistema
 * **3º Documentación de arquitectura:**
   * i. Vistas y decisiones del sistema ➔ [Ver ARC42](docs/arquitectura/ARC42.md)
-  * ii. Motor de optimización CSP ➔ [Ver Algoritmo de CSP con OR TOOLS](docs/arquitectura/Algoritmo%20CSP%20con%20OR%20TOOLS.md)
-  * iii. Pruebas del backend ➔ [Ver Testing](docs/arquitectura/Gu%C3%ADa%20de%20Pruebas%20(Testing)%20-%20Backend%20SGOHA.md)
+  * ii. Motor de optimización CSP ➔ [Ver Algoritmo CSP con OR TOOLS](docs/arquitectura/Algoritmo%20CSP%20con%20OR%20TOOLS.md)
+  * iii. Pruebas del backend ➔ [Ver Guía de Testing](docs/arquitectura/Gu%C3%ADa%20de%20Pruebas%20(Testing)%20-%20Backend%20SGOHA.md)
 
-
-**d. Análisis esperado** ➔ [Ver Matriz de Trazabilidad](docs/planificacion/trazabilidad.md)
+**c. Análisis de trazabilidad** *(incluido en [Matriz de Trazabilidad](docs/planificacion/trazabilidad.md) — secciones 1 y 2)*
 * 1º Trazabilidad entre:
   * i. Backlog (Jira)
   * ii. Commits
