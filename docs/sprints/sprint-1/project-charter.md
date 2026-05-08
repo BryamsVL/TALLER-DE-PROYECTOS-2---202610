@@ -88,11 +88,9 @@ Los siguientes requerimientos describen las capacidades principales que el siste
 
 | Sprint | Período | Objetivos principales |
 |--------|---------|-----------------------|
-| Sprint 0 | Semanas 1–2 | Inicio del proyecto: análisis, documentación base, repositorio GitHub, selección de stack, primer borrador del problema. |
-| Sprint 1 | Semanas 3–4 | Modelado CSP formal, diseño de arquitectura, prototipo de UI, módulo de registro y autenticación. |
-| Sprint 2 | Semanas 5–8 | Módulo de matrícula con validaciones, implementación del motor CSP, primeras pruebas del algoritmo. |
-| Sprint 3 | Semanas 9–12 | Módulo de visualización, ajuste manual de horarios, exportación, pruebas de integración. |
-| Sprint 4 | Semanas 13–16 | Pruebas finales (cobertura ≥ 70%), informe de impacto, video demostrativo, presentación final. |
+| Sprint 1 | Semanas 1–4 | Análisis del problema, documentación base, modelado CSP formal, diseño de arquitectura, módulo de autenticación RBAC (JWT), CRUD de entidades base y configuración del período académico. HU-01 a HU-10 — **35 pts** ✅ Completado. |
+| Sprint 2 | 23/04/2026 – 07/05/2026 | Implementación del motor CSP institucional (restricciones duras D1–D9 y blandas B1–B5 en OR-Tools), activación y ajuste manual de horarios, vistas de horario por docente. HU-11 a HU-17 — **34 pts** 🔄 En curso. |
+| Sprint 3 | 08/05/2026 – 22/05/2026 | Módulo de matrícula estudiantil (prerrequisitos, créditos 20–22, horario automático), grilla semanal interactiva, exportación PDF/Excel y auditoría OWASP Top 10. HU-18 a HU-26 — **42 pts** ⬜ Planificado. |
 
 ---
 
