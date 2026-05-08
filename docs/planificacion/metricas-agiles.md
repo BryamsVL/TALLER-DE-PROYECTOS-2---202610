@@ -18,6 +18,8 @@
 
 ## 2. Análisis del Burndown
 
+![Análisis de Burndown](./burndown.jpg)
+
 ### Sprint 1 — Datos reales (10 HU, 35 Puntos)
 
 | Día (Hábiles) | Pts Restantes (Ideal) | Pts Restantes (Real) | Tendencia |
@@ -48,6 +50,10 @@
 
 ## 3. Análisis del Burnup
 
+![Análisis de Burnup 1](./burnup-1.jpg)
+![Análisis de Burnup 2](./burnup-2.jpg)
+![Análisis de Burnup 3](./burnup-3.jpg)
+
 | Sprint | Pts acumulados (proyectado) | Pts acumulados (real) | % del proyecto |
 |---|---|---|---|
 | Inicio | 0 | 0 | 0% |
@@ -62,6 +68,8 @@
 ---
 
 ## 4. Análisis de Velocidad por Sprint
+
+![Análisis de Velocidad](./velocidad.jpg)
 
 | Sprint | Velocidad (pts) | Variación | Observación |
 |---|---|---|---|
