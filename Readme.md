@@ -240,8 +240,8 @@ Toda la documentación está estructurada bajo metodologías ágiles y **Spec-Dr
   * ii. Evolución del sistema ➔ [Ver Trazabilidad](docs/planificacion/trazabilidad.md)
 * **3º Documentación de arquitectura:**
   * i. Vistas y decisiones del sistema ➔ [Ver ARC42](docs/arquitectura/ARC42.md)
-  * ii. Motor de optimización CSP ➔ [Ver Algoritmo del Solver](docs/arquitectura/algoritmo-solver.md)
-  * iii. Pruebas del backend ➔ [Ver Testing](docs/arquitectura/testing-backend.md)
+  * ii. Motor de optimización CSP ➔ [Ver Algoritmo de CSP con OR TOOLS](docs/arquitectura/Algoritmo CSP con OR TOOLS.md)
+  * iii. Pruebas del backend ➔ [Ver Testing](docs/arquitectura/Guía de Pruebas (Testing) - Backend SGOHA.md)
 
 
 **d. Análisis esperado** ➔ [Ver Matriz de Trazabilidad](docs/planificacion/trazabilidad.md)
