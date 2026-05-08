@@ -16,9 +16,9 @@ Esta matriz asegura que cada requerimiento funcional (RF), restricción matemát
 | **RF-03, RF-05** (Cursos y componentes) | HU-07 | Sprint 1 | ✅ Implementado | `PR #5 (e4f5a6b)` |
 | **RF-04** (Aulas) | HU-08 | Sprint 1 | ✅ Implementado | `PR #6 (c7d8e9f)` |
 | **RF-08** (Ejecutar Etapa 1) | HU-09, HU-10 | Sprint 1 | ✅ Implementado | `PR #7 (b1a2c3d)` |
-| **D1-D9** (Restricciones duras CSP) | HU-11 | Sprint 2 | 🔄 En curso | `[En curso]` |
-| **Regla 2** (No horarios silentes inválidos) | HU-12 | Sprint 2 | 🔄 En curso | `[En curso]` |
-| **RF-09** (Activar Horario Inst.) | HU-13 | Sprint 2 | 🔄 En curso | `[En curso]` |
+| **D1-D9** (Restricciones duras CSP) | HU-11 | Sprint 2 | ✅ Implementado | |
+| **Regla 2** (No horarios silentes inválidos) | HU-12 | Sprint 2 | ✅ Implementado| |
+| **RF-09** (Activar Horario Inst.) | HU-13 | Sprint 2 | ✅ Implementado |  |
 | **RF-10, Regla 10** (Ajuste manual) | HU-14 | Sprint 2 | 🔄 En curso | `[En curso]` |
 | **B1-B5** (Restricciones blandas) | HU-15 | Sprint 2 | ⬜ Pendiente | — |
 | **RF-11, D10, D11** (Etapa 2 - Docentes) | HU-16, HU-17 | Sprint 2 | 🔄 En curso | `[En curso]` |
