@@ -50,12 +50,12 @@ El proyecto está dividido en 7 Épicas y 3 Sprints.
 
 | Epic | ID | Historia de Usuario | Estado Jira | Puntos | Responsable |
 |---|---|---|---|---|---|
-| EP-04 | HU-11 | Modelado de Restricciones Duras en OR-Tools | 🔄 In Progress | 8 | Alberto Patiño |
-| EP-04 | HU-12 | Ejecución y Resultado de la Generación | 🔄 In Progress | 5 | Alberto Patiño |
-| EP-04 | HU-13 | Activación y Cancelación del Horario Institucional | 🔄 In Progress | 3 | Andre De La Torre |
+| EP-04 | HU-11 | Modelado de Restricciones Duras en OR-Tools | ✅ Done | 8 | Alberto Patiño |
+| EP-04 | HU-12 | Ejecución y Resultado de la Generación | ✅ Done | 5 | Alberto Patiño |
+| EP-04 | HU-13 | Activación y Cancelación del Horario Institucional | ✅ Done | 3 | Andre De La Torre |
 | EP-04 | HU-14 | Ajuste Manual de Asignaciones | 🔄 In Progress | 5 | Brianna Cortez |
 | EP-04 | HU-15 | Restricciones Blandas y Puntuación del Horario | ⬜ To Do | 5 | Alberto Patiño |
-| EP-05 | HU-16 | Generación de Vista de Horario por Docente | 🔄 In Progress | 5 | Brianna Cortez |
+| EP-05 | HU-16 | Generación de Vista de Horario por Docente | ⬜ To Do | 5 | Brianna Cortez |
 | EP-05 | HU-17 | Consulta de Horario por el Docente | ⬜ To Do | 3 | Brianna Cortez |
 
 **Total Puntos Sprint 2:** 34 pts

@@ -135,8 +135,8 @@ Usuario
 |---|---|---|---|
 | Healthcheck ambos servicios | ✅ | ✅ | ✅ |
 | JWT + middleware auth | ⚙️ base | ✅ | ✅ |
-| CRUD entidades (cursos, aulas, docentes) | 🔲 | ✅ | ✅ |
 | Motor CSP (POST /solve completo) | stub | stub | ✅ |
+| CRUD entidades (cursos, aulas, docentes) | 🔲 | ✅ | ✅ |
 | Caché node-cache TTL 24 h | 🔲 | 🔲 | ✅ |
 | Exportación PDF / Excel | 🔲 | 🔲 | ✅ |
 
