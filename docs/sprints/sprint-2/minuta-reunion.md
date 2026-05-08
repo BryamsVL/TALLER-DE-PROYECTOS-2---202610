@@ -5,7 +5,7 @@
 **Fecha:** 23/04/2026
 **Lugar:** Google Meet
 **Facilitador:** Andre De La Torre Segura (Scrum Master)
-**Asistentes:** Brianna Cortez, Andre De La Torre, Alberto Patiño, Edward Flores, Bryams Vilchez, Jack Perez.
+**Asistentes:** Edward Flores, Andre De La Torre, Alberto Patiño, Brianna Cortez, Bryams Vilchez, Jack Perez.
 
 ## 1. Revisión del Cierre del Sprint 1
 
@@ -25,7 +25,7 @@ El Sprint 1 se cerró exitosamente con 35 puntos completados (HU-01 a HU-10).
 | HU-10 | Traslado y parámetros | ✅ Terminado |
 
 **Impedimentos Resueltos:**
-- El JWT ahora rechaza correctamente tokens expirados (solucionado por Edward).
+- El JWT ahora rechaza correctamente tokens expirados (solucionado por Brianna).
 - Incompatibilidad de Supabase RLS resuelta desactivando temporalmente en desarrollo (Jack investigará reglas definitivas).
 
 ## 2. Planificación del Sprint 2
@@ -37,10 +37,10 @@ El objetivo principal es lograr que el motor OR-Tools genere horarios institucio
 | HU-11 | Restricciones duras D1–D9 en OR-Tools | Alberto Patiño | 8 | 🔴 Crítico |
 | HU-12 | Ejecución y resultado generación horario | Alberto Patiño | 5 | 🟠 Alto |
 | HU-13 | Activación/cancelación horario | Andre De La Torre | 3 | 🟢 Bajo |
-| HU-14 | Ajuste manual asignaciones | Edward Flores | 5 | 🟠 Alto |
+| HU-14 | Ajuste manual asignaciones | Brianna Cortez | 5 | 🟠 Alto |
 | HU-15 | Restricciones blandas B1–B5 | Alberto Patiño | 5 | 🟠 Alto |
-| HU-16 | Vista horario por docente | Edward Flores | 5 | 🟡 Medio |
-| HU-17 | Consulta horario por el docente | Edward Flores | 3 | 🟢 Bajo |
+| HU-16 | Vista horario por docente | Brianna Cortez | 5 | 🟡 Medio |
+| HU-17 | Consulta horario por el docente | Brianna Cortez | 3 | 🟢 Bajo |
 
 **Carga Total:** 34 Story Points.
 
@@ -49,8 +49,8 @@ El equipo acuerda unánimemente que la **HU-11 (Restricciones duras D1-D9)** es 
 
 ## 4. Acuerdos Tomados
 1. **Apoyo a Alberto:** Si Alberto enfrenta bloqueos matemáticos graves en CP-SAT después de 48 horas, Jack apoyará en la revisión de la documentación de Google OR-Tools. (Responsable: Jack Perez, Límite: 27/04).
-2. **Contrato de Interfaz:** Bryams y Edward acordarán el formato exacto del JSON del horario para iniciar el frontend (HU-14 y HU-16) con mocks, sin esperar a que el solver funcione. (Responsable: Edward/Bryams, Límite: 25/04).
-3. **Pair Programming:** Edward realizará pair programming con Andre para asegurar que la activación del horario (HU-13) se propague correctamente a las vistas.
+2. **Contrato de Interfaz:** Bryams y Brianna acordarán el formato exacto del JSON del horario para iniciar el frontend (HU-14 y HU-16) con mocks, sin esperar a que el solver funcione. (Responsable: Brianna/Bryams, Límite: 25/04).
+3. **Pair Programming:** Brianna realizará pair programming con Andre para asegurar que la activación del horario (HU-13) se propague correctamente a las vistas.
 
 ## 5. Próxima Reunión
 - **Daily Scrum:** 24/04/2026 a las 09:00 AM.

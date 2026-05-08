@@ -53,7 +53,7 @@ Descomposición lógica en módulos principales.
 
 - **Frontend:** React 18 + TypeScript — SPA con vistas de calendario, formularios de registro, matrícula e integración con API REST. *(Responsable: Bryams Vilchez)*
 - **Backend / API REST:** Express + Node.js — autenticación JWT, registro de entidades, validaciones de matrícula. *(Responsable: Andre De La Torre)*
-- **Microservicio CSP:** FastAPI + OR-Tools — motor de satisfacción de restricciones para generación de horarios. *(Responsable: Brianna Cortez)*
+- **Microservicio CSP:** FastAPI + OR-Tools — motor de satisfacción de restricciones para generación de horarios. *(Responsable: Edward Flores)*
 - **Base de datos:** Supabase con ORM Prisma.
 - **DevOps:** Docker Compose + GitHub Actions. *(Responsable: Jack Perez)*
 

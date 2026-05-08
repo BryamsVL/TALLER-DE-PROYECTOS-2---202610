@@ -15,10 +15,10 @@ El Sprint 2 se encuentra actualmente en curso. El equipo está trabajando fuerte
 | HU-11 | Restricciones duras D1–D9 en OR-Tools | Alberto Patiño | 8 | 🔄 En curso |
 | HU-12 | Ejecución y resultado generación horario | Alberto Patiño | 5 | 🔄 En curso |
 | HU-13 | Activación/cancelación horario | Andre De La Torre | 3 | 🔄 En curso |
-| HU-14 | Ajuste manual asignaciones | Edward Flores | 5 | 🔄 En curso |
+| HU-14 | Ajuste manual asignaciones | Brianna Cortez | 5 | 🔄 En curso |
 | HU-15 | Restricciones blandas B1–B5 | Alberto Patiño | 5 | ⬜ Pendiente |
-| HU-16 | Vista horario por docente | Edward Flores | 5 | 🔄 En curso |
-| HU-17 | Consulta horario por el docente | Edward Flores | 3 | ⬜ Pendiente |
+| HU-16 | Vista horario por docente | Brianna Cortez | 5 | 🔄 En curso |
+| HU-17 | Consulta horario por el docente | Brianna Cortez | 3 | ⬜ Pendiente |
 
 ## 3. Métricas del Sprint
 - **Puntos Planificados vs Completados:** 34 / 34 (100%).

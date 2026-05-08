@@ -13,10 +13,10 @@ El Sprint 2 se encuentra en ejecución. El equipo está trabajando en dotar de "
 | HU-11 (CSP Duras) | Alberto Patiño | 🔄 En curso | 8 |
 | HU-12 (Ejecución CSP) | Alberto Patiño | 🔄 En curso | 5 |
 | HU-13 (Activar Horario) | Andre De La Torre | 🔄 En curso | 3 |
-| HU-14 (Ajuste manual) | Edward Flores | 🔄 En curso | 5 |
+| HU-14 (Ajuste manual) | Brianna Cortez | 🔄 En curso | 5 |
 | HU-15 (CSP Blandas) | Alberto Patiño | ⬜ Pendiente | 5 |
-| HU-16 (Vista Horario) | Edward Flores | 🔄 En curso | 5 |
-| HU-17 (Consulta Docente) | Edward Flores | ⬜ Pendiente | 3 |
+| HU-16 (Vista Horario) | Brianna Cortez | 🔄 En curso | 5 |
+| HU-17 (Consulta Docente) | Brianna Cortez | ⬜ Pendiente | 3 |
 
 ## 3. ¿Qué salió bien?
 1. **Modelado CSP Impecable:** Alberto logró traducir exitosamente las reglas D1-D9 al modelo booleano de CP-SAT.
@@ -35,7 +35,7 @@ El Sprint 2 se encuentra en ejecución. El equipo está trabajando en dotar de "
 |---|---|---|
 | Compartir conocimiento del modelo CP-SAT con el resto del equipo backend. | Alberto Patiño | 09/05/2026 |
 | Implementar memoización (`useMemo`, `React.memo`) en los componentes de las grillas. | Bryams Vilchez | 10/05/2026 |
-| Usar un endpoint optimizado (bulk) para la re-validación de cruces de la HU-14. | Edward Flores | 12/05/2026 |
+| Usar un endpoint optimizado (bulk) para la re-validación de cruces de la HU-14. | Brianna Cortez | 12/05/2026 |
 
 ## 6. Comparación de Velocidad S1 vs S2
 - **Sprint 1:** 35 pts (CRUDs y Auth, alta cantidad de tareas de baja complejidad).

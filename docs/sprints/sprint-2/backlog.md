@@ -26,7 +26,7 @@
 
 ## HU-14: Ajuste Manual de Asignaciones
 **Historia:** Como administrador, quiero modificar manualmente las asignaciones del horario institucional en estado BORRADOR.  
-**Pts:** 5 | **Responsable:** Edward Flores | **Estado:** 🔄 En curso
+**Pts:** 5 | **Responsable:** Brianna Cortez | **Estado:** 🔄 En curso
 
 ---
 
@@ -38,13 +38,13 @@
 
 ## HU-16: Generación de Vista de Horario por Docente
 **Historia:** Como administrador, quiero generar las vistas individuales de horario para cada docente a partir del horario activo.  
-**Pts:** 5 | **Responsable:** Edward Flores | **Estado:** 🔄 En curso
+**Pts:** 5 | **Responsable:** Brianna Cortez | **Estado:** 🔄 En curso
 
 ---
 
 ## HU-17: Consulta de Horario por el Docente
 **Historia:** Como docente, quiero consultar mi horario asignado para el período activo y verificar mis asignaciones.  
-**Pts:** 3 | **Responsable:** Edward Flores | **Estado:** ⬜ Pendiente
+**Pts:** 3 | **Responsable:** Brianna Cortez | **Estado:** ⬜ Pendiente
 
 ---
 

@@ -6,10 +6,10 @@
 
 ## 1. Capacidad del Equipo
 El sprint dura 2 semanas (10 días hábiles).
-- Brianna Cortez (PO): 25 horas.
+- Edward Flores (PO): 25 horas.
 - Andre De La Torre (SM): 20 horas.
 - Alberto Patiño (Dev): 25 horas.
-- Edward Flores (Dev): 25 horas.
+- Brianna Cortez (Dev): 25 horas.
 - Bryams Vilchez (Dev): 40 horas.
 - Jack Perez (Dev QA): 25 horas.
 
@@ -53,13 +53,13 @@ Para que el Sprint 3 inicie sin bloqueos, las siguientes piezas del Sprint 2 son
 | Bryams | HU-23 | 5 pts | UI de Grillas Interactiva |
 | Jack | HU-24, HU-25, HU-26 | 11 pts | Exportación y Ciberseguridad |
 
-*(Edward y Andre darán soporte cruzado a Alberto debido a su carga crítica de 26 puntos).*
+*(Brianna y Andre darán soporte cruzado a Alberto debido a su carga crítica de 26 puntos).*
 
 ## 5. Riesgos Específicos del Sprint 3
 
 | Riesgo | Probabilidad | Impacto | Estrategia |
 |---|---|---|---|
-| Sobrecarga de Alberto (26 pts) | Alta | Crítico | Edward tomará desarrollo de APIs menores (HU-22) para aliviarlo. |
+| Sobrecarga de Alberto (26 pts) | Alta | Crítico | Brianna tomará desarrollo de APIs menores (HU-22) para aliviarlo. |
 | Librerías PDF pesadas rompen build | Media | Medio | Evaluar alternativas nativas si `react-pdf` da problemas en Vite. |
 | Falsos positivos en análisis OWASP | Alta | Bajo | Jack configurará exclusiones correctas en ZAP. |
 

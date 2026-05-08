@@ -8,19 +8,19 @@
 
 ## HU-01: Registro de Usuarios
 **Historia:** Como administrador, quiero registrar usuarios con roles para controlar el acceso al sistema.  
-**Pts:** 3 | **Responsable:** Edward Flores | **Estado:** ✅ Terminado
+**Pts:** 3 | **Responsable:** Brianna Cortez | **Estado:** ✅ Terminado
 
 ---
 
 ## HU-02: Inicio de Sesión
 **Historia:** Como usuario registrado, quiero iniciar sesión con mis credenciales para acceder a las funcionalidades.  
-**Pts:** 5 | **Responsable:** Edward Flores | **Estado:** ✅ Terminado
+**Pts:** 5 | **Responsable:** Brianna Cortez | **Estado:** ✅ Terminado
 
 ---
 
 ## HU-03: Control de Acceso por Rol
 **Historia:** Como sistema, quiero restringir el acceso a cada endpoint según el rol del usuario autenticado.  
-**Pts:** 3 | **Responsable:** Edward Flores | **Estado:** ✅ Terminado
+**Pts:** 3 | **Responsable:** Brianna Cortez | **Estado:** ✅ Terminado
 
 ---
 
@@ -38,7 +38,7 @@
 
 ## HU-06: Gestión de Disponibilidad de Docentes
 **Historia:** Como administrador, quiero registrar y actualizar la disponibilidad horaria semanal de cada docente.  
-**Pts:** 5 | **Responsable:** Edward Flores | **Estado:** ✅ Terminado
+**Pts:** 5 | **Responsable:** Brianna Cortez | **Estado:** ✅ Terminado
 
 ---
 

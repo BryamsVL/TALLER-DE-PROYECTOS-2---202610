@@ -29,12 +29,12 @@ El proyecto está dividido en 7 Épicas y 3 Sprints.
 
 | Epic | ID | Historia de Usuario | Estado Jira | Puntos | Responsable |
 |---|---|---|---|---|---|
-| EP-02 | HU-01 | Registro de Usuarios | ✅ Done | 3 | Edward Flores |
-| EP-02 | HU-02 | Inicio de Sesión | ✅ Done | 5 | Edward Flores |
-| EP-02 | HU-03 | Control de Acceso por Rol | ✅ Done | 3 | Edward Flores |
+| EP-02 | HU-01 | Registro de Usuarios | ✅ Done | 3 | Brianna Cortez |
+| EP-02 | HU-02 | Inicio de Sesión | ✅ Done | 5 | Brianna Cortez |
+| EP-02 | HU-03 | Control de Acceso por Rol | ✅ Done | 3 | Brianna Cortez |
 | EP-01 | HU-04 | Gestión de Estudiantes | ✅ Done | 3 | Alberto Patiño |
 | EP-01 | HU-05 | Gestión de Docentes | ✅ Done | 3 | Alberto Patiño |
-| EP-01 | HU-06 | Gestión de Disponibilidad de Docentes | ✅ Done | 5 | Edward Flores |
+| EP-01 | HU-06 | Gestión de Disponibilidad de Docentes | ✅ Done | 5 | Brianna Cortez |
 | EP-01 | HU-07 | Gestión de Cursos y Componentes | ✅ Done | 5 | Alberto Patiño |
 | EP-01 | HU-08 | Gestión de Aulas | ✅ Done | 3 | Alberto Patiño |
 | EP-03 | HU-09 | Configuración de Franjas Horarias | ✅ Done | 3 | Andre De La Torre |
@@ -53,10 +53,10 @@ El proyecto está dividido en 7 Épicas y 3 Sprints.
 | EP-04 | HU-11 | Modelado de Restricciones Duras en OR-Tools | 🔄 In Progress | 8 | Alberto Patiño |
 | EP-04 | HU-12 | Ejecución y Resultado de la Generación | 🔄 In Progress | 5 | Alberto Patiño |
 | EP-04 | HU-13 | Activación y Cancelación del Horario Institucional | 🔄 In Progress | 3 | Andre De La Torre |
-| EP-04 | HU-14 | Ajuste Manual de Asignaciones | 🔄 In Progress | 5 | Edward Flores |
+| EP-04 | HU-14 | Ajuste Manual de Asignaciones | 🔄 In Progress | 5 | Brianna Cortez |
 | EP-04 | HU-15 | Restricciones Blandas y Puntuación del Horario | ⬜ To Do | 5 | Alberto Patiño |
-| EP-05 | HU-16 | Generación de Vista de Horario por Docente | 🔄 In Progress | 5 | Edward Flores |
-| EP-05 | HU-17 | Consulta de Horario por el Docente | ⬜ To Do | 3 | Edward Flores |
+| EP-05 | HU-16 | Generación de Vista de Horario por Docente | 🔄 In Progress | 5 | Brianna Cortez |
+| EP-05 | HU-17 | Consulta de Horario por el Docente | ⬜ To Do | 3 | Brianna Cortez |
 
 **Total Puntos Sprint 2:** 34 pts
 
@@ -72,7 +72,7 @@ El proyecto está dividido en 7 Épicas y 3 Sprints.
 | EP-06 | HU-19 | Control de Carga Académica del Estudiante | ⬜ To Do | 5 | Alberto Patiño |
 | EP-06 | HU-20 | Generación Automática del Horario de Estudiantes | ⬜ To Do | 8 | Alberto Patiño |
 | EP-06 | HU-21 | Atomicidad de Cursos Compuestos | ⬜ To Do | 5 | Alberto Patiño |
-| EP-06 | HU-22 | Consulta de Horario por el Estudiante | ⬜ To Do | 3 | Edward Flores |
+| EP-06 | HU-22 | Consulta de Horario por el Estudiante | ⬜ To Do | 3 | Brianna Cortez |
 | EP-07 | HU-23 | Grilla Semanal de Horario | ⬜ To Do | 5 | Bryams Vilchez |
 | EP-07 | HU-24 | Exportación del Horario en PDF | ⬜ To Do | 3 | Bryams Vilchez |
 | EP-07 | HU-25 | Exportación del Horario en Excel | ⬜ To Do | 3 | Bryams Vilchez |
@@ -101,8 +101,8 @@ Cualquier desviación de tiempo en HU-11 impactará en cadena a todo el Sprint 3
 ## Carga por Integrante (Estimación Global)
 
 - **Alberto Patiño (Backend/CSP):** 45 pts (Mayormente concentrado en solver matemático S2/S3)
-- **Edward Flores (Backend/Auth):** 32 pts (Autenticación y endpoints)
+- **Brianna Cortez (Backend/Auth):** 32 pts (Autenticación y endpoints)
 - **Bryams Vilchez (Frontend):** 11 pts (UI/Grillas y exportación)
 - **Andre De La Torre (Scrum Master):** 8 pts (Apoyo backend + franjas)
 - **Jack Perez (QA/DevOps):** 5 pts (Seguridad OWASP + Testing)
-- **Brianna Cortez (PO):** Validación y levantamiento de backlog (No asignada a HUs técnicas)
+- **Edward Flores (PO):** Validación y levantamiento de backlog (No asignada a HUs técnicas)

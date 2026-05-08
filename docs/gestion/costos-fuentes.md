@@ -12,10 +12,10 @@ Costos asociados al equipo Scrum durante los 3 sprints (6 semanas). Se estima un
 
 | Rol Scrum | Integrante | Horas S1 | Horas S2 | Horas S3 | Total Horas | Costo/hora (S/) | Total (S/) |
 |---|---|---|---|---|---|---|---|
-| Product Owner | Brianna Cortez | 20 | 20 | 25 | 65 | 15 | 975 |
+| Product Owner | Edward Flores | 20 | 20 | 25 | 65 | 15 | 975 |
 | Scrum Master | Andre De La Torre | 20 | 20 | 20 | 60 | 15 | 900 |
 | Dev — Backend/CSP | Alberto Patiño | 25 | 40 | 25 | 90 | 18 | 1,620 |
-| Dev — Backend/Auth | Edward Flores | 25 | 25 | 25 | 75 | 18 | 1,350 |
+| Dev — Backend/Auth | Brianna Cortez | 25 | 25 | 25 | 75 | 18 | 1,350 |
 | Dev — Frontend/UI | Bryams Vilchez | 20 | 25 | 40 | 85 | 18 | 1,530 |
 | Dev — QA/DevOps | Jack Perez | 20 | 20 | 25 | 65 | 15 | 975 |
 | **SUBTOTAL RRHH** | | **130** | **150** | **160** | **440** | | **7,350** |

@@ -98,9 +98,9 @@ El equipo consta de 6 integrantes.
 | Integrante | Rol | Asignación Principal (S2-S3) | Nivel de Riesgo/Carga |
 |---|---|---|---|
 | **Alberto Patiño** | Dev CSP/Backend | HU-11, HU-15, HU-18 | 🔴 Alta (Lidera el desarrollo del Solver) |
-| **Brianna Cortez** | Product Owner | HU-12, Documentación | 🟡 Media |
+| **Edward Flores** | Product Owner | HU-12, Documentación | 🟡 Media |
 | **Andre De La Torre** | Scrum Master / Dev | HU-13, Infraestructura | 🟢 Baja |
-| **Edward Flores** | Dev Backend / Auth | HU-14, HU-16 | 🟡 Media |
+| **Brianna Cortez** | Dev Backend / Auth | HU-14, HU-16 | 🟡 Media |
 | **Bryams Vilchez** | Dev Frontend / UI | HU-23, Grillas, HU-24 | 🔴 Alta (Todo el Frontend de UI visual) |
 | **Jack Perez** | Dev QA / DevOps | HU-26 (OWASP), CI/CD, Reportes | 🟡 Media |
 

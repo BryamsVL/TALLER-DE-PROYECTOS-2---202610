@@ -257,10 +257,10 @@ Toda la documentación está estructurada bajo metodologías ágiles y **Spec-Dr
 
 | Rol | Integrante | Responsabilidad Clave |
 |---|---|---|
-| **Product Owner** | Brianna Cortez Ponce | Validación funcional y Backlog. |
+| **Product Owner** | Edward Flores Rodriguez | Validación funcional y Backlog. |
 | **Scrum Master** | Andre De La Torre Segura | Remoción de impedimentos, métricas. |
 | **Dev CSP/Backend** | Alberto Patiño Reynoso | Algoritmo OR-Tools y matemáticas complejas. |
-| **Dev Backend/Auth**| Edward Flores Rodriguez| Middlewares, Express, Seguridad. |
+| **Dev Backend/Auth**| Brianna Cortez Ponce| Middlewares, Express, Seguridad. |
 | **Dev Frontend/UI** | Bryams Vilchez Lazaro | SPA React, interfaces drag & drop. |
 | **Dev QA/DevOps** | Jack Perez Lizarbe | CI/CD, automatización Docker, reportes. |
 
