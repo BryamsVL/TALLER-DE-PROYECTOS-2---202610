@@ -137,7 +137,7 @@
 **Priorización:** Crítica (Valor 5, Riesgo 5, Complejidad 5)
 **Relación CSP:** NÚCLEO CSP (D1, D2, D3, D4).
 
-#### HU-12 — Ejecución del Horario Institucional
+#### HU-12 Ejecución y resultado del horario institucional
 **Historia:** Como administrador, quiero ejecutar la generación automática del horario institucional y recibir el resultado (solución completa o reporte de conflictos) para decidir si activarlo o ajustarlo.
 **Criterios de aceptación:** 
 - 1. El endpoint de generación ejecuta el solver de OR-Tools con los datos del período activo.
@@ -148,30 +148,34 @@
 **Priorización:** Crítica (Valor 5, Riesgo 5, Complejidad 4)
 **Relación CSP:** Función Objetivo y Exploración.
 
-#### HU-13 — Activación de Horario
-**Historia:** Como administrador, quiero aprobar un horario generado.
-**Criterios de aceptación:** 
-- 1. Transición de estado bloquea cualquier regeneración algorítmica posterior.
-- 2. Registra log de auditoría con fecha y usuario que aprobó el horario.
-- 3. Habilita visibilidad del horario para consultas de estudiantes y docentes.
+#### HU-13 Activación y cancelación del horario institucional
+**Historia:** Como administrador, quiero activar o cancelar el horario institucional en estado BORRADOR para controlar qué horario queda disponible como base para las etapas siguientes.** 
+- 1. El endpoint de activación verifica cero solapamientos en el BORRADOR antes de cambiar el estado a ACTIVO.
+- 2. Un horario ACTIVO no puede modificarse directamente; debe cancelarse primero.
+- 3. Al cancelar un horario ACTIVO, todos los recursos quedan liberados para nueva asignación.
+- 4. La Etapa 2 no puede iniciarse sin un horario institucional en estado ACTIVO; retorna error descriptivo.
+- 5. Las operaciones de activación y cancelación son transaccionales (commit completo o rollback).
 **Priorización:** Media (Valor 3, Riesgo 1, Complejidad 2)
 **Relación CSP:** N/A (Flujo transaccional).
 
-#### HU-14 — Ajuste Manual de Asignaciones
-**Historia:** Como administrador, quiero mover manualmente una clase si el CSP la puso en un lugar indeseado pero factible.
+#### HU-14 — HU-14 Ajuste manual de asignaciones
+**Historia:** Como administrador, quiero modificar manualmente las asignaciones del horario institucional en estado BORRADOR y recibir validación en tiempo real para corregir conflictos antes de activarlo.
 **Criterios de aceptación:** 
-- 1. Interfaz permite Drag & Drop de un bloque de clase hacia otra celda.
-- 2. Backend valida en tiempo real si el destino viola la unicidad D1 o D2.
-- 3. Retorna HTTP 422 Unprocessable Entity si se intenta un movimiento que genera cruce.
+- 1.  El sistema permite reasignar un componente seleccionando una nueva combinación de docente, aula y franja.
+- 2. La validación de solapamientos se produce en <= 1 segundo tras la acción del Administrador.
+. Si la nueva combinación produce solapamiento, el sistema rechaza el cambio e indica el recurso en conflicto y la franja afectada.
+- 3. Los cambios válidos se persisten en el BORRADOR sin afectar ningún horario ACTIVO.
+- 4. Solo se pueden ajustar horarios en estado BORRADOR; los ACTIVOS retornan error 409.
 **Priorización:** Alta (Valor 4, Riesgo 3, Complejidad 4)
 **Relación CSP:** Validación heurística post-solver.
 
-#### HU-15 — Restricciones Blandas y Puntuación
-**Historia:** Como sistema, quiero optimizar el horario (B1-B5) minimizando huecos de docentes.
-**Criterios de aceptación:** 
-- 1. Integra matriz de preferencias de turno de docentes.
-- 2. El solver implementa `model.Maximize()` sobre las variables de confort.
-- 3. La ejecución con restricciones blandas respeta el mismo timeout de 30s.
+#### HU-15 — Restricciones blandas y puntuación del horario
+**Historia:** Como administrador, quiero que el motor OR-Tools optimice el horario generado según criterios de calidad (restricciones blandas) para obtener una distribución más eficiente de recursos además de satisfacer las restricciones obligatorias.** 
+- 1. El solver intenta minimizar huecos entre clases (B1), carga consecutiva del docente (B2) y concentración de bloques en un solo día (B3).
+- 2. El solver prefiere aulas con capacidad cercana a la matrícula real del curso (B4).
+. El solver prefiere asignar TEORÍA y PRÁCTICA en días distintos (B5).
+- 3. Las restricciones blandas solo se optimizan si las duras ya están satisfechas.
+- 4.  El horario generado incluye una puntuación interna que refleja el grado de cumplimiento de las restricciones blandas.
 **Priorización:** Baja (Valor 3, Riesgo 4, Complejidad 5)
 **Relación CSP:** Soft Constraints y Variables de Penalización.
 
@@ -179,21 +183,23 @@
 
 ### EP-05 — Generación de Horario de Docentes
 
-#### HU-16 — Generación de Vista de Docentes
-**Historia:** Como administrador, quiero segmentar el horario total para cada docente.
-**Criterios de aceptación:** 
-- 1. Filtra las asignaciones maestras por `teacher_id`.
-- 2. Devuelve JSON estructurado por días de la semana y horas ordenadas.
-- 3. Latencia del endpoint menor a 300ms (con uso de índices).
+#### HU-16 — Generación de vista de horario por docente
+**Historia:** Como administrador, quiero generar las vistas individuales de horario para cada docente a partir del horario institucional activo para que cada profesor pueda consultar sus asignaciones del período.** 
+- 1. La Etapa 2 solo puede ejecutarse sobre un horario institucional en estado ACTIVO; retorna error descriptivo en caso contrario.
+- 2. La vista de cada docente incluye: nombre del curso, tipo de componente, aula, franja y día.
+. La vista se genera en <= 5 segundos por docente.
+- 3. LEl indicador de carga horaria semanal muestra el total de horas asignadas por día.
+- 4. Si un docente supera 4 horas consecutivas, se emite la alerta de carga excesiva (B2).
 **Priorización:** Media (Valor 3, Riesgo 2, Complejidad 2)
 **Relación CSP:** Parseo de resultados del Solver.
 
-#### HU-17 — Consulta de Horario por Docente
-**Historia:** Como docente, quiero ver mi horario y confirmar que no hay cruces.
-**Criterios de aceptación:** 
-- 1. UI dibuja bloques de colores diferenciados por componente (T/P).
-- 2. Tooltip o tarjeta muestra el aula y pabellón asignado.
-- 3. Componente 100% responsivo para visualización en móviles.
+#### HU-17 —  Consulta de horario por el docente
+**Historia:** Como docente, quiero consultar mi horario asignado para el período activo y verificar que no existen solapamientos ni conflictos en mis asignaciones.** 
+- 1. El docente autenticado puede consultar únicamente su propio horario; intentar acceder al de otro docente retorna error 403.
+- 2. La vista muestra todos los componentes asignados con: curso, componente, aula, franja y día.
+- 3. La vista indica el total de horas semanales asignadas.
+- 4. Si existe alerta de carga excesiva, se muestra de forma visible en la respuesta.
+- 5. La consulta retorna en <= 3 segundos.
 **Priorización:** Alta (Valor 5, Riesgo 1, Complejidad 2)
 **Relación CSP:** N/A.
 
@@ -203,48 +209,51 @@
 
 ### EP-06 — Generación de Horario de Estudiantes
 
-#### HU-18 — Validación de Prerrequisitos
-**Historia:** Como sistema, quiero evitar matricular a estudiantes en cursos no aptos.
-**Criterios de aceptación:** 
-- 1. Verifica historial de notas aprobadas antes de confirmar la canasta.
-- 2. Retorna HTTP 409 si el alumno no cuenta con el prerrequisito exigido.
-- 3. El mensaje de error detalla exactamente qué curso previo le falta.
+#### HU-18 — Validación de prerrequisitos y corequisitos
+**Historia:** Como sistema, quiero validar automáticamente los prerrequisitos y corequisitos de cada curso antes de asignarlo al estudiante para garantizar que las inscripciones cumplan el plan de estudios.** 
+- 1. Para cada curso candidato, el sistema verifica que todos sus prerrequisitos figuren en el historial aprobado del estudiante (D12).
+- 2. Los cursos que no cumplen prerrequisitos son excluidos con notificación que indica exactamente qué prerrequisito falta.
+- 3. Los corequisitos se validan como grupo: si un curso del grupo no puede asignarse, todos quedan excluidos (D18).
+- 4. La validación se ejecuta antes de invocar el solver OR-Tools de la Etapa 3.
 **Priorización:** Crítica (Valor 5, Riesgo 4, Complejidad 4)
 **Relación CSP:** Restricción de Dominio Estudiantil.
 
-#### HU-19 — Control de Carga (20-22)
-**Historia:** Como sistema, quiero asegurar que el alumno lleve entre 20 y 22 créditos.
-**Criterios de aceptación:** 
-- 1. Acumulador suma dinámicamente los créditos en la interfaz.
-- 2. Backend bloquea confirmación de matrícula si la suma < 20 o > 22.
-- 3. Excepciones de carga (sobrecréditos) requieren bandera de override de administrador.
+#### HU-19 — Control de carga académica del estudiante
+**Historia:** Como sistema, quiero controlar simultáneamente los créditos totales y las horas semanales acumuladas del estudiante durante la generación de su horario para prevenir la sobrecarga académica.** 
+- 1.  La suma de créditos de los cursos asignados no puede superar el límite del estudiante ni el del período (D13).
+- 2. La suma de horas semanales de los cursos asignados no puede superar el límite del estudiante (D14).
+- 3. Si agregar un curso supera el límite de créditos, el sistema muestra: créditos actuales + créditos del curso vs. límite.
+- 4. Si agregar un curso supera el límite de horas, el sistema muestra: horas actuales + horas del curso vs. límite.
+- 5. Ambos controles operan de forma independiente; superar cualquiera de los dos bloquea la asignación.
 **Priorización:** Alta (Valor 4, Riesgo 3, Complejidad 3)
 **Relación CSP:** Restricción D5 (Límite Créditos).
 
-#### HU-20 — Horario Automático Estudiantes
-**Historia:** Como estudiante, quiero que el sistema elija las secciones óptimas para mí.
-**Criterios de aceptación:** 
-- 1. El motor evalúa secciones disponibles sin generar cruces con lo ya elegido.
-- 2. Retorna las mejores combinaciones posibles balanceando días libres.
-- 3. Considera tiempos de traslado (HU-10) entre clases consecutivas.
+#### HU-20 — Generación automática del horario de estudiantes
+**Historia:** Como administrador o estudiante, quiero ejecutar la generación automática del horario individual del estudiante para obtener la selección óptima de cursos disponibles respetando todas las restricciones de la Etapa 3.** 
+- 1. La Etapa 3 solo puede ejecutarse con un horario institucional en estado ACTIVO; retorna error descriptivo en caso contrario (EA-12).
+. El horario del estudiante se genera en <= 5 segundos.
+- 2. El resultado incluye: cursos asignados, componentes, aulas, franjas, créditos totales y horas semanales totales.
+- 3. Si no existen opciones en el turno preferido del estudiante, el sistema asigna en turno adyacente y emite TURNO_ALTERNATIVO (D16).
+- 4. Para cada curso no asignable, el sistema indica la causa específica: sin vacantes, prerrequisito pendiente, límite de créditos, límite de horas, sin oferta en turno.
 **Priorización:** Alta (Valor 4, Riesgo 4, Complejidad 5)
 **Relación CSP:** Mini-CSP Estudiantil (Optimización individual).
 
-#### HU-21 — Atomicidad de Cursos
-**Historia:** Como sistema, quiero que Teoría y Práctica del mismo curso no se dividan.
-**Criterios de aceptación:** 
-- 1. Si se elige Teoría, exige seleccionar la Práctica correspondiente del mismo código.
-- 2. Retorna HTTP 400 Bad Request si el payload omite uno de los componentes obligatorios.
-- 3. UI bloquea deseleccionar un componente si el otro sigue marcado.
+#### HU-21 — Atomicidad de cursos compuestos (estudiante)
+**Historia:** Como sistema, quiero garantizar que los cursos con componentes TEORÍA + PRÁCTICA se asignen de forma completa o no se asignen en absoluto para que el estudiante nunca quede con solo una parte de un curso compuesto.** 
+- 1. Si el componente TEORÍA de un curso puede asignarse pero el de PRÁCTICA no (o viceversa), ninguno de los dos se asigna (D17).
+- 2. El sistema notifica al estudiante que el curso no pudo asignarse de forma completa, indicando qué componente presentó el conflicto.
+- 3. Un curso compuesto parcialmente asignable no reduce el total de créditos del estudiante.
+- 4. El solver libera los recursos reservados para el componente que sí tenía asignación provisional.
 **Priorización:** Alta (Valor 4, Riesgo 3, Complejidad 4)
 **Relación CSP:** Restricción D8 (Co-requisitos paralelos).
 
-#### HU-22 — Consulta de Horario Alumno
-**Historia:** Como estudiante, quiero ver mis clases aprobadas.
-**Criterios de aceptación:** 
-- 1. Renderiza componentes inscritos con estado visual (Confirmado / Pendiente).
-- 2. Opción de imprimir o exportar versión preliminar.
-- 3. Tiempo de renderizado inicial de la grilla menor a 1 segundo.
+#### HU-22 — Consulta de horario por el estudiante
+**Historia:** Como estudiante, quiero consultar mi horario generado para el período activo y conocer el detalle de cada curso asignado, incluyendo el componente, el docente, el aula y la franja.** 
+- 1. l estudiante autenticado puede consultar únicamente su propio horario; acceder al de otro estudiante retorna error 403.
+- 2. La respuesta incluye por cada curso asignado: nombre del curso, tipo de componente, docente, aula, franja y día.
+- 3. La respuesta incluye el resumen de carga académica: créditos totales y horas semanales acumuladas vs. límites.
+- 4. Si el horario contiene cursos en turno alternativo, el indicador TURNO_ALTERNATIVO se muestra de forma visible.
+- 5. La consulta retorna en <= 3 segundos.
 **Priorización:** Media (Valor 4, Riesgo 1, Complejidad 2)
 **Relación CSP:** N/A.
 
@@ -252,38 +261,42 @@
 
 ### EP-07 — Visualización y Exportación
 
-#### HU-23 — Grilla Semanal
-**Historia:** Como usuario, quiero ver mi horario en grilla (L-S).
-**Criterios de aceptación:** 
-- 1. Componente React renderiza estructura de tabla 6x14 horas.
-- 2. Incorpora tooltips interactivos con detalle de docente y pabellón.
-- 3. Incluye filtros rápidos por día de la semana y turno (Mañana/Tarde).
+#### HU-23 — Grilla semanal de horario
+**Historia:** Como usuario (administrador, docente o estudiante), quiero visualizar mi horario en formato de grilla semanal (días x franjas) para tener una vista clara y ordenada de mis asignaciones del período.** 
+- 1. La grilla muestra las columnas por día de la semana y las filas por franja horaria.
+. Cada celda ocupada muestra: nombre del curso, tipo de componente, docente asignado y aula.
+- 2. IEl Administrador visualiza el horario institucional completo; el Docente y el Estudiante visualizan únicamente sus asignaciones propias.
+- 3. La grilla carga completamente en <= 3 segundos.
+- 4. No se producen solapamientos visuales: dos asignaciones en la misma celda indican un error de datos que debe reportarse.
 **Priorización:** Alta (Valor 5, Riesgo 3, Complejidad 4)
 **Relación CSP:** N/A.
 
-#### HU-24 — Exportación PDF
-**Historia:** Como usuario, quiero descargar mi horario en PDF.
+#### HU-24 — Exportación del horario en PDF
+**Historia:** Como usuario (administrador, docente o estudiante), quiero exportar mi horario en formato PDF para tener una copia imprimible o compartible con todos los datos de la grilla.
 **Criterios de aceptación:** 
-- 1. El documento incluye cabecera con datos del alumno/docente y logo institucional.
-- 2. Usa formato A4 apaisado para asegurar que la tabla semanal no se corte.
-- 3. La descarga y generación toma menos de 3 segundos.
+- 1. El archivo PDF contiene todos los campos visibles en la grilla: nombre del curso, componente, docente, aula, día y franja.
+- 2. El PDF incluye el nombre del usuario, el período académico y la fecha de exportación en el encabezado.
+- 3. La descarga se completa en <= 30 segundos.
+- 4. Solo se puede exportar el horario propio; intentar exportar el de otro usuario retorna error 403.
 **Priorización:** Baja (Valor 3, Riesgo 2, Complejidad 3)
 **Relación CSP:** N/A.
 
-#### HU-25 — Exportación Excel
-**Historia:** Como usuario, quiero mi horario en XLSX.
-**Criterios de aceptación:** 
-- 1. Las columnas son días de la semana y las filas franjas horarias.
-- 2. La primera fila (cabecera) está congelada en el archivo resultante.
-- 3. Auto-ajusta el ancho de celda para legibilidad del curso.
+#### HU-25 — Exportación del horario en Excel
+**Historia:** Como usuario (administrador, docente o estudiante), quiero exportar mi horario en formato Excel para poder manipular los datos o compartirlos en un formato editable.** 
+- 1. El archivo Excel contiene todos los campos visibles en la grilla en hojas organizadas por día o en una hoja única con columna de día.
+- 2. La descarga se completa en <= 30 segundos.
+- 3. Solo se puede exportar el horario propio; intentar exportar el de otro usuario retorna error 403.
+- 4. El archivo es abierto sin errores en Microsoft Excel y LibreOffice Calc.
 **Priorización:** Baja (Valor 3, Riesgo 2, Complejidad 2)
 **Relación CSP:** N/A.
 
-#### HU-26 — Seguridad OWASP
-**Historia:** Como sistema, quiero estar libre de inyecciones.
+#### HU-26 — HU-26 Protección ante vulnerabilidades OWASP
+**Historia:** Como sistema, quiero estar protegido contra las vulnerabilidades del OWASP Top 10 aplicables al PMV para garantizar la confidencialidad e integridad de los datos académicos.
 **Criterios de aceptación:** 
-- 1. Implementa Helmet y configuración estricta de CORS en el backend Node.
-- 2. Pasa análisis de código estático sin vulnerabilidades altas.
-- 3. Incorpora Rate Limiting en endpoints de autenticación para mitigar fuerza bruta.
+- 1. Todos los accesos a base de datos usan ORM o queries parametrizados (sin SQL Injection)..
+- 2. Todas las salidas de texto renderizadas en el frontend aplican escape de caracteres (sin XSS).
+- 3. Los endpoints de escritura implementan protección CSRF (token de sincronización o SameSite cookies).
+- 4. El sistema opera exclusivamente sobre HTTPS en el entorno de producción.
+- 5. Los datos sensibles (contraseñas, tokens) no se exponen en logs ni en respuestas de error.
 **Priorización:** Crítica (Valor 5, Riesgo 5, Complejidad 3)
 **Relación CSP:** N/A.
