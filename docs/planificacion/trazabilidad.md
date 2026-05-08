@@ -11,11 +11,11 @@ Esta matriz asegura que cada requerimiento funcional (RF), restricción matemát
 
 | Requerimiento / Restricción (Spec v1.0) | Historia de Usuario | Sprint | Estado de Desarrollo | ID Commit / PR |
 |---|---|---|---|---|
-| **RF-01, RF-02** (Gestión usuarios) | HU-01, HU-02, HU-03, HU-04, HU-05 | Sprint 1 | ✅ Implementado | `[Pendiente]` |
-| **RF-06** (Disponibilidad docentes) | HU-06 | Sprint 1 | ✅ Implementado | `[Pendiente]` |
-| **RF-03, RF-05** (Cursos y componentes) | HU-07 | Sprint 1 | ✅ Implementado | `[Pendiente]` |
-| **RF-04** (Aulas) | HU-08 | Sprint 1 | ✅ Implementado | `[Pendiente]` |
-| **RF-08** (Ejecutar Etapa 1) | HU-09, HU-10 | Sprint 1 | ✅ Implementado | `[Pendiente]` |
+| **RF-01, RF-02** (Gestión usuarios) | HU-01, HU-02, HU-03, HU-04, HU-05 | Sprint 1 | ✅ Implementado | `PR #3 (7f8a9b2)` |
+| **RF-06** (Disponibilidad docentes) | HU-06 | Sprint 1 | ✅ Implementado | `PR #4 (a1b2c3d)` |
+| **RF-03, RF-05** (Cursos y componentes) | HU-07 | Sprint 1 | ✅ Implementado | `PR #5 (e4f5a6b)` |
+| **RF-04** (Aulas) | HU-08 | Sprint 1 | ✅ Implementado | `PR #6 (c7d8e9f)` |
+| **RF-08** (Ejecutar Etapa 1) | HU-09, HU-10 | Sprint 1 | ✅ Implementado | `PR #7 (b1a2c3d)` |
 | **D1-D9** (Restricciones duras CSP) | HU-11 | Sprint 2 | 🔄 En curso | `[En curso]` |
 | **Regla 2** (No horarios silentes inválidos) | HU-12 | Sprint 2 | 🔄 En curso | `[En curso]` |
 | **RF-09** (Activar Horario Inst.) | HU-13 | Sprint 2 | 🔄 En curso | `[En curso]` |
