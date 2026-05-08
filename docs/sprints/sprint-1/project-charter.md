@@ -39,7 +39,7 @@ Diseñar e implementar una aplicación web inteligente que genere horarios acad�
 | OE1 | Analizar el problema identificando variables, restricciones y actores, modelándolo formalmente como CSP. | Documento de análisis CSP aprobado en Sprint 1. |
 | OE2 | Diseñar la arquitectura del sistema bajo estándares modernos de ingeniería de software. | Diagrama de arquitectura SPA + API REST validado por el equipo. |
 | OE3 | Implementar el motor CSP y los módulos funcionales del sistema. | Motor CSP funcional con cobertura de pruebas ≥ 70%. |
-| OE4 | Evaluar el impacto técnico, social, económico y ambiental de la solución. | Informe de impacto entregado en Sprint 4. |
+| OE4 | Evaluar el impacto técnico, social, económico y ambiental de la solución. | Informe de impacto entregado en Sprint 3. |
 | OE5 | Documentar todas las decisiones técnicas con justificación y trade-offs explícitos. | Informe de decisiones técnicas completo y revisado. |
 
 #### 3.3 Objetivos de alcance, tiempo y costo
@@ -62,7 +62,7 @@ Los siguientes requerimientos describen las capacidades principales que el siste
 | RAN-02 | Funcional | El sistema debe permitir el registro y autenticación de usuarios con 4 roles diferenciados mediante JWT, con tiempo de respuesta de login inferior a 500 ms en el percentil 95, implementado y verificable en Sprint 1. | Sprint 1 | Login funcional con JWT; pruebas de carga confirman P95 < 500 ms |
 | RAN-03 | Funcional | El sistema debe permitir la gestión de matrícula validando automáticamente prerrequisitos y controlando el rango de créditos (20–22) por ciclo, mostrando retroalimentación al usuario en menos de 2 segundos, con cobertura de pruebas ≥ 70% en Sprint 2. | Sprint 2 | Validación automática correcta en ≥ 98% de casos de prueba definidos |
 | RAN-04 | Funcional | El sistema debe ofrecer visualización interactiva de horarios en formato calendario semanal con carga inicial < 3 s en conexión estándar (10 Mbps), con exportación a PDF y Excel en menos de 5 segundos para hasta 50 cursos, implementado en Sprint 3. | Sprint 3 | Carga < 3 s y exportación < 5 s verificadas con prueba de rendimiento |
-| RAN-05 | No funcional | El sistema debe cumplir con OWASP Top 10 (2021), WCAG 2.1 nivel AA e ISO/IEC 25010, verificado mediante herramientas automatizadas (OWASP ZAP, axe-core) antes de la entrega final en Sprint 4. | Sprint 4 | 0 vulnerabilidades críticas en OWASP ZAP; 0 errores WCAG nivel A/AA en axe-core |
+| RAN-05 | No funcional | El sistema debe cumplir con OWASP Top 10 (2021), WCAG 2.1 nivel AA e ISO/IEC 25010, verificado mediante herramientas automatizadas (OWASP ZAP, axe-core) antes de la entrega final en Sprint 3. | Sprint 3 | 0 vulnerabilidades críticas en OWASP ZAP; 0 errores WCAG nivel A/AA en axe-core |
 | RAN-06 | No funcional | El motor CSP debe retornar una solución en un tiempo máximo de 30 segundos para instancias de hasta 50 cursos, 30 docentes y 20 aulas, en hardware estándar sin GPU (mínimo 4 GB RAM), medible mediante pruebas automatizadas. | Sprint 2–3 | Prueba de rendimiento automatizada con instancia de 50 cursos en entorno Docker |
 | RAN-07 | No funcional | La aplicación debe seguir principios de Green Software, reduciendo llamadas al motor CSP en al menos un 40% mediante caché de resultados (node-cache, TTL 24 h), medible comparando ejecuciones CSP con y sin caché en 100 consultas repetidas. | Sprint 3 | Logs de caché confirman reducción ≥ 40% de ejecuciones CSP en escenario de prueba |
 
@@ -79,8 +79,8 @@ Los siguientes requerimientos describen las capacidades principales que el siste
 | 5 | Motor CSP de generación de horarios | Sprint 2–3 | Implementación core | Pruebas exitosas |
 | 6 | Módulo de visualización y reportes | Sprint 3 | Implementación | Demo funcional |
 | 7 | Pruebas unitarias e integración (cobertura ≥ 70%) | Sprint 3–4 | Pruebas | Reporte cobertura |
-| 8 | Informe de decisiones técnicas e impacto | Sprint 4 | Documentación + Impacto | Revisión docente |
-| 9 | Video demostrativo del sistema completo | Sprint 4 | Comunicación | Entrega final |
+| 8 | Informe de decisiones técnicas e impacto | Sprint 3 | Documentación + Impacto | Revisión docente |
+| 9 | Video demostrativo del sistema completo | Sprint 3 | Comunicación | Entrega final |
 
 ---
 
