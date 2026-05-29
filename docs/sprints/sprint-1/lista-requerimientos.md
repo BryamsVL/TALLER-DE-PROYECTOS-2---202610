@@ -60,10 +60,3 @@ Los RF-04, RF-05 y RF-06 responden a la restricción de limite de creditos y pre
 Las entrevistas fueron registradas en video y están disponibles en el siguiente enlace:
 
 📁 [Carpeta de evidencias en Google Drive](https://drive.google.com/drive/folders/10NgtMOCTmdpwfpxIK3Uw4jOLN4Usxmlw?usp=sharing)
-
-| # | Entrevistado | Enlace directo |
-|---|-------------|----------------|
-| 1 | Entrevista stakeholder 1 | [Ver video](https://drive.google.com/file/d/1aga_-4RZi-pFoM5F7ORgoRgVjBBpwSUA/view?usp=sharing) |
-| 2 | Entrevista stakeholder 2 | [Ver video](https://drive.google.com/file/d/1zhzlnHvZTnkPZEfL-sMYwcSG0ZxsLYYZ/view?usp=sharing) |
-| 3 | Entrevista stakeholder 3 | [Ver video](https://drive.google.com/file/d/10yVG9tYZdUXh5mXEkqRvzHqLGasZVkxw/view?usp=sharing) |
-| 4 | Entrevista stakeholder 4 | [Ver video](https://drive.google.com/file/d/1VG20TiQaxVTDp_liFiwdxxHtuNTnGHcM/view?usp=sharing) |
