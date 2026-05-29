@@ -1,7 +1,3 @@
-Sí puede ir la evidencia, es buena práctica en un documento de requerimientos referenciar las fuentes. Va así:
-
----
-
 # 1 Requerimientos funcionales
 
 | ID | Módulo | Descripción SMART | Actor | Prioridad | Sprint | Criterio de Aceptación |
