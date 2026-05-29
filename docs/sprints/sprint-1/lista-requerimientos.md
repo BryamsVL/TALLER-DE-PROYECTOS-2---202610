@@ -1,3 +1,7 @@
+Sí puede ir la evidencia, es buena práctica en un documento de requerimientos referenciar las fuentes. Va así:
+
+---
+
 # 1 Requerimientos funcionales
 
 | ID | Módulo | Descripción SMART | Actor | Prioridad | Sprint | Criterio de Aceptación |
@@ -19,6 +23,7 @@
 | RF-15 | Administración | El sistema debe registrar en un log inmutable todas las acciones críticas con usuario, timestamp ISO 8601 y descripción, con integridad verificable mediante hash SHA-256. | Admin | Media | Sprint 4 | 100% de acciones críticas registradas; integridad del log verificada con hash SHA-256 en prueba |
 
 # 2 Requerimientos no funcionales
+
 | ID | Atributo | Descripción SMART + Métrica | Estándar | Prioridad | Sprint | Criterio de Aceptación |
 |----|----------|-----------------------------|----------|-----------|--------|------------------------|
 | RNF-01 | Rendimiento | La generación del horario completo (50 cursos, 30 docentes, 20 aulas) debe completarse en ≤ 30 segundos. Las respuestas de la API REST deben ser inferiores a 500 ms en el percentil 95, medidas con k6 en entorno Docker con 4 GB RAM. | ISO 25010 §4.2 | Alta | Sprint 2–3 | Informe k6 con P95 < 500 ms y tiempo CSP ≤ 30 s en entorno de prueba definido |
@@ -31,6 +36,38 @@
 | RNF-08 | Compatibilidad | La SPA debe funcionar correctamente en Chrome ≥ 120, Firefox ≥ 121 y Edge ≥ 120, en resoluciones ≥ 360px de ancho, verificado mediante pruebas manuales en BrowserStack o equivalente. | W3C | Media | Sprint 3 | Lista de verificación completada en los 3 navegadores y resolución mínima sin errores funcionales |
 | RNF-09 | Portabilidad | El sistema debe desplegarse completamente mediante docker-compose up en menos de 5 minutos en cualquier máquina con Docker instalado, sin modificar código fuente. Toda configuración vía variables de entorno en .env.example documentado. | ISO 25010 §4.9 | Media | Sprint 1 | Despliegue desde cero en < 5 min en máquina limpia con Docker; .env.example documentado con todos los campos requeridos |
 
-## Trazabilidad requerimientos-problema 
+## Trazabilidad requerimientos-problema
 
-Los RF-04, RF-05 y RF-06 responden a la restricción de limite de creditos y prerrequisitos academicos. Los RF-07 y RF-08 modelan el nucleo del CSP: no solapamiento, disponibilidad de docentes y aulas. Los RNF-01 a RNF-05 cubren los 5 atributos de calidad obligatorios segun ISO/IEC 25010, alcanzando el nivel Sobresaliente en la rubrica de calidad del software. 
+Los RF-04, RF-05 y RF-06 responden a la restricción de limite de creditos y prerrequisitos academicos. Los RF-07 y RF-08 modelan el nucleo del CSP: no solapamiento, disponibilidad de docentes y aulas. Los RNF-01 a RNF-05 cubren los 5 atributos de calidad obligatorios segun ISO/IEC 25010, alcanzando el nivel Sobresaliente en la rubrica de calidad del software.
+
+---
+
+# 3 Nuevos Requerimientos Funcionales según entrevista a stakeholders
+
+> Identificados a partir de entrevistas realizadas a docentes y estudiantes de la institución. Los docentes señalaron la necesidad de mayor automatización en la asignación de horarios y notificación formal de cambios. Los estudiantes solicitaron mayor detalle visible durante la matrícula, opción de planificación previa y mensajes de error más claros.
+
+| ID | Módulo | Descripción SMART | Actor | Prioridad | Sprint | Criterio de Aceptación |
+|----|--------|-------------------|-------|-----------|--------|------------------------|
+| RF-16 | Matrícula | El sistema debe mostrar para cada sección disponible: nombre del docente, aula, turno, día, franja horaria, créditos y vacantes disponibles vs. cupo máximo con indicador visual de ocupación (verde < 70 %, amarillo 70–90 %, rojo > 90 %), actualizados en menos de 2 segundos. | Estudiante | Alta | Sprint 2 | 7 campos visibles en catálogo; indicador de color correcto en 3 umbrales; vacantes refrescadas en < 2 s tras retiro en prueba |
+| RF-17 | Matrícula | Cuando el estudiante intente matricularse fuera del período habilitado, el sistema debe retornar HTTP 403 con estado actual del ciclo (CERRADO / NO_INICIADO) y fechas ISO 8601 de apertura y cierre del período vigente o siguiente, en menos de 1 segundo. | Estudiante | Alta | Sprint 2 | HTTP 403 en 100 % de intentos fuera de período; mensaje incluye estado + 2 fechas; tiempo < 1 s |
+| RF-18 | Matrícula | El sistema debe permitir al estudiante armar un borrador de matrícula (máx. 8 NRCs) antes del período oficial, con detección de cruces de horario y acumulado de créditos en tiempo real (< 500 ms); al abrirse el período oficial el borrador se convierte en carrito preconfigurado en 1 clic, sin generar inscripciones reales hasta la confirmación explícita. | Estudiante | Alta | Sprint 2 | Borrador persiste en BD tras reload; 0 inscripciones reales generadas fuera de período; cruce detectado en < 500 ms; botón "Usar como carrito" disponible al abrir período |
+| RF-19 | Matrícula | Cuando una sección alcance su cupo máximo, el sistema debe ofrecer al estudiante unirse a una lista de espera FIFO; al liberarse una vacante notifica in-app en menos de 5 minutos y otorga 24 horas para confirmar antes de pasar al siguiente en lista. | Estudiante | Media | Sprint 3 | Lista FIFO persistida en BD con timestamp; notificación in-app en < 5 min tras retiro; vacante reasignada automáticamente si no confirma en 24 h |
+| RF-20 | Notificaciones | Cuando el coordinador modifique una asignación en un horario ya publicado (docente, aula o franja), el sistema debe notificar in-app al docente afectado en menos de 2 minutos indicando: curso, campo modificado, valor anterior, valor nuevo y nombre del coordinador responsable. | Docente | Alta | Sprint 3 | Notificación generada en < 2 min en 100 % de modificaciones sobre horario publicado; 4 campos informativos presentes; visible en panel del docente |
+| RF-21 | Motor CSP | El motor CSP debe automatizar la generación de asignaciones respetando la carga lectiva máxima semanal por tipo de contrato docente (TC: 20 h, TP: 12 h), registrando conflicto tipo TEACHER_OVERLOAD en SolverRunConflict cuando una asignación la supere. (Ley 30220, Art. 84) | Coordinador / Admin | Alta | Sprint 3 | 0 asignaciones generadas superan el límite configurado; conflicto TEACHER_OVERLOAD documentado en SolverRunConflict; prueba: docente TC asignado a 21 h → bloqueado |
+| RF-22 | Motor CSP | El motor CSP debe detectar y bloquear asignaciones que impliquen más de 4 horas consecutivas de dictado para un mismo docente en un día, mostrando alerta bloqueante con nombre del docente y los bloques en conflicto ante cualquier modificación manual. | Coordinador | Media | Sprint 3 | 0 asignaciones con bloques consecutivos superiores al umbral; modificación manual bloqueada con mensaje descriptivo en 100 % de casos |
+| RF-23 | Disponibilidad | Al habilitar el período de registro de disponibilidad, el sistema debe notificar in-app automáticamente a todos los docentes activos; 48 horas antes del cierre debe reenviar recordatorio solo a quienes aún no hayan registrado; el coordinador visualiza el conteo de docentes pendientes en su dashboard en tiempo real. | Docente / Coordinador | Media | Sprint 3 | Notificación inicial al 100 % de docentes activos; recordatorio emitido en < 1 h del trigger de 48 h; contador de pendientes correcto y visible en dashboard del coordinador |
+| RF-24 | Administración | El sistema debe permitir al coordinador configurar el peso de prioridad (1.0–5.0, paso 0.5) de cada docente candidato por sección; el motor CSP usará estos pesos para desempatar asignaciones equivalentes, mostrando el orden resultante en el panel de generación de horario. | Coordinador | Baja | Sprint 4 | UI permite editar priorityWeight por sección; CSP respeta orden descendente en 100 % de casos equivalentes; orden visible en panel de generación |
+| RF-25 | UX / Soporte | Todas las pantallas del módulo de inscripciones deben incluir un botón flotante "Reportar problema" que permita al estudiante generar un ticket en menos de 30 segundos, capturando automáticamente URL, timestamp ISO 8601, rol del usuario y descripción libre (máx. 500 caracteres), sin abandonar la pantalla actual. | Estudiante / Admin | Baja | Sprint 4 | Ticket creado en < 30 s sin cambio de pantalla; 4 campos automáticos presentes en 100 % de tickets; panel admin muestra estado ABIERTO / CERRADO |
+
+## Evidencia — Entrevistas a stakeholders
+
+Las entrevistas fueron registradas en video y están disponibles en el siguiente enlace:
+
+📁 [Carpeta de evidencias en Google Drive](https://drive.google.com/drive/folders/10NgtMOCTmdpwfpxIK3Uw4jOLN4Usxmlw?usp=sharing)
+
+| # | Entrevistado | Enlace directo |
+|---|-------------|----------------|
+| 1 | Entrevista stakeholder 1 | [Ver video](https://drive.google.com/file/d/1aga_-4RZi-pFoM5F7ORgoRgVjBBpwSUA/view?usp=sharing) |
+| 2 | Entrevista stakeholder 2 | [Ver video](https://drive.google.com/file/d/1zhzlnHvZTnkPZEfL-sMYwcSG0ZxsLYYZ/view?usp=sharing) |
+| 3 | Entrevista stakeholder 3 | [Ver video](https://drive.google.com/file/d/10yVG9tYZdUXh5mXEkqRvzHqLGasZVkxw/view?usp=sharing) |
+| 4 | Entrevista stakeholder 4 | [Ver video](https://drive.google.com/file/d/1VG20TiQaxVTDp_liFiwdxxHtuNTnGHcM/view?usp=sharing) |
