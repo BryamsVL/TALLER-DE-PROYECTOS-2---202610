@@ -28,6 +28,7 @@ Control del proyecto, presupuestos y riesgos.
 - [Costos por Sprint](./gestion/costos-por-sprint.md)
 - [Costo Acumulado (Curva S)](./gestion/costo-acumulado.md)
 - [Análisis de Sostenibilidad y Complejidad (Green Software)](./gestion/analisis-sostenibilidad.md)
+- [Reporte de Optimización Green Software (Detallado)](./gestion/green-software.md)
 
 ### 4. [Arquitectura Técnica (`/arquitectura`)](./arquitectura)
 Documentación para el equipo de desarrollo.
