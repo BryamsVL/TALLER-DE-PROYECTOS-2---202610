@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { AulaForm } from "./AulaForm";
+import { AulaRegisterDialog } from "./AulaRegisterDialog";
 import { eliminarAula, toggleActivoAula } from "./actions";
 
 export default async function AulasPage() {
@@ -77,28 +77,17 @@ export default async function AulasPage() {
         </Card>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[350px_1fr]">
-        <div>
-          <Card className="border-gray-100 shadow-sm sticky top-6">
-            <CardHeader className="bg-gray-50/50 border-b border-gray-100 pb-4">
-              <CardTitle className="font-display text-base">Crear nueva aula</CardTitle>
-              <CardDescription>
-                Define el nombre, capacidad y tipo de asignación del espacio físico.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <AulaForm />
-            </CardContent>
-          </Card>
-        </div>
-
+      <div className="space-y-6">
         <div className="space-y-6">
           <Card className="border-gray-100 shadow-sm overflow-hidden">
-            <CardHeader className="bg-gray-50/50 border-b border-gray-100">
-              <CardTitle className="font-display text-base">Aulas registradas</CardTitle>
-              <CardDescription>
-                Lista de espacios físicos disponibles para la programación horaria.
-              </CardDescription>
+            <CardHeader className="bg-gray-50/50 border-b border-gray-100 flex flex-row items-center justify-between gap-3">
+              <div>
+                <CardTitle className="font-display text-base">Aulas registradas</CardTitle>
+                <CardDescription>
+                  Lista de espacios físicos disponibles para la programación horaria.
+                </CardDescription>
+              </div>
+              <AulaRegisterDialog />
             </CardHeader>
             <CardContent className="p-0">
               {fetchError && (

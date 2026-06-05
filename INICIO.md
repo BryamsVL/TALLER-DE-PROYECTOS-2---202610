@@ -30,21 +30,10 @@ Abre **tres terminales o pestañas diferentes** (asegúrate de que la ruta raíz
 
 #### 💻 Terminal 1: Motor CSP (Python)
 Este es el cerebro inteligente basado en Inteligencia Artificial y Google OR-Tools.
-1. Navega a la carpeta del microservicio de Python:
-   ```powershell
-   cd Backend/csp-service
-   ```
-2. Activa el entorno virtual de Python:
-   * En **Windows (PowerShell)**:
-     ```powershell
-     .\venv\Scripts\Activate.ps1
-     ```
-     *(Si usas CMD clásico, es `.venv\Scripts\activate`)*
-3. Inicia el servidor de FastAPI en el puerto `8002`:
-   ```bash
-   uvicorn app.main:app --reload --port 8002
-   ```
 
+cd backend\csp-service
+  .\venv\Scripts\Activate.ps1
+  uvicorn app.main:app --reload --port 8002
 ---
 
 #### 🔌 Terminal 2: API Gateway (Express Backend)
@@ -64,7 +53,7 @@ Este servicio conecta la base de datos de Supabase con el motor CSP y el fronten
 La interfaz gráfica de usuario donde realizas todas las acciones.
 1. Navega a la carpeta de la interfaz web:
    ```bash
-   cd web
+   cd frontend    
    ```
 2. Inicia el servidor de desarrollo de Next.js en el puerto `3000`:
    ```bash

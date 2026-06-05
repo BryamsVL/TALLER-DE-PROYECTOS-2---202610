@@ -7,15 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { crearCarrera } from "./actions";
 
-export function CarreraForm() {
+export function CarreraForm({ onSuccess }: { onSuccess?: () => void }) {
   const [state, action, pending] = useActionState(crearCarrera, undefined);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     if (state?.message === "ok") {
       formRef.current?.reset();
+      onSuccess?.();
     }
-  }, [state]);
+  }, [state, onSuccess]);
 
   return (
     <form ref={formRef} action={action} className="grid gap-4">

@@ -1,8 +1,8 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
-import { Lock, Mail, User } from "lucide-react";
+import { CheckCircle2, Eye, EyeOff, Lock, Mail, User, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +10,14 @@ import { signUp } from "@/app/actions/auth";
 
 export default function RegisterPage() {
   const [state, action, pending] = useActionState(signUp, undefined);
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  const confirmTouched = confirm.length > 0;
+  const passwordsMatch = password === confirm;
+  const canSubmit = password.length > 0 && confirmTouched && passwordsMatch;
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-6">
@@ -116,12 +124,28 @@ export default function RegisterPage() {
                 <Input
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   autoComplete="new-password"
                   required
                   placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={
+                    showPassword ? "Ocultar contrasena" : "Mostrar contrasena"
+                  }
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
               </div>
               {state?.errors?.password && (
                 <ul className="text-xs text-destructive space-y-0.5">
@@ -132,14 +156,77 @@ export default function RegisterPage() {
               )}
             </div>
 
+            <div className="space-y-2">
+              <Label
+                htmlFor="confirm-password"
+                className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+              >
+                Confirmar contrasena
+              </Label>
+              <div
+                className={`flex items-center gap-2 rounded-xl border bg-background px-3 focus-within:ring-1 ${
+                  confirmTouched
+                    ? passwordsMatch
+                      ? "border-green-500 focus-within:ring-green-500"
+                      : "border-destructive focus-within:ring-destructive"
+                    : "border-input focus-within:ring-ring"
+                }`}
+              >
+                <Lock className="h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="confirm-password"
+                  type={showConfirm ? "text" : "password"}
+                  autoComplete="new-password"
+                  required
+                  placeholder="••••••••"
+                  value={confirm}
+                  onChange={(e) => setConfirm(e.target.value)}
+                  className="border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm((v) => !v)}
+                  aria-label={
+                    showConfirm ? "Ocultar contrasena" : "Mostrar contrasena"
+                  }
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  {showConfirm ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+              {confirmTouched && (
+                <p
+                  className={`flex items-center gap-1 text-xs ${
+                    passwordsMatch ? "text-green-600" : "text-destructive"
+                  }`}
+                >
+                  {passwordsMatch ? (
+                    <>
+                      <CheckCircle2 className="h-3.5 w-3.5" />
+                      Las contrasenas coinciden
+                    </>
+                  ) : (
+                    <>
+                      <XCircle className="h-3.5 w-3.5" />
+                      Las contrasenas no coinciden
+                    </>
+                  )}
+                </p>
+              )}
+            </div>
+
             {state?.message && (
               <p className="text-sm text-destructive">{state.message}</p>
             )}
 
             <Button
               type="submit"
-              disabled={pending}
-              className="w-full rounded-xl bg-accent py-3 text-sm font-semibold text-accent-foreground hover:bg-accent/90 h-auto"
+              disabled={pending || !canSubmit}
+              className="w-full rounded-xl bg-accent py-3 text-sm font-semibold text-accent-foreground hover:bg-accent/90 h-auto disabled:opacity-60"
             >
               {pending ? "Creando..." : "Crear cuenta"}
             </Button>

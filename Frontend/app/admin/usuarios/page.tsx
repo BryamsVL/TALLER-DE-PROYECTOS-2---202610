@@ -1,5 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import prisma from "@/lib/prisma";
 import {
   Card,
   CardContent,
@@ -10,63 +9,68 @@ import {
 import { getSessionProfile } from "@/lib/auth/get-session-profile";
 import { UsuariosTable, type UsuarioRow } from "./UsuariosTable";
 
+// Prisma usa el enum UserRole en inglés; la UI muestra roles en español.
+const DB_A_UI: Record<string, UsuarioRow["rol"]> = {
+  ADMIN: "ADMIN",
+  COORDINATOR: "COORDINADOR",
+  TEACHER: "DOCENTE",
+  STUDENT: "ESTUDIANTE",
+};
+
 export default async function UsuariosPage() {
   const { user: caller } = await getSessionProfile();
-  const supabase = await createClient();
 
-  const [
-    { data: perfiles, error: perfilesError },
-    { data: profesores, error: profesoresError },
-    { data: estudiantes, error: estudiantesError },
-    { data: carreras, error: carrerasError },
-  ] = await Promise.all([
-    supabase
-      .from("perfil")
-      .select("id, nombre, rol, activo")
-      .order("nombre", { ascending: true }),
-    supabase.from("profesor").select("id, tipo"),
-    supabase.from("estudiante").select("id, carrera_id"),
-    supabase.from("carrera").select("id, nombre").order("nombre", { ascending: true }),
-  ]);
+  let fetchError: string | null = null;
+  let usuarios: UsuarioRow[] = [];
+  let carreras: { id: string; nombre: string }[] = [];
 
-  // Emails: requieren admin client. Si no esta configurada la service role key,
-  // mostramos el listado sin emails (en lugar de fallar).
-  let emailPorId = new Map<string, string>();
-  let emailFetchError: string | null = null;
   try {
-    const admin = createAdminClient();
-    const { data, error } = await admin.auth.admin.listUsers({ page: 1, perPage: 200 });
-    if (error) emailFetchError = error.message;
-    else emailPorId = new Map((data.users ?? []).map((u) => [u.id, u.email ?? ""]));
-  } catch (err) {
-    emailFetchError = err instanceof Error ? err.message : "Configura SUPABASE_SERVICE_ROLE_KEY.";
+    const [users, carrerasDb] = await Promise.all([
+      prisma.user.findMany({
+        select: {
+          id: true,
+          email: true,
+          fullName: true,
+          role: true,
+          isActive: true,
+          teacher: { select: { specialty: true } },
+          student: {
+            select: { carreraId: true, carrera: { select: { name: true } } },
+          },
+        },
+        orderBy: { fullName: "asc" },
+      }),
+      prisma.carrera.findMany({
+        where: { isActive: true },
+        select: { id: true, name: true },
+        orderBy: { name: "asc" },
+      }),
+    ]);
+
+    carreras = carrerasDb.map((c) => ({ id: c.id, nombre: c.name }));
+
+    usuarios = users.map((u) => {
+      const rol = DB_A_UI[u.role] ?? "ESTUDIANTE";
+      const tipo =
+        rol === "DOCENTE"
+          ? u.teacher?.specialty === "Medio Tiempo"
+            ? "MEDIO_TIEMPO"
+            : "TIEMPO_COMPLETO"
+          : null;
+      return {
+        perfilId: u.id,
+        nombre: u.fullName,
+        email: u.email,
+        rol,
+        activo: u.isActive,
+        tipo,
+        carreraId: u.student?.carreraId ?? null,
+        carreraNombre: u.student?.carrera?.name ?? null,
+      };
+    });
+  } catch (error: any) {
+    fetchError = error?.message ?? "Error cargando usuarios.";
   }
-
-  const tipoPorId = new Map((profesores ?? []).map((p) => [p.id, p.tipo]));
-  const carreraPorEstudiante = new Map(
-    (estudiantes ?? []).map((e) => [e.id, e.carrera_id]),
-  );
-  const carreraNombre = new Map((carreras ?? []).map((c) => [c.id, c.nombre]));
-
-  const usuarios: UsuarioRow[] = (perfiles ?? []).map((p) => {
-    const carreraId = carreraPorEstudiante.get(p.id) ?? null;
-    return {
-      perfilId: p.id,
-      nombre: p.nombre,
-      email: emailPorId.get(p.id) ?? "(sin email)",
-      rol: p.rol as UsuarioRow["rol"],
-      activo: p.activo,
-      tipo: (tipoPorId.get(p.id) as UsuarioRow["tipo"]) ?? null,
-      carreraId,
-      carreraNombre: carreraId ? carreraNombre.get(carreraId) ?? null : null,
-    };
-  });
-
-  const fetchError =
-    perfilesError?.message ??
-    profesoresError?.message ??
-    estudiantesError?.message ??
-    carrerasError?.message;
 
   const total = usuarios.length;
   const activos = usuarios.filter((u) => u.activo).length;
@@ -120,11 +124,6 @@ export default async function UsuariosPage() {
         <CardHeader>
           <CardTitle className="font-display text-base">Listado</CardTitle>
           <CardDescription>
-            {emailFetchError && (
-              <span className="text-destructive">
-                Emails no disponibles: {emailFetchError}.{" "}
-              </span>
-            )}
             {total} usuario{total === 1 ? "" : "s"} registrado{total === 1 ? "" : "s"}.
           </CardDescription>
         </CardHeader>
@@ -142,7 +141,7 @@ export default async function UsuariosPage() {
           {total > 0 && (
             <UsuariosTable
               usuarios={usuarios}
-              carreras={carreras ?? []}
+              carreras={carreras}
               selfId={caller.id}
             />
           )}

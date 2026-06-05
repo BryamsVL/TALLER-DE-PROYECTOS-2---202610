@@ -24,13 +24,13 @@ export interface UsuarioRow {
   rol: Rol;
   activo: boolean;
   tipo: "TIEMPO_COMPLETO" | "MEDIO_TIEMPO" | null;
-  carreraId: number | null;
+  carreraId: string | null;
   carreraNombre: string | null;
 }
 
 interface UsuariosTableProps {
   usuarios: UsuarioRow[];
-  carreras: { id: number; nombre: string }[];
+  carreras: { id: string; nombre: string }[];
   // Para evitar que el admin se elimine a si mismo.
   selfId: string;
 }

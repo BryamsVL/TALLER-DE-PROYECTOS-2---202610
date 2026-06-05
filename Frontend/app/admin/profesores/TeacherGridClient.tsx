@@ -39,6 +39,8 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { eliminarProfesor, toggleActivoProfesor, editarProfesor } from "./actions";
+import { ProfesorForm } from "./ProfesorForm";
+import { UserPlus } from "lucide-react";
 
 interface TeacherGridClientProps {
   initialProfesores: any[];
@@ -99,10 +101,12 @@ export function TeacherGridClient({
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTeacher, setSelectedTeacher] = useState<any | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   
   // States inside edit modal
   const [editNombre, setEditNombre] = useState("");
   const [editSpecialty, setEditSpecialty] = useState("");
+  const [editAppointment, setEditAppointment] = useState<"NOMBRADO" | "CONTRATADO">("CONTRATADO");
   const [selectedCourseIds, setSelectedCourseIds] = useState<string[]>([]);
   const [selectedSlotIds, setSelectedSlotIds] = useState<string[]>([]);
   
@@ -122,6 +126,7 @@ export function TeacherGridClient({
     setSelectedTeacher(teacher);
     setEditNombre(teacher.fullName);
     setEditSpecialty(teacher.specialty || "");
+    setEditAppointment(teacher.appointmentType === "NOMBRADO" ? "NOMBRADO" : "CONTRATADO");
     setSelectedCourseIds(teacher.teacherCourses.map((tc: any) => tc.courseId));
     setSelectedSlotIds(teacher.availability.map((av: any) => av.timeSlotId));
     setIsEditOpen(true);
@@ -140,7 +145,8 @@ export function TeacherGridClient({
         editNombre,
         editSpecialty,
         selectedCourseIds,
-        selectedSlotIds
+        selectedSlotIds,
+        editAppointment
       );
 
       if (res.success) {
@@ -218,8 +224,17 @@ export function TeacherGridClient({
             </Button>
           )}
         </div>
-        <div className="text-xs text-muted-foreground font-medium bg-gray-50 dark:bg-gray-900 px-3 py-1.5 rounded-lg border border-gray-100/50 dark:border-gray-800">
-          Mostrando <span className="text-gray-900 dark:text-white font-semibold">{filteredProfesores.length}</span> de {initialProfesores.length} profesores
+        <div className="flex items-center gap-3">
+          <div className="text-xs text-muted-foreground font-medium bg-gray-50 dark:bg-gray-900 px-3 py-1.5 rounded-lg border border-gray-100/50 dark:border-gray-800">
+            Mostrando <span className="text-gray-900 dark:text-white font-semibold">{filteredProfesores.length}</span> de {initialProfesores.length} profesores
+          </div>
+          <Button
+            onClick={() => setIsRegisterOpen(true)}
+            className="h-10 bg-blue-600 hover:bg-blue-700 font-semibold flex items-center gap-1.5 shrink-0"
+          >
+            <UserPlus className="h-4 w-4" />
+            Registrar profesor
+          </Button>
         </div>
       </div>
 
@@ -454,13 +469,27 @@ export function TeacherGridClient({
 
                   <div className="space-y-2">
                     <Label htmlFor="edit-specialty-custom" className="text-xs font-bold text-gray-500 uppercase tracking-wider">Especialidad / Carrera Personalizada</Label>
-                    <Input 
-                      id="edit-specialty-custom" 
-                      value={editSpecialty} 
+                    <Input
+                      id="edit-specialty-custom"
+                      value={editSpecialty}
                       onChange={(e) => setEditSpecialty(e.target.value)}
                       placeholder="Ej. Algoritmos avanzados"
                       className="h-10 border-gray-200 dark:border-gray-800 focus-visible:ring-blue-500"
                     />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-appointment" className="text-xs font-bold text-gray-500 uppercase tracking-wider">Tipo de Vínculo</Label>
+                    <select
+                      id="edit-appointment"
+                      value={editAppointment}
+                      onChange={(e) => setEditAppointment(e.target.value === "NOMBRADO" ? "NOMBRADO" : "CONTRATADO")}
+                      className="flex h-10 w-full rounded-md border border-gray-200 dark:border-gray-800 bg-transparent px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    >
+                      <option value="CONTRATADO">Contratado</option>
+                      <option value="NOMBRADO">Nombrado (planta)</option>
+                    </select>
+                    <p className="text-[11px] text-gray-400">Los nombrados tienen prioridad al compactar huecos en su horario.</p>
                   </div>
                 </div>
 
@@ -629,6 +658,31 @@ export function TeacherGridClient({
               </Button>
             </DialogFooter>
           </Tabs>
+        </DialogContent>
+      </Dialog>
+
+      {/* Register Teacher Modal Dialog */}
+      <Dialog open={isRegisterOpen} onOpenChange={setIsRegisterOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto border border-gray-100 dark:border-gray-900 shadow-2xl">
+          <DialogHeader>
+            <div className="flex items-center gap-2.5">
+              <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 flex items-center justify-center">
+                <UserPlus className="h-5 w-5" />
+              </div>
+              <div>
+                <DialogTitle className="font-display font-bold text-lg text-gray-900 dark:text-white">
+                  Registrar profesor
+                </DialogTitle>
+                <DialogDescription className="text-xs">
+                  Añade un nuevo docente indicando su código, especialidad o contrato.
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+
+          <div className="pt-2">
+            <ProfesorForm onSuccess={() => setIsRegisterOpen(false)} />
+          </div>
         </DialogContent>
       </Dialog>
     </div>

@@ -58,7 +58,7 @@ async function assertAdminCaller() {
     select: { role: true },
   });
 
-  return user?.role === "ADMIN" || user?.role === "COORDINATOR";
+  return user?.role === "ADMIN";
 }
 
 export async function crearEstudiante(

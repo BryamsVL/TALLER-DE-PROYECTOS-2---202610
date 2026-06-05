@@ -45,8 +45,10 @@ export async function getSessionProfile(): Promise<SessionProfile> {
         data: {
           id: user.id,
           email: user.email ?? "",
-          fullName: (user.user_metadata?.nombre as string) || (user.user_metadata?.full_name as string) || "Administrador",
-          role: "ADMIN", // Forzar ADMIN para desarrollo
+          fullName: (user.user_metadata?.nombre as string) || (user.user_metadata?.full_name as string) || "Usuario",
+          // Least-privilege: un usuario auto-aprovisionado NO debe ser ADMIN.
+          // La elevacion de rol la realiza un administrador explicitamente.
+          role: "STUDENT",
           isActive: true,
         },
       });
@@ -72,6 +74,6 @@ export async function getSessionProfile(): Promise<SessionProfile> {
 }
 
 export function isAdminRole(role: AppRole) {
-  return role === "ADMIN" || role === "COORDINADOR";
+  return role === "ADMIN";
 }
 

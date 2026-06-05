@@ -10,7 +10,7 @@ const ROLES = [
   {
     href: "/admin",
     role: "ADMIN",
-    titulo: "Admin / Coordinador",
+    titulo: "Administrador",
     descripcion:
       "Gestiona carreras, cursos, aulas, profesores y genera horarios.",
     icon: Settings2,

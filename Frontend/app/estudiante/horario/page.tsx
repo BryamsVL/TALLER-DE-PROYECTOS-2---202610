@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getSessionProfile } from "@/lib/auth/get-session-profile";
+import { ExportHorarioButtons } from "@/components/ExportHorarioButtons";
 
 const DAYS = [
   { key: "LUN", label: "Lunes" },
@@ -34,6 +35,15 @@ function stableColor(value: string) {
 
 function formatHour(value: string) {
   return value.slice(0, 5);
+}
+
+function toMin(time: string) {
+  const [h, m] = time.split(":");
+  return Number(h) * 60 + Number(m);
+}
+
+function fmtHoras(min: number) {
+  return `${(min / 60).toFixed(min % 60 === 0 ? 0 : 1)} h`;
 }
 
 export default async function EstudianteHorarioPage() {
@@ -136,17 +146,31 @@ export default async function EstudianteHorarioPage() {
 
   const orderedBlocks = [...(bloques ?? [])].sort((a, b) => a.orden - b.orden);
 
+  const bloqueMin = new Map(
+    (bloques ?? []).map((b) => [b.id, toMin(b.hora_fin) - toMin(b.hora_inicio)]),
+  );
+  const totalCargaMin = (sesiones ?? []).reduce(
+    (acc, s) => acc + (bloqueMin.get(s.bloque_id) ?? 0),
+    0,
+  );
+  const numCursos = new Set(
+    (nrcsRows ?? []).map((n) => n.curso_id),
+  ).size;
+
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="font-display text-2xl font-bold tracking-tight md:text-3xl">
-          Mi horario
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {ciclo
-            ? `Sesiones de tus inscripciones activas en ${ciclo.nombre}.`
-            : "No hay ciclo activo."}
-        </p>
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="font-display text-2xl font-bold tracking-tight md:text-3xl">
+            Mi horario
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {ciclo
+              ? `Sesiones de tus inscripciones activas en ${ciclo.nombre}.`
+              : "No hay ciclo activo."}
+          </p>
+        </div>
+        {(sesiones ?? []).length > 0 && <ExportHorarioButtons />}
       </header>
 
       <Card>
@@ -178,7 +202,21 @@ export default async function EstudianteHorarioPage() {
             </p>
           )}
           {(sesiones ?? []).length > 0 && (
-            <div className="overflow-x-auto rounded-xl border bg-card shadow-sm">
+            <div className="space-y-4">
+              <div className="flex flex-wrap items-center gap-2 text-sm">
+                <span className="font-semibold">
+                  Carga semanal: {fmtHoras(totalCargaMin)}
+                </span>
+                <span className="rounded-full border bg-muted/40 px-2.5 py-1 text-xs">
+                  {numCursos} curso{numCursos === 1 ? "" : "s"}
+                </span>
+                <span className="rounded-full border bg-muted/40 px-2.5 py-1 text-xs">
+                  {(sesiones ?? []).length} sesion
+                  {(sesiones ?? []).length === 1 ? "" : "es"}
+                </span>
+              </div>
+
+              <div className="overflow-x-auto rounded-xl border bg-card shadow-sm">
               <div className="grid min-w-[920px] grid-cols-[110px_repeat(6,minmax(0,1fr))]">
                 {/* Header row */}
                 <div className="border-b border-r bg-muted/40 px-3 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -251,6 +289,7 @@ export default async function EstudianteHorarioPage() {
                     </div>
                   );
                 })}
+              </div>
               </div>
             </div>
           )}

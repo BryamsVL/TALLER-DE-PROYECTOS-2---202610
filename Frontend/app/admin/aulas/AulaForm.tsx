@@ -8,15 +8,16 @@ import { Label } from "@/components/ui/label";
 import { crearAula } from "./actions";
 import { TIPO_AULA_OPTIONS } from "../catalog-options";
 
-export function AulaForm() {
+export function AulaForm({ onSuccess }: { onSuccess?: () => void }) {
   const [state, action, pending] = useActionState(crearAula, undefined);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     if (state?.message === "ok") {
       formRef.current?.reset();
+      onSuccess?.();
     }
-  }, [state]);
+  }, [state, onSuccess]);
 
   return (
     <form ref={formRef} action={action} className="grid gap-4">

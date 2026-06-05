@@ -23,19 +23,18 @@ export interface UsuarioEdit {
   rol: Rol;
   activo: boolean;
   tipo: TipoProfesor | null;
-  carreraId: number | null;
+  carreraId: string | null;
 }
 
 interface EditarUsuarioDialogProps {
   usuario: UsuarioEdit | null;
-  carreras: { id: number; nombre: string }[];
+  carreras: { id: string; nombre: string }[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 const ROLES: { value: Rol; label: string }[] = [
   { value: "ADMIN", label: "Admin" },
-  { value: "COORDINADOR", label: "Coordinador" },
   { value: "DOCENTE", label: "Docente" },
   { value: "ESTUDIANTE", label: "Estudiante" },
 ];
@@ -55,7 +54,7 @@ export function EditarUsuarioDialog({
   const [rol, setRol] = useState<Rol>("ESTUDIANTE");
   const [activo, setActivo] = useState(true);
   const [tipo, setTipo] = useState<TipoProfesor>("TIEMPO_COMPLETO");
-  const [carreraId, setCarreraId] = useState<number | "">("");
+  const [carreraId, setCarreraId] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -171,10 +170,8 @@ export function EditarUsuarioDialog({
               <Label htmlFor="usr-carrera">Carrera</Label>
               <select
                 id="usr-carrera"
-                value={carreraId === "" ? "" : String(carreraId)}
-                onChange={(e) =>
-                  setCarreraId(e.target.value === "" ? "" : Number(e.target.value))
-                }
+                value={carreraId}
+                onChange={(e) => setCarreraId(e.target.value)}
                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
               >
                 <option value="">Selecciona una carrera</option>

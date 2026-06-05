@@ -30,6 +30,9 @@ class SolveRequest(BaseModel):
     period_id: str
     courses: list[CourseRequest]
     teacher_availabilities: dict[str, list[TimeSlot]] = Field(default_factory=dict)
+    # IDs de docentes NOMBRADO (planta). Sus huecos pesan mas en el objetivo,
+    # priorizando la compactacion de su horario.
+    nombrado_teacher_ids: list[str] = Field(default_factory=list)
     timeout_seconds: int = Field(default=30, ge=1, le=120)
 
 
@@ -52,3 +55,8 @@ class SolveResponse(BaseModel):
     assignments: list[Assignment]
     elapsed_seconds: float
     conflicts: list[str] = Field(default_factory=list)
+    # Huecos (bloques ociosos entre la primera y ultima sesion del dia, por
+    # docente) de la PRIMERA solucion factible vs la solucion optimizada.
+    # Permiten reportar el % de reduccion. None si no se optimizo (sin huecos).
+    huecos_baseline: int | None = None
+    huecos_optimizado: int | None = None

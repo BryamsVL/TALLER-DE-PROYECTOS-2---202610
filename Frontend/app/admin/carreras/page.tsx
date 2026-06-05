@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CarreraForm } from "./CarreraForm";
+import { CarreraRegisterDialog } from "./CarreraRegisterDialog";
 import { eliminarCarrera, toggleActivoCarrera } from "./actions";
 
 export default async function CarrerasPage() {
@@ -88,28 +88,17 @@ export default async function CarrerasPage() {
         </Card>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[350px_1fr]">
-        <div>
-          <Card className="border-gray-100 shadow-sm sticky top-6">
-            <CardHeader className="bg-gray-50/50 border-b border-gray-100 pb-4">
-              <CardTitle className="font-display text-base">Crear nueva carrera</CardTitle>
-              <CardDescription>
-                Añade una nueva carrera profesional al catálogo oficial de la facultad.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <CarreraForm />
-            </CardContent>
-          </Card>
-        </div>
-
+      <div className="space-y-6">
         <div className="space-y-6">
           <Card className="border-gray-100 shadow-sm overflow-hidden">
-            <CardHeader className="bg-gray-50/50 border-b border-gray-100">
-              <CardTitle className="font-display text-base">Programas académicos registrados</CardTitle>
-              <CardDescription>
-                Lista completa de carreras pregrado y sus correspondientes conteos de estudiantes.
-              </CardDescription>
+            <CardHeader className="bg-gray-50/50 border-b border-gray-100 flex flex-row items-center justify-between gap-3">
+              <div>
+                <CardTitle className="font-display text-base">Programas académicos registrados</CardTitle>
+                <CardDescription>
+                  Lista completa de carreras pregrado y sus correspondientes conteos de estudiantes.
+                </CardDescription>
+              </div>
+              <CarreraRegisterDialog />
             </CardHeader>
             <CardContent className="p-0">
               {fetchError && (

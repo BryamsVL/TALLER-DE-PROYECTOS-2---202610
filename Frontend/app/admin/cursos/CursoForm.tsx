@@ -7,15 +7,22 @@ import { Input } from "@/components/ui/input";
 import { crearCurso } from "./actions";
 import { TIPO_AULA_OPTIONS } from "../catalog-options";
 
-export function CursoForm({ carreras = [] }: { carreras?: any[] }) {
+export function CursoForm({
+  carreras = [],
+  onSuccess,
+}: {
+  carreras?: any[];
+  onSuccess?: () => void;
+}) {
   const [state, action, pending] = useActionState(crearCurso, undefined);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     if (state?.message === "ok") {
       formRef.current?.reset();
+      onSuccess?.();
     }
-  }, [state]);
+  }, [state, onSuccess]);
 
   return (
     <form ref={formRef} action={action} className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">

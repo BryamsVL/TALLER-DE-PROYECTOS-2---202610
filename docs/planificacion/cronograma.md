@@ -13,7 +13,7 @@
 |--------|--------|----------|--------|-----|--------|
 | **Sprint 1** | 20 abril – 4 mayo | 2 semanas | ✅ Completado | HU-01 a HU-10 | EP-01, EP-02, EP-03 |
 | **Sprint 2** | 5 mayo – 19 mayo | 2 semanas | 🔄 En progreso | HU-11 a HU-17 | EP-04, EP-05 |
-| **Sprint 3** | 26 mayo – 9 junio | 2 semanas | ⏳ Pendiente | HU-18 a HU-26 | EP-06, EP-07 |
+| **Sprint 3** | 26 mayo – 9 junio | 2 semanas | 🔄 En progreso | HU-18 a HU-29 | EP-06, EP-07, EP-08 |
 | **Buffer** | 10 junio – 16 junio | 5 días | ⏳ Reservado | Correcciones + Integración | - |
 | **Release MVP** | 17 junio | - | 🎯 Objetivo | Todas las HU completadas | - |
 
@@ -60,19 +60,41 @@
 
 | HU | Nombre | Épica | Dependencia | Estado | Riesgo |
 |----|--------|-------|-------------|--------|--------|
-| HU-18 | Validación de Prerrequisitos y Corequisitos | EP-06 | HU-13 (Horario ACTIVO) | ⏳ Pendiente | Medio |
-| HU-19 | Control de Carga Académica del Estudiante | EP-06 | HU-13 | ⏳ Pendiente | Medio |
-| HU-20 | Generación Automática del Horario de Estudiantes | EP-06 | HU-18, HU-19 | ⏳ Pendiente | **Alto** |
-| HU-21 | Atomicidad de Cursos Compuestos | EP-06 | HU-20 | ⏳ Pendiente | Medio |
-| HU-22 | Consulta de Horario por el Estudiante | EP-06 | HU-20 | ⏳ Pendiente | Bajo |
+| HU-18 | Validación de Prerrequisitos y Corequisitos | EP-06 | HU-13 (Horario ACTIVO) | ✅ Done | - |
+| HU-19 | Control de Carga Académica del Estudiante | EP-06 | HU-13 | ✅ Done | - |
+| HU-20 | Generación Automática del Horario de Estudiantes | EP-06 | HU-18, HU-19 | ✅ Done | - |
+| HU-21 | Atomicidad de Cursos Compuestos | EP-06 | HU-20 | ✅ Done | - |
+| HU-22 | Consulta de Horario por el Estudiante | EP-06 | HU-20 | ✅ Done | - |
 | HU-23 | Grilla Semanal de Horario | EP-07 | HU-20, HU-17 | ⏳ Pendiente | **Alto** |
 | HU-24 | Exportación del Horario en PDF | EP-07 | HU-23 | ⏳ Pendiente | Bajo |
 | HU-25 | Exportación del Horario en Excel | EP-07 | HU-23 | ⏳ Pendiente | Bajo |
 | HU-26 | Protección ante Vulnerabilidades OWASP | EP-07 | Todas las anteriores | ⏳ Pendiente | Bajo |
+| HU-27 | Optimización de horario docente: minimización de huecos + % de reducción + prioridad a docentes NOMBRADO | EP-04 | HU-12 | ✅ Done (3 jun — pendiente correr migración `teacher_appointment`) | Medio |
+| HU-28 | Estrategia de Testing y Aseguramiento de Calidad (TP_2): unitarias, componentes, integración, aceptación, E2E y cobertura ≥70% global / ≥85% lógica crítica | EP-08 | HU-20, HU-23, HU-27 | ⏳ Pendiente | **Alto** |
+| HU-29 | Endurecimiento de seguridad y testabilidad: fix de auto-provisión como ADMIN en `get-session-profile`, refactors de desacople (validación pura, `createApp`) | EP-07 | HU-27 | ⏳ Pendiente | Medio |
 
 **📌 Puntos de control críticos:**
-- HU-20 (Generación de horario de estudiantes) debe estar lista antes del **3 junio** para permitir integración con grilla.
-- HU-23 (Grilla semanal) debe estar integrada antes del **6 junio** para validar exportaciones.
+- HU-23 (Grilla semanal **admin/docente**) debe estar integrada antes del **6 junio** para validar exportaciones.
+- HU-29 (fix seguridad + refactors) debe ir **antes** de HU-28 (testing) para que las pruebas fijen el comportamiento correcto, no el bug.
+
+> **Decisión de alcance (3 junio):** el módulo de Estudiante (EP-06: HU-18 a HU-22) se cierra en este alcance del MVP — no se desarrolla la generación/consulta de horario por estudiante ni su interfaz adicional. La grilla (HU-23) y exportaciones (HU-24/25) se mantienen para **admin y docente**. Esto retira HU-20 y la variante estudiante de HU-23 de la ruta crítica.
+
+> **Nota:** HU-27 implementa una restricción **blanda** (compactación de huecos con peso a nombrados), por lo que adelanta parcialmente **HU-15** (Restricciones Blandas B1–B5) del Sprint 2.
+
+#### Detalle de HU-28 — Estrategia de Testing (TP_2)
+
+| Capa | Herramienta obligatoria | Objetivo en SGOHA | Estado |
+|------|-------------------------|-------------------|--------|
+| Unitarias Backend | Vitest | `gapMetrics.ts` (16 tests, 100% cobertura) | ✅ Done |
+| Integración API | Supertest | `/health`, 404, helmet; auth/roles (401/403/200); CRUD cursos con persistencia real | ✅ Done (20 tests) |
+| Componentes React | RTL (Jest) | `ExportHorarioButtons`, `HorarioGrid` (render/condicional/estado vacío), `CursoForm` (validación/error/éxito), `GenerarHorarioPanel` (async OPTIMAL/INFEASIBLE/error) | ✅ Done (14 tests) |
+| Mocking de dependencias | jest.mock + global.fetch | Server actions mockeadas (`crearCurso`); API REST del CSP mockeada vía `global.fetch`. **Adaptación:** MSW se omitió por fricción con jsdom/next-jest; el stack usa server actions, no REST desde componentes (prof autorizó adaptar al proyecto) | ✅ Done |
+| Unitarias Frontend | Jest | Validaciones Zod (Curso/Profesor), helpers puros | ⏳ Pendiente |
+| Aceptación | Cypress | Login, gestión de datos, navegación, validaciones | ⏳ Pendiente |
+| E2E | Playwright | Golden Path = generar horario; Happy/Unhappy Path | ⏳ Pendiente |
+| Cobertura | v8 (Backend) · Istanbul (Frontend) + LCOV/HTML | ≥70% global, ≥85% lógica crítica (solver, métricas, auth) | 🔄 Backend gapMetrics 100% |
+
+**Orden de ejecución:** HU-29 (fix seguridad + refactors testabilidad) → setup tooling → unitarias (`gapMetrics`, scheduler) → integración → componentes → E2E/aceptación → reporte de cobertura.
 
 ---
 
@@ -108,22 +130,21 @@ Sprint 2 (En progreso)
                     ▼             ▼
 Sprint 3                        │
 │                               │
-├── HU-18 (Prerrequisitos)       │
-├── HU-19 (Carga Académica)      │
+├── [EP-06 Estudiante CERRADO — fuera de alcance: HU-18..HU-22] (no en ruta crítica)
+│                               │
+├── HU-27 (Optimización huecos + nombrados) ✅
 │         │                      │
-│         ▼                      │
-├── 🔴 HU-20 (Generación Horario Estudiante) ← PUNTO DE BLOQUEO #2
-│         │                      │
-│         ▼                      │
-├── HU-21 (Atomicidad Cursos)    │
-├── HU-22 (Consulta Estudiante)  │
-│         │                      │
-│         ▼                      │
-├── 🔴 HU-23 (Grilla Semanal React) ← PUNTO DE BLOQUEO #3
+│         ▼                      ▼
+├── 🔴 HU-23 (Grilla Semanal React — admin/docente) ← PUNTO DE BLOQUEO
 │         │
 │         ▼
 ├── HU-24 (Exportación PDF)
 ├── HU-25 (Exportación Excel)
+│
+├── HU-29 (Fix seguridad + refactors testabilidad)
+│         │
+│         ▼
+├── HU-28 (Estrategia de Testing TP_2)
 │
 └── HU-26 (OWASP)
 ```
@@ -135,8 +156,10 @@ Sprint 3                        │
 La **ruta crítica** que determina la duración total del proyecto es:
 
 ```
-HU-01..10 → HU-11 → HU-12 → HU-13 → HU-20 → HU-23 → HU-24/HU-25
+HU-01..10 → HU-11 → HU-12 → HU-13 → HU-16/HU-17 → HU-23 (admin/docente) → HU-24/HU-25
 ```
+
+> Nota: con el cierre del módulo Estudiante (EP-06), HU-20 sale de la ruta crítica. El nuevo cuello de botella es HU-23 (grilla admin/docente) antes de las exportaciones.
 
 ### Tabla de hitos críticos
 
@@ -147,8 +170,8 @@ HU-01..10 → HU-11 → HU-12 → HU-13 → HU-20 → HU-23 → HU-24/HU-25
 | 3 | HU-12 (Ejecución generación) | Sprint 2 | ✅ Completado | Alto | 16 mayo |
 | 4 | HU-13 (Activación horario) | Sprint 2 | ✅ Completado | Medio | 19 mayo |
 | 5 | Fin Sprint 2 | Sprint 2 | - | - | 19 mayo |
-| 6 | **HU-20 (Generación horario estudiantes)** | Sprint 3 | **0 días** | **Alto** | 3 junio |
-| 7 | **HU-23 (Grilla semanal)** | Sprint 3 | **0 días** | **Alto** | 6 junio |
+| 6 | HU-20 (Horario estudiantes) | Sprint 3 | ✅ Cerrado (fuera de alcance) | - | - |
+| 7 | **HU-23 (Grilla semanal admin/docente)** | Sprint 3 | **0 días** | **Alto** | 6 junio |
 | 8 | Fin Sprint 3 | Sprint 3 | - | - | 9 junio |
 | 9 | Fin Buffer | Buffer | 5 días | Bajo | 16 junio |
 | 10 | **RELEASE MVP** | - | - | - | **17 junio** |
@@ -162,9 +185,7 @@ HU-01..10 → HU-11 → HU-12 → HU-13 → HU-20 → HU-23 → HU-24/HU-25
 | HU-14 (Ajuste Manual) | Sprint 2 | 2-3 días | Sí, si HU-13 está activo |
 | HU-15 (Restricciones Blandas) | Sprint 2 | 3-4 días | Sí, es optimización no bloqueante |
 | HU-16/HU-17 (Horario Docentes) | Sprint 2 | 2 días | Sí, siempre que esté antes de fin sprint |
-| HU-18/HU-19 (Validaciones previas) | Sprint 3 | 1-2 días | Sí, si HU-20 tiene buffer |
-| HU-21 (Atomicidad) | Sprint 3 | 2 días | Sí, es refinamiento de HU-20 |
-| HU-22 (Consulta Estudiante) | Sprint 3 | 2 días | Sí |
+| HU-18 a HU-22 (Módulo Estudiante) | Sprint 3 | — | Cerrado: fuera de alcance del MVP |
 | HU-24/HU-25 (Exportaciones) | Sprint 3 | 3 días | Sí, dependen de HU-23 |
 | HU-26 (OWASP) | Sprint 3 | Flexible | Puede pasar a post-MVP si es necesario |
 
@@ -181,13 +202,9 @@ HU-01..10 → HU-11 → HU-12 → HU-13 → HU-20 → HU-23 → HU-24/HU-25
 | Documentación de API del solver (Swagger) | Backend | 14 mayo |
 | Ambiente de staging para pruebas | DevOps | 14 mayo |
 
-### 6.2 Para HU-20 (Generación horario estudiantes) — RIESGO #2
+### 6.2 ~~Para HU-20 (Generación horario estudiantes)~~ — CERRADO
 
-| Acción | Responsable | Fecha límite |
-|--------|-------------|--------------|
-| Mock de HU-11/HU-13 para probar HU-20 en paralelo | Frontend + Backend | 22 mayo |
-| Pruebas de integración HU-18 + HU-19 antes de HU-20 | Backend | 28 mayo |
-| Revisión de rendimiento (<5 seg por estudiante) | Backend | 2 junio |
+Módulo Estudiante (EP-06) fuera de alcance del MVP. Riesgo retirado. El esfuerzo se redirige a HU-28 (Testing TP_2) y HU-29 (seguridad/testabilidad).
 
 ### 6.3 Para HU-23 (Grilla semanal) — RIESGO #3
 
@@ -236,9 +253,10 @@ export const mockScheduleData = {
 | Riesgo | HU asociada | Impacto | Probabilidad | Mitigación |
 |--------|-------------|---------|--------------|-------------|
 | OR-Tools no modela correctamente D1-D9 | HU-11 | Catastrófico | Media | Code reviews diarios + pruebas unitarias |
-| Tiempo de generación excede límites | HU-12, HU-20 | Alto | Media | Optimización + monitoreo temprano |
-| Frontend bloqueado esperando backend | HU-20, HU-23 | Alto | Media | Mocks desde 26 mayo |
+| Tiempo de generación excede límites | HU-12 | Alto | Media | Optimización + monitoreo temprano |
+| Frontend bloqueado esperando backend | HU-23 | Alto | Baja | Datos reales de horario institucional ya disponibles |
 | Integración grilla con datos reales falla | HU-23 | Alto | Baja | Pruebas de integración anticipadas |
+| Cobertura de tests no alcanza 70%/85% | HU-28 | Medio | Media | Priorizar unitarias de lógica crítica (solver, gapMetrics, auth) |
 | Exportaciones no cumplen tiempo límite | HU-24, HU-25 | Bajo | Baja | Librerías probadas previamente |
 | Vulnerabilidades OWASP | HU-26 | Medio | Baja | Auditoría + ZAP en staging |
 
@@ -255,22 +273,27 @@ export const mockScheduleData = {
 |--------|--------|--------|-----|
 | Sprint 1 | 20 abril – 4 mayo | ✅ Completado | HU-01 a HU-10 |
 | Sprint 2 | 5 mayo – 19 mayo | 🔄 En progreso | HU-11 a HU-17 |
-| Sprint 3 | 26 mayo – 9 junio | ⏳ Pendiente | HU-18 a HU-26 |
+| Sprint 3 | 26 mayo – 9 junio | 🔄 En progreso | HU-18 a HU-29 (EP-06 cerrada) |
 | Buffer | 10 – 16 junio | ⏳ Reservado | Correcciones |
-| Release | 17 junio | 🎯 Objetivo | MVP |
+| Release | 17 junio | 🎯 Objetivo | MVP (sin módulo estudiante) |
 
 ## Ruta Crítica
 
-HU-01..10 → HU-11 → HU-12 → HU-13 → HU-20 → HU-23 → HU-24/HU-25
+HU-01..10 → HU-11 → HU-12 → HU-13 → HU-16/HU-17 → HU-23 (admin/docente) → HU-24/HU-25
 
 ## Puntos de Bloqueo
 
 1. **HU-11 (14 mayo)** — Modelado D1-D9 en OR-Tools
-2. **HU-20 (3 junio)** — Generación horario estudiantes
-3. **HU-23 (6 junio)** — Grilla semanal interactiva
+2. **HU-23 (6 junio)** — Grilla semanal admin/docente
+3. **HU-28** — Estrategia de Testing TP_2 (cobertura 70%/85%)
+
+## Alcance
+
+- Módulo Estudiante (EP-06: HU-18 a HU-22) **fuera de alcance** del MVP.
+- Foco final: grilla/exportaciones admin-docente, optimización de huecos (HU-27), testing (HU-28) y seguridad (HU-29).
 
 ## Mitigación Principal
 
 - Code reviews diarios de OR-Tools (HU-11)
-- Mocks para frontend desde 26 mayo (desarrollo paralelo)
+- HU-29 (fix seguridad + refactors) antes de HU-28 (testing)
 - Buffer de 5 días al final del proyecto

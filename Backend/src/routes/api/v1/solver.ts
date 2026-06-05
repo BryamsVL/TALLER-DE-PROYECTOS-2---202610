@@ -1,5 +1,7 @@
 import { Router, Request, Response } from "express";
+import { randomUUID } from "node:crypto";
 import { prisma } from "../../../lib/prisma.js";
+import { cuentaHuecos, pctReduccion } from "../../../lib/gapMetrics.js";
 
 interface CspTimeSlot {
   day: number;
@@ -19,11 +21,177 @@ interface CspSolveResponse {
   assignments: CspAssignment[];
   elapsed_seconds: number;
   conflicts?: string[];
+  huecos_baseline?: number | null;
+  huecos_optimizado?: number | null;
 }
 
 const router = Router();
 
 const CSP_SERVICE_URL = process.env.CSP_SERVICE_URL || "http://localhost:8002";
+
+// Mapeo del slot sintetico del CSP a la fila TimeSlot persistida.
+const START_MINUTE_TO_SLOT_ORDER: Record<number, number> = {
+  420: 1, 520: 2, 620: 3, 720: 4, 840: 5, 940: 6, 1040: 7, 1140: 8, 1240: 9,
+};
+const DAY_NUM_TO_ENUM: Record<number, string> = {
+  1: "MONDAY", 2: "TUESDAY", 3: "WEDNESDAY", 4: "THURSDAY", 5: "FRIDAY", 6: "SATURDAY",
+};
+
+// Ejecuta promesas en lotes para no abrir cientos de conexiones a la vez
+// contra Supabase (que ademas dispararia el timeout de transaccion).
+async function inChunks<T, R>(
+  items: T[],
+  size: number,
+  fn: (item: T) => Promise<R>,
+): Promise<R[]> {
+  const out: R[] = [];
+  for (let i = 0; i < items.length; i += size) {
+    const batch = items.slice(i, i + size);
+    out.push(...(await Promise.all(batch.map(fn))));
+  }
+  return out;
+}
+
+// Persiste el resultado del CSP en el modelo normalizado
+// (TeachingSchedule -> SectionAssignment -> SectionAssignmentSlot) para que
+// docentes/estudiantes vean el horario. Reemplaza el horario previo del periodo.
+//
+// Los upserts de oferta/seccion (idempotentes) se hacen FUERA de la
+// transaccion interactiva; la parte atomica usa createMany en lote. Esto
+// evita el P2028 "Transaction already closed" por exceso de round-trips.
+async function persistSchedule(
+  academicPeriodId: string,
+  assignments: CspAssignment[],
+  classrooms: { id: string; capacity: number }[],
+): Promise<void> {
+  const timeSlots = await prisma.timeSlot.findMany({
+    select: { id: true, dayOfWeek: true, slotOrder: true },
+  });
+  const tsByDayOrder = new Map(
+    timeSlots.map((t) => [`${t.dayOfWeek}|${t.slotOrder}`, t.id]),
+  );
+
+  const byCourse = new Map<string, CspAssignment[]>();
+  for (const a of assignments) {
+    const list = byCourse.get(a.course_id);
+    if (list) list.push(a);
+    else byCourse.set(a.course_id, [a]);
+  }
+
+  // 1. Oferta + seccion por curso (idempotente, fuera de transaccion).
+  const groups = [...byCourse.entries()];
+  const sectionByCourse = new Map<string, string>();
+  await inChunks(groups, 8, async ([courseId, group]) => {
+    const offering = await prisma.courseOffering.upsert({
+      where: { academicPeriodId_courseId: { academicPeriodId, courseId } },
+      create: { academicPeriodId, courseId, status: "ACTIVE" },
+      update: {},
+    });
+    const caps = group.map(
+      (g) => classrooms.find((c) => c.id === g.classroom_id)?.capacity ?? 30,
+    );
+    const section = await prisma.courseSection.upsert({
+      where: {
+        courseOfferingId_sectionCode: {
+          courseOfferingId: offering.id,
+          sectionCode: "U1",
+        },
+      },
+      create: {
+        courseOfferingId: offering.id,
+        sectionCode: "U1",
+        vacancyLimit: Math.max(30, ...caps),
+        status: "ACTIVE",
+      },
+      update: {},
+    });
+    sectionByCourse.set(courseId, section.id);
+  });
+
+  // 2. Reemplazar el horario del periodo (cascade limpia assignments/slots).
+  await prisma.teachingSchedule.deleteMany({ where: { academicPeriodId } });
+  const schedule = await prisma.teachingSchedule.create({
+    data: { academicPeriodId, status: "CONFIRMED" },
+  });
+
+  // 3. Armar filas en memoria. Dedup para no violar los UNIQUE
+  // (schedule,teacher,timeSlot) / (schedule,classroom,timeSlot).
+  const usedTeacherTs = new Set<string>();
+  const usedClassroomTs = new Set<string>();
+  const assignmentRows: {
+    id: string;
+    teachingScheduleId: string;
+    sectionId: string;
+    teacherId: string;
+    classroomId: string;
+    assignmentStatus: string;
+  }[] = [];
+  const slotRows: {
+    sectionAssignmentId: string;
+    teachingScheduleId: string;
+    sectionId: string;
+    teacherId: string;
+    classroomId: string;
+    timeSlotId: string;
+  }[] = [];
+
+  for (const [courseId, group] of groups) {
+    const sectionId = sectionByCourse.get(courseId);
+    const first = group[0];
+    if (!sectionId || !first) continue;
+
+    const sectionAssignmentId = randomUUID();
+    let hasSlot = false;
+
+    for (const g of group) {
+      const order = START_MINUTE_TO_SLOT_ORDER[g.slot.start_minute];
+      const dayEnum = DAY_NUM_TO_ENUM[g.slot.day];
+      if (!order || !dayEnum) continue;
+      const timeSlotId = tsByDayOrder.get(`${dayEnum}|${order}`);
+      if (!timeSlotId) continue;
+
+      const tKey = `${g.teacher_id}|${timeSlotId}`;
+      const cKey = `${g.classroom_id}|${timeSlotId}`;
+      if (usedTeacherTs.has(tKey) || usedClassroomTs.has(cKey)) continue;
+      usedTeacherTs.add(tKey);
+      usedClassroomTs.add(cKey);
+
+      slotRows.push({
+        sectionAssignmentId,
+        teachingScheduleId: schedule.id,
+        sectionId,
+        teacherId: g.teacher_id,
+        classroomId: g.classroom_id,
+        timeSlotId,
+      });
+      hasSlot = true;
+    }
+
+    if (!hasSlot) continue;
+    assignmentRows.push({
+      id: sectionAssignmentId,
+      teachingScheduleId: schedule.id,
+      sectionId,
+      teacherId: first.teacher_id,
+      classroomId: first.classroom_id,
+      assignmentStatus: "CONFIRMED",
+    });
+  }
+
+  // 4. Inserciones masivas atomicas (2 round-trips).
+  if (assignmentRows.length > 0) {
+    await prisma.$transaction([
+      prisma.sectionAssignment.createMany({
+        data: assignmentRows,
+        skipDuplicates: true,
+      }),
+      prisma.sectionAssignmentSlot.createMany({
+        data: slotRows,
+        skipDuplicates: true,
+      }),
+    ]);
+  }
+}
 
 router.post("/generate", async (req: Request, res: Response) => {
   try {
@@ -86,6 +254,10 @@ router.post("/generate", async (req: Request, res: Response) => {
           { day, start_minute: 1240, end_minute: 1330 }, // 20:40-22:10 (Bloque 9)
         ]) 
       })),
+      // Docentes NOMBRADO: el solver pesa mas sus huecos para compactar su horario.
+      nombrado_teacher_ids: teachers
+        .filter((t) => t.appointmentType === "NOMBRADO")
+        .map((t) => t.id),
       teacher_availabilities: teachers.reduce((acc, t) => {
         if (t.availability && t.availability.length > 0) {
           acc[t.id] = t.availability.map(a => {
@@ -119,6 +291,16 @@ router.post("/generate", async (req: Request, res: Response) => {
 
     const result = await response.json() as CspSolveResponse;
 
+    // 2b. Persistir el horario para que docentes/estudiantes lo vean.
+    // No bloquea la respuesta si la persistencia falla.
+    if (result.assignments && result.assignments.length > 0) {
+      try {
+        await persistSchedule(actualPeriodId, result.assignments, classrooms);
+      } catch (persistErr) {
+        console.error("Error persistiendo el horario generado:", persistErr);
+      }
+    }
+
     // 3. Process the result and store assignments
     const enrichedAssignments = (result.assignments ?? []).map((assignment) => {
       const course = courses.find(c => c.id === assignment.course_id);
@@ -132,11 +314,27 @@ router.post("/generate", async (req: Request, res: Response) => {
       };
     });
 
-    res.json({ 
-      success: true, 
-      status: result.status, 
-      assignments: enrichedAssignments, 
-      conflicts: result.conflicts 
+    // Metricas de huecos: baseline (1ra solucion factible) vs optimizada.
+    // El conteo optimizado se reverifica en Node a partir de las asignaciones
+    // (no se confia ciegamente en el numero del solver).
+    const huecosOptimizado = cuentaHuecos(
+      (result.assignments ?? []).map((a) => ({
+        teacher_id: a.teacher_id,
+        slot: { day: a.slot.day, start_minute: a.slot.start_minute },
+      })),
+    );
+    const huecosBaseline = result.huecos_baseline ?? null;
+
+    res.json({
+      success: true,
+      status: result.status,
+      assignments: enrichedAssignments,
+      conflicts: result.conflicts,
+      huecos: {
+        baseline: huecosBaseline,
+        optimizado: huecosOptimizado,
+        pct_reduccion: pctReduccion(huecosBaseline, huecosOptimizado),
+      },
     });
   } catch (error) {
     console.error("Solver Error:", error);

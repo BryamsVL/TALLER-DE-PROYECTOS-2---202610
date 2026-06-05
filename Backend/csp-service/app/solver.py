@@ -152,6 +152,83 @@ def solve(request: SolveRequest) -> SolveResponse:
             model.add_at_most_one(vars_list)
 
     # ------------------------------------------------------------------ #
+    #  Objetivo blando: minimizar HUECOS por docente/dia.                 #
+    #                                                                     #
+    #  Un "hueco" es un bloque ocioso entre la primera y la ultima sesion #
+    #  de un docente en un mismo dia. Se cuenta por POSICION de bloque    #
+    #  (no por minutos), de modo que el almuerzo —que no es un bloque     #
+    #  declarado— nunca cuenta como hueco. Los docentes NOMBRADO pesan    #
+    #  mas (peso 3 vs 1) para priorizar la compactacion de su horario.    #
+    # ------------------------------------------------------------------ #
+    NOMBRADO_WEIGHT = 3
+    CONTRATADO_WEIGHT = 1
+    nombrado_set = set(request.nombrado_teacher_ids)
+
+    # Bloques agrupados por dia, ordenados cronologicamente (por minuto de inicio).
+    positions_by_day: dict[int, list[int]] = {}
+    for si, (day, start_minute, _end) in enumerate(all_slots):
+        positions_by_day.setdefault(day, []).append((start_minute, si))
+    for day in positions_by_day:
+        positions_by_day[day] = [si for _start, si in sorted(positions_by_day[day])]
+
+    def _or_of(literals: list) -> object | None:
+        """OR de literales booleanos. None si la lista esta vacia (= falso)."""
+        present = [lit for lit in literals if lit is not None]
+        if not present:
+            return None
+        if len(present) == 1:
+            return present[0]
+        or_var = model.new_bool_var("or")
+        model.add_max_equality(or_var, present)
+        return or_var
+
+    gap_terms: list[tuple[object, int]] = []  # (gap_bool, peso)
+    gap_bools: list[object] = []              # solo para el conteo crudo
+
+    for ti in range(len(all_teachers)):
+        weight = NOMBRADO_WEIGHT if all_teachers[ti] in nombrado_set else CONTRATADO_WEIGHT
+        for day, sis in positions_by_day.items():
+            # occ[k] = el docente ti dicta en la posicion k de ese dia (o None si
+            # no tiene ninguna variable ahi -> ocupacion fija en 0).
+            occ: list[object | None] = []
+            for si in sis:
+                vlist = vars_by_teacher_slot.get((ti, si))
+                if vlist:
+                    o = model.new_bool_var(f"occ_{ti}_{day}_{si}")
+                    model.add_max_equality(o, vlist)
+                    occ.append(o)
+                else:
+                    occ.append(None)
+
+            n = len(occ)
+            for k in range(n):
+                before = _or_of(occ[:k])
+                after = _or_of(occ[k + 1 :])
+                # Solo hay hueco posible si hay clase antes Y despues de la posicion k.
+                if before is None or after is None:
+                    continue
+                gap = model.new_bool_var(f"gap_{ti}_{day}_{k}")
+                occ_k = occ[k]
+                if occ_k is None:
+                    # Posicion sin clase posible -> siempre ociosa entre clases.
+                    model.add_bool_and([before, after]).only_enforce_if(gap)
+                    model.add_bool_or([before.Not(), after.Not()]).only_enforce_if(gap.Not())
+                else:
+                    model.add_bool_and([before, after, occ_k.Not()]).only_enforce_if(gap)
+                    model.add_bool_or(
+                        [before.Not(), after.Not(), occ_k]
+                    ).only_enforce_if(gap.Not())
+                gap_terms.append((gap, weight))
+                gap_bools.append(gap)
+
+    # Conteo crudo de huecos (sin pesos) para reportar baseline vs optimizado.
+    total_gaps = None
+    if gap_bools:
+        total_gaps = model.new_int_var(0, len(gap_bools), "total_gaps")
+        model.add(total_gaps == sum(gap_bools))
+        model.minimize(sum(peso * gap for gap, peso in gap_terms))
+
+    # ------------------------------------------------------------------ #
     #  Resolver                                                           #
     # ------------------------------------------------------------------ #
     solver = cp_model.CpSolver()
@@ -160,7 +237,20 @@ def solve(request: SolveRequest) -> SolveResponse:
     # Encuentra la primera solución feasible más rápido antes de optimizar.
     solver.parameters.search_branching = cp_model.PORTFOLIO_WITH_QUICK_RESTART_SEARCH
 
-    status_code = solver.solve(model)
+    # Captura los huecos de la PRIMERA solucion factible (baseline, sin compactar)
+    # para contrastarlos con la solucion final optimizada.
+    class _BaselineGapsCallback(cp_model.CpSolverSolutionCallback):
+        def __init__(self, gaps_var):
+            super().__init__()
+            self._gaps_var = gaps_var
+            self.baseline: int | None = None
+
+        def on_solution_callback(self) -> None:
+            if self.baseline is None and self._gaps_var is not None:
+                self.baseline = int(self.value(self._gaps_var))
+
+    gap_callback = _BaselineGapsCallback(total_gaps)
+    status_code = solver.solve(model, gap_callback)
 
     status_map = {
         cp_model.OPTIMAL: "OPTIMAL",
@@ -196,8 +286,13 @@ def solve(request: SolveRequest) -> SolveResponse:
                 )
             )
 
+    huecos_optimizado = (
+        int(solver.value(total_gaps)) if total_gaps is not None else None
+    )
     return SolveResponse(
         status=status,
         assignments=assignments,
         elapsed_seconds=perf_counter() - start_time,
+        huecos_baseline=gap_callback.baseline,
+        huecos_optimizado=huecos_optimizado,
     )

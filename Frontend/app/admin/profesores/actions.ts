@@ -23,6 +23,9 @@ const ProfesorSchema = z.object({
   tipo: z.enum(["TIEMPO_COMPLETO", "MEDIO_TIEMPO"], {
     error: "Selecciona un tipo de contrato valido.",
   }),
+  appointmentType: z.enum(["NOMBRADO", "CONTRATADO"], {
+    error: "Selecciona el tipo de vinculo (nombrado/contratado).",
+  }),
 });
 
 export type ProfesorFormState =
@@ -32,6 +35,7 @@ export type ProfesorFormState =
         email?: string[];
         password?: string[];
         tipo?: string[];
+        appointmentType?: string[];
       };
       message?: string;
     }
@@ -47,7 +51,7 @@ async function assertAdminCaller() {
     select: { role: true },
   });
 
-  return user?.role === "ADMIN" || user?.role === "COORDINATOR";
+  return user?.role === "ADMIN";
 }
 
 export async function crearProfesor(
@@ -59,6 +63,7 @@ export async function crearProfesor(
     email: formData.get("email"),
     password: formData.get("password"),
     tipo: formData.get("tipo"),
+    appointmentType: formData.get("appointmentType"),
   });
 
   if (!parsed.success) {
@@ -123,6 +128,7 @@ export async function crearProfesor(
           code: code,
           fullName: parsed.data.nombre,
           specialty: parsed.data.tipo === "TIEMPO_COMPLETO" ? "Tiempo Completo" : "Medio Tiempo",
+          appointmentType: parsed.data.appointmentType,
           isActive: true,
         },
       });
@@ -212,7 +218,8 @@ export async function editarProfesor(
   nombre: string,
   specialty: string,
   courseIds: string[],
-  timeSlotIds: string[]
+  timeSlotIds: string[],
+  appointmentType: "NOMBRADO" | "CONTRATADO" = "CONTRATADO"
 ): Promise<{ success: boolean; error?: string }> {
   if (!(await assertAdminCaller())) {
     return { success: false, error: "No autorizado." };
@@ -220,6 +227,10 @@ export async function editarProfesor(
 
   if (!teacherId || !nombre.trim() || !specialty.trim()) {
     return { success: false, error: "Datos de entrada inválidos o incompletos." };
+  }
+
+  if (appointmentType !== "NOMBRADO" && appointmentType !== "CONTRATADO") {
+    return { success: false, error: "Tipo de vínculo inválido." };
   }
 
   try {
@@ -240,6 +251,7 @@ export async function editarProfesor(
         data: {
           fullName: nombre.trim(),
           specialty: specialty.trim(),
+          appointmentType: appointmentType,
         },
       });
 

@@ -10,6 +10,7 @@ const NAV_ADMIN: NavItem[] = [
   { href: "/admin/aulas", label: "Aulas", icon: "door" },
   { href: "/admin/cursos", label: "Cursos", icon: "bookMarked" },
   { href: "/admin/horarios", label: "Generar horario", icon: "calendarClock" },
+  { href: "/admin/reglas", label: "Reglas", icon: "fileText" },
 ];
 
 
@@ -26,7 +27,7 @@ export default async function AdminLayout({
 
   return (
     <AppShell
-      roleLabel="Admin / Coordinador"
+      roleLabel="Administrador"
       userEmail={user.email}
       navItems={NAV_ADMIN}
     >

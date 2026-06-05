@@ -8,15 +8,16 @@ import { Label } from "@/components/ui/label";
 import { crearProfesor } from "./actions";
 import { TIPO_PROFESOR_OPTIONS } from "../catalog-options";
 
-export function ProfesorForm() {
+export function ProfesorForm({ onSuccess }: { onSuccess?: () => void }) {
   const [state, action, pending] = useActionState(crearProfesor, undefined);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     if (state?.message === "ok") {
       formRef.current?.reset();
+      onSuccess?.();
     }
-  }, [state]);
+  }, [state, onSuccess]);
 
   return (
     <form ref={formRef} action={action} className="grid gap-4">
@@ -89,6 +90,30 @@ export function ProfesorForm() {
           </select>
           {state?.errors?.tipo && (
             <p className="text-xs text-destructive">{state.errors.tipo[0]}</p>
+          )}
+        </div>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="space-y-1.5">
+          <Label htmlFor="prof-appointment">Tipo de vinculo</Label>
+          <select
+            id="prof-appointment"
+            name="appointmentType"
+            required
+            defaultValue="CONTRATADO"
+            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring"
+            aria-invalid={state?.errors?.appointmentType ? "true" : undefined}
+          >
+            <option value="CONTRATADO">Contratado</option>
+            <option value="NOMBRADO">Nombrado (planta)</option>
+          </select>
+          {state?.errors?.appointmentType ? (
+            <p className="text-xs text-destructive">{state.errors.appointmentType[0]}</p>
+          ) : (
+            <p className="text-xs text-muted-foreground">
+              Los nombrados tienen prioridad al compactar huecos en su horario.
+            </p>
           )}
         </div>
       </div>

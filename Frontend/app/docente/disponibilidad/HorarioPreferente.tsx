@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { Sun, Sunset, Moon } from "lucide-react";
-import { setDisponibilidad } from "./actions";
+import { setDisponibilidad, setDisponibilidadMasivo } from "./actions";
 
 type Dia = "LUN" | "MAR" | "MIE" | "JUE" | "VIE" | "SAB" | "DOM";
 type DiaActiva = Exclude<Dia, "DOM">;
@@ -23,6 +23,8 @@ const TURNOS: { key: Turno; label: string; horas: string; icon: typeof Sun }[] =
   { key: "TARDE", label: "Tarde", horas: "14:00 - 18:50", icon: Sunset },
   { key: "NOCHE", label: "Noche", horas: "19:00 - 22:10", icon: Moon },
 ];
+
+const DIAS_ACTIVOS: DiaActiva[] = ["LUN", "MAR", "MIE", "JUE", "VIE", "SAB"];
 
 function key(dia: DiaActiva, turno: Turno) {
   return `${dia}-${turno}`;
@@ -70,6 +72,35 @@ export function HorarioPreferente({ initial }: HorarioPreferenteProps) {
     });
   }
 
+  function handleBulk(turno: Turno | "ALL", activar: boolean) {
+    setError(null);
+    const turnos: Turno[] = turno === "ALL" ? ["MANANA", "TARDE", "NOCHE"] : [turno];
+    const keys: string[] = [];
+    for (const t of turnos) {
+      for (const d of DIAS_ACTIVOS) keys.push(key(d, t));
+    }
+
+    const prev = marcados;
+    const next = new Set(marcados);
+    for (const k of keys) {
+      if (activar) next.add(k);
+      else next.delete(k);
+    }
+    setMarcados(next);
+
+    const fd = new FormData();
+    fd.set("turno", turno);
+    fd.set("activar", activar ? "true" : "false");
+
+    startTransition(async () => {
+      const result = await setDisponibilidadMasivo(fd);
+      if (!result.ok) {
+        setMarcados(prev);
+        setError(result.message);
+      }
+    });
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
@@ -79,6 +110,56 @@ export function HorarioPreferente({ initial }: HorarioPreferenteProps) {
             : `${seleccionados} de ${totalSlots} turnos marcados.`}
         </p>
         {error && <p className="text-xs text-destructive">{error}</p>}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={() => handleBulk("ALL", true)}
+          disabled={pending}
+          className="rounded-md border bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
+        >
+          Marcar todo
+        </button>
+        <button
+          type="button"
+          onClick={() => handleBulk("ALL", false)}
+          disabled={pending}
+          className="rounded-md border px-3 py-1.5 text-xs font-semibold text-destructive hover:bg-destructive/10 disabled:opacity-60"
+        >
+          Limpiar
+        </button>
+
+        <span className="ml-1 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+          Atajos por turno:
+        </span>
+        {TURNOS.map((t) => (
+          <div
+            key={t.key}
+            className="flex items-center gap-1 rounded-lg border bg-muted/40 p-1"
+          >
+            <span className="px-1.5 text-[10px] font-medium text-muted-foreground">
+              {t.label}
+            </span>
+            <button
+              type="button"
+              onClick={() => handleBulk(t.key, true)}
+              disabled={pending}
+              className="rounded px-1.5 py-0.5 text-[10px] font-bold text-primary hover:bg-primary/10 disabled:opacity-60"
+            >
+              Agregar
+            </button>
+            <span className="text-muted-foreground/40">|</span>
+            <button
+              type="button"
+              onClick={() => handleBulk(t.key, false)}
+              disabled={pending}
+              className="rounded px-1.5 py-0.5 text-[10px] font-bold text-destructive hover:bg-destructive/10 disabled:opacity-60"
+            >
+              Quitar
+            </button>
+          </div>
+        ))}
       </div>
 
       <div className="overflow-x-auto rounded-lg border bg-background">

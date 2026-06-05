@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CursoForm } from "./CursoForm";
+import { CursoRegisterDialog } from "./CursoRegisterDialog";
 import { CursosTable } from "./CursosTable";
 
 export default async function CursosPage() {
@@ -96,28 +96,17 @@ export default async function CursosPage() {
         </Card>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
-        <div className="space-y-6">
-          <Card className="border-gray-100 shadow-sm">
-            <CardHeader className="bg-gray-50/50 border-b border-gray-100 pb-4">
-              <CardTitle className="font-display text-base">Crear nuevo curso</CardTitle>
-              <CardDescription>
-                Registra el curso con su ciclo, carga horaria y tipo de aula.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <CursoForm carreras={[]} />
-            </CardContent>
-          </Card>
-        </div>
-
+      <div className="space-y-6">
         <div className="space-y-6">
           <Card className="border-gray-100 shadow-sm overflow-hidden">
-            <CardHeader className="bg-gray-50/50 border-b border-gray-100">
-              <CardTitle className="font-display text-base">Cursos registrados</CardTitle>
-              <CardDescription>
-                Cada curso tiene una vista de detalle para gestionar sus NRCs y configuración.
-              </CardDescription>
+            <CardHeader className="bg-gray-50/50 border-b border-gray-100 flex flex-row items-center justify-between gap-3">
+              <div>
+                <CardTitle className="font-display text-base">Cursos registrados</CardTitle>
+                <CardDescription>
+                  Cada curso tiene una vista de detalle para gestionar sus NRCs y configuración.
+                </CardDescription>
+              </div>
+              <CursoRegisterDialog carreras={[]} />
             </CardHeader>
             <CardContent className="p-0">
               {fetchError && (

@@ -39,6 +39,13 @@ enum DayOfWeek {
   SATURDAY
 }
 
+// Tipo de vinculo del docente. Los NOMBRADO (planta) tienen prioridad al
+// compactar horarios: el solver penaliza mas fuerte sus huecos.
+enum TeacherAppointment {
+  NOMBRADO
+  CONTRATADO
+}
+
 // ============================================================
 //  AUTENTICACIÓN
 // ============================================================
@@ -230,6 +237,7 @@ model Teacher {
   code      String   @unique
   fullName  String
   specialty String
+  appointmentType TeacherAppointment @default(CONTRATADO)
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

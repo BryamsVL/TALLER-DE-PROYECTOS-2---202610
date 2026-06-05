@@ -37,6 +37,11 @@ interface SolverResponse {
   assignments: Assignment[];
   elapsed_seconds?: number;
   conflicts?: string[];
+  huecos?: {
+    baseline: number | null;
+    optimizado: number;
+    pct_reduccion: number;
+  };
 }
 
 export function GenerarHorarioPanel() {
@@ -274,6 +279,16 @@ export function GenerarHorarioPanel() {
                 <p className={`text-xs mt-0.5 ${result.status === "OPTIMAL" ? "text-emerald-700/80 dark:text-emerald-400/70" : "text-amber-700/80 dark:text-amber-400/70"}`}>
                   Asignaciones procesadas: <span className="font-bold">{result.assignments.length} sesiones</span>.
                 </p>
+                {result.huecos && result.huecos.baseline != null && (
+                  <p className="text-xs mt-1 text-emerald-700/80 dark:text-emerald-400/70">
+                    Huecos docentes: <span className="font-bold">{result.huecos.baseline} → {result.huecos.optimizado}</span>
+                    {result.huecos.pct_reduccion > 0 && (
+                      <span className="ml-1.5 inline-flex items-center rounded-full bg-emerald-500/15 px-2 py-0.5 font-bold text-emerald-700 dark:text-emerald-400">
+                        −{result.huecos.pct_reduccion}% reducción
+                      </span>
+                    )}
+                  </p>
+                )}
               </div>
             </div>
             <div className="flex items-center gap-2">

@@ -21,7 +21,7 @@ async function assertAdminCaller(): Promise<boolean> {
     .select("rol")
     .eq("id", user.id)
     .single();
-  return perfil?.rol === "ADMIN" || perfil?.rol === "COORDINADOR";
+  return perfil?.rol === "ADMIN";
 }
 
 // Aprueba la solicitud y hace el swap de inscripcion en una sola pasada.

@@ -1,8 +1,8 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import Link from "next/link";
-import { Lock, Mail } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +10,16 @@ import { signIn } from "@/app/actions/auth";
 
 export default function LoginPage() {
   const [state, action, pending] = useActionState(signIn, undefined);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Credenciales invalidas: borrar solo la contrasena, mantener el correo.
+  useEffect(() => {
+    if (state?.message) {
+      setPassword("");
+    }
+  }, [state]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-6">
@@ -72,6 +82,8 @@ export default function LoginPage() {
                   autoComplete="email"
                   required
                   placeholder="usuario@institucion.edu"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
                 />
               </div>
@@ -92,12 +104,28 @@ export default function LoginPage() {
                 <Input
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
                   required
                   placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={
+                    showPassword ? "Ocultar contrasena" : "Mostrar contrasena"
+                  }
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
               </div>
               {state?.errors?.password && (
                 <p className="text-xs text-destructive">{state.errors.password[0]}</p>

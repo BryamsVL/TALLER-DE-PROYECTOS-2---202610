@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { GenerarHorarioPanel } from "./GenerarHorarioPanel";
+import { ExportHorarioButtons } from "@/components/ExportHorarioButtons";
 import { 
   CalendarClock, 
   DoorOpen, 
@@ -156,6 +157,9 @@ export default async function HorariosPage() {
             <CardDescription className="text-xs">
               Ejecuta el Solver CSP de Python para compilar y visualizar el calendario óptimo.
             </CardDescription>
+            <div className="pt-3">
+              <ExportHorarioButtons />
+            </div>
           </CardHeader>
           <CardContent className="pt-6">
             <GenerarHorarioPanel />
