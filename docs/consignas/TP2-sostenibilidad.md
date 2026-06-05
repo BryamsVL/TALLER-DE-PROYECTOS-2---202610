@@ -255,15 +255,6 @@ Las optimizaciones y herramientas de Green Software implementadas se encuentran 
 ---
 
 ## 7. Cumplimiento de actividades y recursos
-
-- [ ] Escuchar audio: *El_costo_físico_del_mundo_digital.m4a*
-- [ ] Ver video: *Viaje_Full-Stack_Sostenible.mp4*
-- [ ] Revisar infografía: *Sostenibilidad y eficiencia web móvil.png*
-- [ ] Revisar diapositivas: *Green_MERN_Engineering.pptx*
-- [ ] **Responder encuesta estudiantil** (NotebookLM 2026) — adjuntar captura
-
----
-
 ## Checklist final de entrega
 
 - [x] ≥5 impactos analizados — **7 impactos documentados** (§1)
