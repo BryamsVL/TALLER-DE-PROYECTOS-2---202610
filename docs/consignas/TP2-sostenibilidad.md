@@ -276,7 +276,7 @@ Las optimizaciones y herramientas de Green Software implementadas se encuentran 
 
 ---
 
-## Resultados de implementación — 2026-05-29
+## Resultados de implementación
 
 Mejoras de sostenibilidad aplicadas en esta iteración. Todas verificadas a nivel de
 compilación (`tsc --noEmit` del backend limpio; lockfile del frontend sincronizado).
