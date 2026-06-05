@@ -225,8 +225,10 @@ docker-compose up --build
 
 ## 🎓 Entregables Académicos (TP2)
 
-* [📄 Estrategias de Testing y Aseguramiento de Calidad](./docs/consignas/TP2-testing.md)
-* [📄 Desarrollo Web Responsable y Sostenibilidad](./docs/consignas/TP2-sostenibilidad.md)
+| Entregable / Tema | Documento de Evidencia |
+|---|---|
+| **Estrategias de Testing y Aseguramiento de Calidad** | [📄 TP2-testing.md](./docs/consignas/TP2-testing.md) |
+| **Desarrollo Web Responsable y Sostenibilidad** | [📄 TP2-sostenibilidad.md](./docs/consignas/TP2-sostenibilidad.md) |
 ---
 
 ## 👥 Equipo de Desarrollo
