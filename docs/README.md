@@ -41,3 +41,8 @@ Histórico y trabajo en curso dividido por iteraciones.
 - [Sprint 1 (Inicio y Fundamentos)](./sprints/sprint-1) — Completado
 - [Sprint 2 (Motor CSP)](./sprints/sprint-2) — En curso
 - [Sprint 3 (PMV)](./sprints/sprint-3) — Planificado
+
+### 6. Entregables Académicos (TP2)
+- [Entregable TP2 — Sostenibilidad y Desarrollo Web Responsable](./consignas/TP2-sostenibilidad.md)
+- [Entregable TP2 — Estrategias de Testing y Aseguramiento de Calidad](./consignas/TP2-testing.md)
+- [Reporte Técnico de Optimización Green Software](./gestion/green-software.md)
