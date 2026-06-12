@@ -13,6 +13,11 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const emailErrorId = state?.errors?.email ? "login-email-error" : undefined;
+  const passwordErrorId = state?.errors?.password
+    ? "login-password-error"
+    : undefined;
+  const formErrorId = state?.message ? "login-form-error" : undefined;
 
   // Credenciales invalidas: borrar solo la contrasena, mantener el correo.
   useEffect(() => {
@@ -84,11 +89,15 @@ export default function LoginPage() {
                   placeholder="usuario@institucion.edu"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  aria-invalid={state?.errors?.email ? "true" : undefined}
+                  aria-describedby={emailErrorId}
                   className="border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
                 />
               </div>
               {state?.errors?.email && (
-                <p className="text-xs text-destructive">{state.errors.email[0]}</p>
+                <p id={emailErrorId} className="text-xs text-destructive">
+                  {state.errors.email[0]}
+                </p>
               )}
             </div>
 
@@ -110,14 +119,18 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  aria-invalid={state?.errors?.password ? "true" : undefined}
+                  aria-describedby={passwordErrorId}
                   className="border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
+                  aria-pressed={showPassword}
                   aria-label={
                     showPassword ? "Ocultar contrasena" : "Mostrar contrasena"
                   }
+                  title={showPassword ? "Ocultar contrasena" : "Mostrar contrasena"}
                   className="text-muted-foreground hover:text-foreground"
                 >
                   {showPassword ? (
@@ -128,17 +141,27 @@ export default function LoginPage() {
                 </button>
               </div>
               {state?.errors?.password && (
-                <p className="text-xs text-destructive">{state.errors.password[0]}</p>
+                <p id={passwordErrorId} className="text-xs text-destructive">
+                  {state.errors.password[0]}
+                </p>
               )}
             </div>
 
             {state?.message && (
-              <p className="text-sm text-destructive">{state.message}</p>
+              <p
+                id={formErrorId}
+                className="text-sm text-destructive"
+                role="alert"
+                aria-live="polite"
+              >
+                {state.message}
+              </p>
             )}
 
             <Button
               type="submit"
               disabled={pending}
+              aria-describedby={formErrorId}
               className="w-full rounded-xl bg-accent py-3 text-sm font-semibold text-accent-foreground hover:bg-accent/90 h-auto"
             >
               {pending ? "Ingresando..." : "Ingresar"}

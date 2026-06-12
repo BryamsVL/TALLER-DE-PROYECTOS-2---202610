@@ -40,3 +40,11 @@ Histórico y trabajo en curso dividido por iteraciones.
 - [Sprint 1 (Inicio y Fundamentos)](./sprints/sprint-1) — Completado
 - [Sprint 2 (Motor CSP)](./sprints/sprint-2) — En curso
 - [Sprint 3 (PMV)](./sprints/sprint-3) — Planificado
+
+### 6. [Calidad (`/calidad`)](./calidad)
+Artefactos de aseguramiento de calidad y evidencias para la consigna TP2.
+- [README](./calidad/README.md)
+- [SonarCloud](./calidad/sonarcloud.md)
+- [OWASP Top 10 2025](./calidad/owasp-top10-2025.md)
+- [Auditoria WCAG](./calidad/wcag-auditoria.md)
+- [SUS](./calidad/sus.md)

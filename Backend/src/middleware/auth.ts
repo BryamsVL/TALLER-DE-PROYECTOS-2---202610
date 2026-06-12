@@ -8,6 +8,18 @@ export interface AuthPayload {
   role: Role;
 }
 
+function isAuthPayload(value: unknown): value is AuthPayload {
+  if (!value || typeof value !== "object") return false;
+
+  const payload = value as Record<string, unknown>;
+  return (
+    typeof payload.userId === "string" &&
+    ["ADMIN", "COORDINADOR", "DOCENTE", "ESTUDIANTE"].includes(
+      String(payload.role),
+    )
+  );
+}
+
 declare global {
   namespace Express {
     interface Request {
@@ -31,7 +43,14 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
 
   try {
     const token = header.slice(7);
-    req.auth = jwt.verify(token, secret) as AuthPayload;
+    const decoded = jwt.verify(token, secret, { algorithms: ["HS256"] });
+
+    if (!isAuthPayload(decoded)) {
+      res.status(401).json({ error: "Invalid token" });
+      return;
+    }
+
+    req.auth = decoded;
     next();
   } catch {
     res.status(401).json({ error: "Invalid token" });

@@ -61,6 +61,16 @@ describe("requireAuth", () => {
     expect(res.body).toMatchObject({ ok: true, role: "DOCENTE" });
   });
 
+  it("401 cuando el payload no tiene la forma esperada", async () => {
+    const malformedToken = jwt.sign({ sub: "u1" }, TEST_SECRET);
+    const res = await request(app)
+      .get("/privado")
+      .set("Authorization", `Bearer ${malformedToken}`);
+
+    expect(res.status).toBe(401);
+    expect(res.body).toEqual({ error: "Invalid token" });
+  });
+
   it("500 cuando JWT_SECRET no esta configurado", async () => {
     const prev = process.env.JWT_SECRET;
     delete process.env.JWT_SECRET;
