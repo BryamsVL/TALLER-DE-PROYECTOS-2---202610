@@ -1,0 +1,636 @@
+// SGOHA — Schema Prisma completo
+// Basado en: database/schema.sql del proyecto modelo (Planner UC)
+// Backend: Express + Node.js + Prisma + PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================================
+//  ENUMS
+// ============================================================
+
+enum UserRole {
+  ADMIN
+  COORDINATOR
+  TEACHER
+  STUDENT
+}
+
+enum SexType {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+}
+
+// Tipo de vinculo del docente. Los NOMBRADO (planta) tienen prioridad al
+// compactar horarios: el solver penaliza mas fuerte sus huecos.
+enum TeacherAppointment {
+  NOMBRADO
+  CONTRATADO
+}
+
+// ============================================================
+//  AUTENTICACIÓN
+// ============================================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String?
+  fullName      String
+  role          UserRole
+  isActive      Boolean   @default(true)
+  emailVerified Boolean   @default(false)
+  avatarUrl     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relaciones
+  profile             Profile?
+  oauthAccounts       OAuthLinkedAccount[]
+  refreshTokens       RefreshToken[]
+  passwordResetTokens PasswordResetToken[]
+  teachingSchedulesCreated   TeachingSchedule[] @relation("CreatedBy")
+  teachingSchedulesConfirmed TeachingSchedule[] @relation("ConfirmedBy")
+  studentSchedulesGenerated  StudentSchedule[]
+  solverRunsRequested        SolverRun[]
+  teacher                    Teacher?
+  student                    Student?
+
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+model OAuthLinkedAccount {
+  id              String   @id @default(cuid())
+  userId          String
+  provider        String
+  providerSubject String
+  providerEmail   String?
+  createdAt       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerSubject])
+  @@index([userId])
+  @@map("oauth2_linked_accounts")
+}
+
+model RefreshToken {
+  id         String    @id @default(cuid())
+  userId     String
+  tokenHash  String    @unique
+  expiresAt  DateTime
+  revoked    Boolean   @default(false)
+  revokedAt  DateTime?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@map("refresh_tokens")
+}
+
+model PasswordResetToken {
+  id             String    @id @default(cuid())
+  userId         String
+  otpHash        String
+  resetTokenHash String?
+  expiresAt      DateTime
+  verified       Boolean   @default(false)
+  verifiedAt     DateTime?
+  used           Boolean   @default(false)
+  usedAt         DateTime?
+  verifyAttempts Int       @default(0)
+  createdAt      DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("password_reset_tokens")
+}
+
+// ============================================================
+//  PERFILES Y CATÁLOGOS
+// ============================================================
+
+model Profile {
+  id         String    @id @default(cuid())
+  userId     String    @unique
+  dni        String?   @unique
+  phone      String?   @unique
+  sex        SexType?
+  age        Int?
+  facultadId String?
+  carreraId  String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  facultad  Facultad? @relation(fields: [facultadId], references: [id], onDelete: SetNull)
+  carrera   Carrera?  @relation(fields: [carreraId], references: [id], onDelete: SetNull)
+
+  @@index([facultadId])
+  @@index([carreraId])
+  @@map("profiles")
+}
+
+model Facultad {
+  id        String    @id @default(cuid())
+  code      String    @unique
+  name      String
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  carreras  Carrera[]
+  profiles  Profile[]
+  students  Student[]
+
+  @@map("facultades")
+}
+
+model Carrera {
+  id         String    @id @default(cuid())
+  facultadId String
+  code       String?   @unique
+  name       String
+  isActive   Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  facultad  Facultad  @relation(fields: [facultadId], references: [id], onDelete: Cascade)
+  profiles  Profile[]
+  students  Student[]
+
+  @@index([facultadId])
+  @@map("carreras")
+}
+
+// ============================================================
+//  DOMINIO ACADÉMICO
+// ============================================================
+
+model AcademicPeriod {
+  id                String   @id @default(cuid())
+  code              String   @unique
+  name              String
+  startsAt          DateTime @db.Date
+  endsAt            DateTime @db.Date
+  status            String   @default("PLANNING") // PLANNING | ACTIVE | CLOSED
+  maxStudentCredits Int      @default(22)
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  courseOfferings   CourseOffering[]
+  teachingSchedules TeachingSchedule[]
+  studentSchedules  StudentSchedule[]
+  solverRuns        SolverRun[]
+
+  @@map("academic_periods")
+}
+
+model TimeSlot {
+  id         String    @id @default(cuid())
+  dayOfWeek  DayOfWeek
+  startTime  DateTime  @db.Time
+  endTime    DateTime  @db.Time
+  slotOrder  Int
+  isActive   Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  teacherAvailability  TeacherAvailability[]
+  classroomAvailability ClassroomAvailability[]
+  sectionAssignmentSlots SectionAssignmentSlot[]
+
+  @@unique([dayOfWeek, startTime, endTime])
+  @@index([dayOfWeek, startTime])
+  @@map("time_slots")
+}
+
+model Teacher {
+  id        String   @id @default(cuid())
+  userId    String?  @unique
+  code      String   @unique
+  fullName  String
+  specialty String
+  appointmentType TeacherAppointment @default(CONTRATADO)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user                    User?                    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  teacherCourses          TeacherCourse[]
+  availability            TeacherAvailability[]
+  sectionCandidates       SectionTeacherCandidate[]
+  sectionAssignments      SectionAssignment[]
+  sectionAssignmentSlots  SectionAssignmentSlot[]
+
+  @@index([userId])
+  @@index([isActive])
+  @@map("teachers")
+}
+
+model Classroom {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  name      String
+  capacity  Int
+  roomType  String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  availability           ClassroomAvailability[]
+  sectionAssignments     SectionAssignment[]
+  sectionAssignmentSlots SectionAssignmentSlot[]
+
+  @@index([isActive])
+  @@map("classrooms")
+}
+
+model Course {
+  id               String   @id @default(cuid())
+  code             String   @unique
+  name             String
+  cycle            Int      @default(1)
+  credits          Int
+  requiredCredits  Int      @default(0)
+  weeklyHours      Int
+  requiredRoomType String
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  teacherCourses      TeacherCourse[]
+  prerequisites       CoursePrerequisite[]  @relation("CoursePrereqs")
+  isPrerequisiteOf    CoursePrerequisite[]  @relation("PrerequisiteOf")
+  offerings           CourseOffering[]
+  studentCompletions  StudentCompletedCourse[]
+  scheduleItems       StudentScheduleItem[]
+
+  @@index([isActive])
+  @@map("courses")
+}
+
+model TeacherCourse {
+  id        String   @id @default(cuid())
+  teacherId String
+  courseId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  teacher Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  course  Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([teacherId, courseId])
+  @@index([teacherId])
+  @@index([courseId])
+  @@map("teacher_courses")
+}
+
+model Student {
+  id          String   @id @default(cuid())
+  userId      String?  @unique
+  code        String   @unique
+  fullName    String
+  cycle       Int
+  career      String?
+  creditLimit Int      @default(22)
+  isActive    Boolean  @default(true)
+  facultadId  String?
+  carreraId   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user               User?                    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  facultad           Facultad?                @relation(fields: [facultadId], references: [id], onDelete: SetNull)
+  carrera            Carrera?                 @relation(fields: [carreraId], references: [id], onDelete: SetNull)
+  completedCourses   StudentCompletedCourse[]
+  schedules          StudentSchedule[]
+  solverRuns         SolverRun[]
+
+  @@index([userId])
+  @@index([isActive])
+  @@map("students")
+}
+
+// ============================================================
+//  DISPONIBILIDAD
+// ============================================================
+
+model TeacherAvailability {
+  id          String   @id @default(cuid())
+  teacherId   String
+  timeSlotId  String
+  isAvailable Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  teacher  Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  timeSlot TimeSlot @relation(fields: [timeSlotId], references: [id], onDelete: Cascade)
+
+  @@unique([teacherId, timeSlotId])
+  @@index([teacherId])
+  @@index([timeSlotId])
+  @@map("teacher_availability")
+}
+
+model ClassroomAvailability {
+  id           String   @id @default(cuid())
+  classroomId  String
+  timeSlotId   String
+  isAvailable  Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  classroom Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  timeSlot  TimeSlot  @relation(fields: [timeSlotId], references: [id], onDelete: Cascade)
+
+  @@unique([classroomId, timeSlotId])
+  @@index([classroomId])
+  @@index([timeSlotId])
+  @@map("classroom_availability")
+}
+
+// ============================================================
+//  PRERREQUISITOS Y CURSOS COMPLETADOS
+// ============================================================
+
+model CoursePrerequisite {
+  id                   String   @id @default(cuid())
+  courseId             String
+  prerequisiteCourseId String
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  course             Course @relation("CoursePrereqs", fields: [courseId], references: [id], onDelete: Cascade)
+  prerequisiteCourse Course @relation("PrerequisiteOf", fields: [prerequisiteCourseId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, prerequisiteCourseId])
+  @@index([courseId])
+  @@index([prerequisiteCourseId])
+  @@map("course_prerequisites")
+}
+
+model StudentCompletedCourse {
+  id         String    @id @default(cuid())
+  studentId  String
+  courseId   String
+  approvedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course  Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, courseId])
+  @@index([studentId])
+  @@index([courseId])
+  @@map("student_completed_courses")
+}
+
+// ============================================================
+//  OFERTAS Y SECCIONES
+// ============================================================
+
+model CourseOffering {
+  id                 String   @id @default(cuid())
+  academicPeriodId   String
+  courseId           String
+  expectedEnrollment Int      @default(0)
+  status             String   @default("DRAFT") // DRAFT | ACTIVE | CANCELLED
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  academicPeriod AcademicPeriod @relation(fields: [academicPeriodId], references: [id], onDelete: Cascade)
+  course         Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  sections       CourseSection[]
+
+  @@unique([academicPeriodId, courseId])
+  @@index([academicPeriodId])
+  @@index([courseId])
+  @@map("course_offerings")
+}
+
+model CourseSection {
+  id               String   @id @default(cuid())
+  courseOfferingId String
+  sectionCode      String
+  vacancyLimit     Int
+  status           String   @default("DRAFT") // DRAFT | ACTIVE | CANCELLED
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  courseOffering     CourseOffering            @relation(fields: [courseOfferingId], references: [id], onDelete: Cascade)
+  teacherCandidates  SectionTeacherCandidate[]
+  sectionAssignments SectionAssignment[]
+  scheduleItems      StudentScheduleItem[]
+
+  @@unique([courseOfferingId, sectionCode])
+  @@index([courseOfferingId])
+  @@map("course_sections")
+}
+
+model SectionTeacherCandidate {
+  id             String   @id @default(cuid())
+  sectionId      String
+  teacherId      String
+  priorityWeight Decimal  @default(1.0) @db.Decimal(8, 4)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  section CourseSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  teacher Teacher       @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@unique([sectionId, teacherId])
+  @@index([sectionId])
+  @@index([teacherId])
+  @@map("section_teacher_candidates")
+}
+
+// ============================================================
+//  HORARIOS GENERADOS (OUTPUT DEL CSP)
+// ============================================================
+
+model TeachingSchedule {
+  id               String    @id @default(cuid())
+  academicPeriodId String
+  version          Int       @default(1)
+  status           String    @default("DRAFT") // DRAFT | CONFIRMED | CANCELLED
+  createdBy        String?
+  confirmedBy      String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  confirmedAt      DateTime?
+
+  academicPeriod     AcademicPeriod     @relation(fields: [academicPeriodId], references: [id], onDelete: Cascade)
+  createdByUser      User?              @relation("CreatedBy", fields: [createdBy], references: [id], onDelete: SetNull)
+  confirmedByUser    User?              @relation("ConfirmedBy", fields: [confirmedBy], references: [id], onDelete: SetNull)
+  sectionAssignments SectionAssignment[]
+
+  @@index([academicPeriodId])
+  @@map("teaching_schedules")
+}
+
+model SectionAssignment {
+  id                 String   @id @default(cuid())
+  teachingScheduleId String
+  sectionId          String
+  teacherId          String
+  classroomId        String
+  assignmentStatus   String   @default("DRAFT") // DRAFT | CONFIRMED | CANCELLED
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  teachingSchedule TeachingSchedule        @relation(fields: [teachingScheduleId], references: [id], onDelete: Cascade)
+  section          CourseSection           @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  teacher          Teacher                 @relation(fields: [teacherId], references: [id])
+  classroom        Classroom               @relation(fields: [classroomId], references: [id])
+  slots            SectionAssignmentSlot[]
+
+  @@unique([teachingScheduleId, sectionId])
+  @@index([teachingScheduleId])
+  @@index([teacherId])
+  @@index([classroomId])
+  @@map("section_assignments")
+}
+
+model SectionAssignmentSlot {
+  id                  String   @id @default(cuid())
+  sectionAssignmentId String
+  teachingScheduleId  String
+  sectionId           String
+  teacherId           String
+  classroomId         String
+  timeSlotId          String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  sectionAssignment SectionAssignment @relation(fields: [sectionAssignmentId], references: [id], onDelete: Cascade)
+  teacher           Teacher           @relation(fields: [teacherId], references: [id])
+  classroom         Classroom         @relation(fields: [classroomId], references: [id])
+  timeSlot          TimeSlot          @relation(fields: [timeSlotId], references: [id])
+
+  @@unique([sectionAssignmentId, timeSlotId])
+  @@unique([teachingScheduleId, teacherId, timeSlotId])
+  @@unique([teachingScheduleId, classroomId, timeSlotId])
+  @@index([teachingScheduleId])
+  @@index([sectionId])
+  @@index([timeSlotId])
+  @@map("section_assignment_slots")
+}
+
+model StudentSchedule {
+  id               String    @id @default(cuid())
+  studentId        String
+  academicPeriodId String
+  status           String    @default("DRAFT") // DRAFT | CONFIRMED | CANCELLED
+  generatedBy      String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  confirmedAt      DateTime?
+
+  student        Student        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  academicPeriod AcademicPeriod @relation(fields: [academicPeriodId], references: [id], onDelete: Cascade)
+  generatedByUser User?         @relation(fields: [generatedBy], references: [id], onDelete: SetNull)
+  items          StudentScheduleItem[]
+
+  @@index([studentId])
+  @@index([academicPeriodId])
+  @@map("student_schedules")
+}
+
+model StudentScheduleItem {
+  id                String   @id @default(cuid())
+  studentScheduleId String
+  studentId         String
+  sectionId         String
+  courseId          String
+  itemStatus        String   @default("ACTIVE") // ACTIVE | REMOVED
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  studentSchedule StudentSchedule @relation(fields: [studentScheduleId], references: [id], onDelete: Cascade)
+  section         CourseSection   @relation(fields: [sectionId], references: [id])
+  course          Course          @relation(fields: [courseId], references: [id])
+
+  @@unique([studentScheduleId, sectionId])
+  @@unique([studentScheduleId, courseId])
+  @@index([studentScheduleId])
+  @@index([studentId])
+  @@index([sectionId])
+  @@map("student_schedule_items")
+}
+
+// ============================================================
+//  TRACKING DEL SOLVER CSP
+// ============================================================
+
+model SolverRun {
+  id               String    @id @default(cuid())
+  runType          String    // TEACHER | STUDENT
+  academicPeriodId String
+  studentId        String?
+  status           String    @default("PENDING") // PENDING | RUNNING | SUCCEEDED | FAILED | CANCELLED
+  requestedBy      String?
+  timeLimitMs      Int       @default(30000)
+  inputHash        String?
+  resultSummary    String?
+  startedAt        DateTime?
+  finishedAt       DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  academicPeriod AcademicPeriod     @relation(fields: [academicPeriodId], references: [id], onDelete: Cascade)
+  student        Student?           @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  requestedByUser User?             @relation(fields: [requestedBy], references: [id], onDelete: SetNull)
+  conflicts      SolverRunConflict[]
+
+  @@index([academicPeriodId])
+  @@index([studentId])
+  @@index([status])
+  @@map("solver_runs")
+}
+
+model SolverRunConflict {
+  id            String   @id @default(cuid())
+  solverRunId   String
+  conflictType  String
+  resourceType  String?
+  resourceId    String?
+  sectionId     String?
+  timeSlotId    String?
+  message       String
+  detailsJson   Json?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  solverRun SolverRun @relation(fields: [solverRunId], references: [id], onDelete: Cascade)
+
+  @@index([solverRunId])
+  @@map("solver_run_conflicts")
+}

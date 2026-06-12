@@ -1,0 +1,53 @@
+name: SonarCloud Analysis
+
+# Análisis estático de calidad (SonarCloud) para Frontend y Backend.
+# Genera cobertura LCOV con los tests existentes y la sube al scanner.
+on:
+  push:
+    branches: [main, version-supabase]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  sonarcloud:
+    name: Build, test & analyze
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # Sonar necesita historial completo para blame/SCM
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # ---------------- Backend ----------------
+      - name: Backend - install
+        working-directory: backend
+        run: npm ci
+
+      - name: Backend - generate prisma client
+        working-directory: backend
+        run: npx prisma generate
+
+      - name: Backend - test with coverage
+        working-directory: backend
+        run: npm run test:cov
+
+      # ---------------- Frontend ----------------
+      - name: Frontend - install
+        working-directory: frontend
+        run: npm ci
+
+      - name: Frontend - test with coverage
+        working-directory: frontend
+        run: npm run test:cov
+
+      # ---------------- SonarCloud scan ----------------
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

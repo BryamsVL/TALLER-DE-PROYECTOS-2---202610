@@ -18,9 +18,9 @@ La siguiente tabla muestra la trazabilidad directa entre cada requerimiento func
 | RF-03, RF-05 (Cursos y componentes) | HU-07 | S1 | ✅ Implementado | Commit `feat(HU-07)` |
 | RF-04 (Aulas) | HU-08 | S1 | ✅ Implementado | Commit `feat(HU-08)` |
 | RF-08 (Etapa 1 — franjas y traslados) | HU-09, HU-10 | S1 | ✅ Implementado | Commits `feat(HU-09)`, `feat(HU-10)` |
-| D1–D9 (Restricciones duras CSP) | HU-11 | S2 | 🔄 En curso | Branch `feature/HU-11-solver-duras` |
-| Regla 2 (Sin horarios inválidos silenciosos) | HU-12 | S2 | 🔄 En curso | Branch `feature/HU-12-ejecutar-csp` |
-| RF-09 (Activar horario institucional) | HU-13 | S2 | 🔄 En curso | Branch `feature/HU-13-activar-horario` |
+| D1–D9 (Restricciones duras CSP) | HU-11 | S2 | ✅ Implementado | Branch `feature/HU-11-solver-duras` |
+| Regla 2 (Sin horarios inválidos silenciosos) | HU-12 | S2 | ✅ Implementado | Branch `feature/HU-12-ejecutar-csp` |
+| RF-09 (Activar horario institucional) | HU-13 | S2 | ✅ Implementado | Branch `feature/HU-13-activar-horario` |
 | RF-10 (Ajuste manual validado) | HU-14 | S2 | 🔄 En curso | Branch `feature/HU-14-ajuste-manual` |
 | B1–B5 (Restricciones blandas) | HU-15 | S2 | ⬜ Pendiente | — |
 | RF-11, D10, D11 (Horario docente) | HU-16, HU-17 | S2 | 🔄 En curso | Branch `feature/HU-16-vista-docente` |

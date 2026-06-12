@@ -219,11 +219,16 @@ docker-compose up --build
 | **Motor CSP con OR-Tools** | [📄 Algoritmo CSP con OR TOOLS](docs/arquitectura/Algoritmo%20CSP%20con%20OR%20TOOLS.md) |
 | **Guía de pruebas del backend** | [📄 Guía de Testing](docs/arquitectura/Gu%C3%ADa%20de%20Pruebas%20(Testing)%20-%20Backend%20SGOHA.md) |
 | **Análisis de trazabilidad** — Backlog ↔ commits ↔ funcionalidades + colaboración real | [📄 analisis-trazabilidad.md](docs/planificacion/analisis-trazabilidad.md) |
+| **Requerimientos funcionales** — RF e RNF con criterios SMART, trazabilidad y nuevos RF derivados de entrevistas a stakeholders | [📄 lista-requerimientos.md](docs/sprints/sprint-1/lista-requerimientos.md) |
 
+---
 
+## 🎓 Entregables Académicos (TP2)
 
-
-
+| Entregable / Tema | Documento de Evidencia | Descripción |
+|---|---|---|
+| **Estrategias de Testing y Aseguramiento de Calidad** | [📄 TP2-testing.md](./docs/consignas/TP2-testing.md) | Plan de pruebas automatizadas (unitarias, componentes, integración, aceptación y E2E) y análisis de cobertura de código. |
+| **Desarrollo Web Responsable y Sostenibilidad** | [📄 TP2-sostenibilidad.md](./docs/consignas/TP2-sostenibilidad.md) | Análisis de impacto ambiental, reducción de CO₂ y aplicación de principios de **Green Software** en la base de datos, API y solver. |
 ---
 
 ## 👥 Equipo de Desarrollo

@@ -42,9 +42,9 @@ Base de datos (Supabase / PostgreSQL)
 
 | Funcionalidad | Endpoint | Capa | Estado |
 |---|---|---|---|
-| Modelado CSP — restricciones D1–D9 | Motor interno FastAPI | CSP service | 🔄 En curso |
-| Ejecución del solver institucional | `POST /api/schedules/institutional/generate` | Backend → CSP | 🔄 En curso |
-| Activación del horario institucional | `POST /api/schedules/institutional/{id}/activate` | Backend | 🔄 En curso |
+| Modelado CSP — restricciones D1–D9 | Motor interno FastAPI | CSP service | ✅ Integrado |
+| Ejecución del solver institucional | `POST /api/schedules/institutional/generate` | Backend → CSP | ✅ Integrado |
+| Activación del horario institucional | `POST /api/schedules/institutional/{id}/activate` | Backend | ✅ Integrado |
 | Ajuste manual de asignaciones | `PUT /api/schedules/institutional/{id}/assignments/{aid}` | Backend | 🔄 En curso |
 | Vista de horario por docente | `GET /api/schedules/teachers/{id}` | Backend | 🔄 En curso |
 
