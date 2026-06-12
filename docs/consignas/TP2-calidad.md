@@ -12,13 +12,15 @@
 
 ## 0. Resumen ejecutivo
 
-| Frente | Estado | Resultado actual |
-|---|---|---|
-| SonarCloud | Parcial | Configuracion y workflow listos; falta ejecucion real en GitHub/SonarCloud |
-| OWASP Top 10 2025 | Parcial | Matriz inicial creada; mitigacion JWT aplicada y validada |
-| WCAG | Parcial | Correcciones en login/registro; checklist inicial documentado |
-| SUS | Parcial | Instrumento, metodo de calculo y plantilla de aplicacion listos |
-| Tracking de consigna | Hecho | Plan actualizado en `docs/consignas/actividades_consignaOWASP.md` |
+
+| Frente               | Estado  | Resultado actual                                                           |
+| -------------------- | ------- | -------------------------------------------------------------------------- |
+| SonarCloud           | Parcial | Configuracion y workflow listos; falta ejecucion real en GitHub/SonarCloud |
+| OWASP Top 10 2025    | Parcial | Matriz inicial creada; mitigacion JWT aplicada y validada                  |
+| WCAG                 | Parcial | Correcciones en login/registro; checklist inicial documentado              |
+| SUS                  | Parcial | Instrumento, metodo de calculo y plantilla de aplicacion listos            |
+| Tracking de consigna | Hecho   | Plan actualizado en `docs/consignas/actividades_consignaOWASP.md`          |
+
 
 ---
 
@@ -28,13 +30,15 @@
 
 Se creo el directorio `docs/calidad/` con estos archivos:
 
-| Archivo | Proposito |
-|---|---|
-| `docs/calidad/README.md` | Indice de entregables de calidad |
-| `docs/calidad/sonarcloud.md` | Configuracion actual de SonarCloud y pendientes operativos |
-| `docs/calidad/owasp-top10-2025.md` | Matriz inicial de riesgos y mitigaciones |
-| `docs/calidad/wcag-auditoria.md` | Auditoria base de accesibilidad |
-| `docs/calidad/sus.md` | Instrumento SUS, formula y plantilla |
+
+| Archivo                            | Proposito                                                  |
+| ---------------------------------- | ---------------------------------------------------------- |
+| `docs/calidad/README.md`           | Indice de entregables de calidad                           |
+| `docs/calidad/sonarcloud.md`       | Configuracion actual de SonarCloud y pendientes operativos |
+| `docs/calidad/owasp-top10-2025.md` | Matriz inicial de riesgos y mitigaciones                   |
+| `docs/calidad/wcag-auditoria.md`   | Auditoria base de accesibilidad                            |
+| `docs/calidad/sus.md`              | Instrumento SUS, formula y plantilla                       |
+
 
 Ademas:
 
@@ -45,12 +49,14 @@ Ademas:
 
 Se verificaron como parte de la consigna:
 
-| Archivo | Estado |
-|---|---|
-| `sonar-project.properties` | Presente y apuntando a frontend + backend |
-| `.github/workflows/sonarcloud.yml` | Presente para analisis automatico |
-| `backend/coverage/lcov.info` | Presente |
-| `frontend/coverage/lcov.info` | Presente |
+
+| Archivo                            | Estado                                    |
+| ---------------------------------- | ----------------------------------------- |
+| `sonar-project.properties`         | Presente y apuntando a frontend + backend |
+| `.github/workflows/sonarcloud.yml` | Presente para analisis automatico         |
+| `backend/coverage/lcov.info`       | Presente                                  |
+| `frontend/coverage/lcov.info`      | Presente                                  |
+
 
 ---
 
@@ -70,15 +76,6 @@ Se verificaron como parte de la consigna:
 - `.github/workflows/sonarcloud.yml`
 - `docs/calidad/sonarcloud.md`
 
-### 2.3 Pendientes para cerrar evidencia
-
-1. Reemplazar `sonar.organization=CHANGE_ME_ORG`.
-2. Configurar `SONAR_TOKEN` en GitHub.
-3. Ejecutar el workflow.
-4. Capturar dashboard inicial.
-5. Priorizar y corregir issues.
-6. Capturar dashboard final.
-
 ---
 
 ## 3. OWASP Top 10 2025
@@ -91,15 +88,17 @@ Se documento una primera matriz alineada con OWASP Top 10 2025 en:
 
 Hallazgos principales documentados:
 
-| ID | Categoria | Situacion |
-|---|---|---|
-| OW-01 | Broken Access Control | Uso de `assertAdminCaller()` y RLS como defensa principal |
-| OW-02 | Authentication Failures | Validacion JWT endurecida en backend |
-| OW-03 | Security Misconfiguration | Falta cerrar organizacion/token de SonarCloud |
-| OW-04 | Cryptographic Failures | `SERVICE_ROLE_KEY` confinada a cliente server-only |
-| OW-05 | Injection | Validacion con `zod.safeParse()` y persistencia con Prisma |
-| OW-06 | Logging and Alerting Failures | Falta trazabilidad centralizada de eventos de seguridad |
-| OW-07 | Mishandling of Exceptional Conditions | Manejo de errores aun sin estandar de observabilidad |
+
+| ID    | Categoria                             | Situacion                                                  |
+| ----- | ------------------------------------- | ---------------------------------------------------------- |
+| OW-01 | Broken Access Control                 | Uso de `assertAdminCaller()` y RLS como defensa principal  |
+| OW-02 | Authentication Failures               | Validacion JWT endurecida en backend                       |
+| OW-03 | Security Misconfiguration             | Falta cerrar organizacion/token de SonarCloud              |
+| OW-04 | Cryptographic Failures                | `SERVICE_ROLE_KEY` confinada a cliente server-only         |
+| OW-05 | Injection                             | Validacion con `zod.safeParse()` y persistencia con Prisma |
+| OW-06 | Logging and Alerting Failures         | Falta trazabilidad centralizada de eventos de seguridad    |
+| OW-07 | Mishandling of Exceptional Conditions | Manejo de errores aun sin estandar de observabilidad       |
+
 
 ### 3.2 Mitigacion implementada en codigo
 
@@ -143,14 +142,16 @@ Resultado:
 
 Se mejoro accesibilidad de formularios con foco en:
 
-| Ajuste | Aplicacion |
-|---|---|
-| `aria-invalid` | Campos con error de validacion |
-| `aria-describedby` | Asociacion entre campo y mensaje de error |
-| `role="alert"` | Mensajes globales de error |
-| `aria-live="polite"` | Anuncio accesible de cambios de estado |
-| `aria-pressed` | Botones para mostrar/ocultar contrasena |
-| `title` | Apoyo adicional para controles iconicos |
+
+| Ajuste               | Aplicacion                                |
+| -------------------- | ----------------------------------------- |
+| `aria-invalid`       | Campos con error de validacion            |
+| `aria-describedby`   | Asociacion entre campo y mensaje de error |
+| `role="alert"`       | Mensajes globales de error                |
+| `aria-live="polite"` | Anuncio accesible de cambios de estado    |
+| `aria-pressed`       | Botones para mostrar/ocultar contrasena   |
+| `title`              | Apoyo adicional para controles iconicos   |
+
 
 ### 4.3 Hallazgos documentados
 
@@ -160,15 +161,7 @@ Se registraron en `docs/calidad/wcag-auditoria.md`:
 - Status messages no anunciados
 - Name/Role/Value insuficiente en toggles de password
 
-### 4.4 Pendientes para cerrar la consigna
-
-1. Ejecutar Lighthouse.
-2. Ejecutar axe-core.
-3. Validar navegacion solo con teclado.
-4. Validar con lector de pantalla.
-5. Completar el mismo nivel de detalle en formularios administrativos restantes.
-
-### 4.5 Validacion ejecutada
+### 4.4 Validacion ejecutada
 
 Se corrio la suite frontend:
 
@@ -230,12 +223,14 @@ Estado reflejado ahi:
 
 ## 7. Archivos editados en codigo
 
-| Archivo | Tipo de cambio |
-|---|---|
-| `backend/src/middleware/auth.ts` | Endurecimiento de validacion JWT |
-| `backend/src/middleware/auth.test.ts` | Caso nuevo para token malformado |
-| `frontend/app/login/page.tsx` | Mejoras WCAG en mensajes, errores y controles |
-| `frontend/app/register/page.tsx` | Mejoras WCAG en mensajes, errores y controles |
+
+| Archivo                               | Tipo de cambio                                |
+| ------------------------------------- | --------------------------------------------- |
+| `backend/src/middleware/auth.ts`      | Endurecimiento de validacion JWT              |
+| `backend/src/middleware/auth.test.ts` | Caso nuevo para token malformado              |
+| `frontend/app/login/page.tsx`         | Mejoras WCAG en mensajes, errores y controles |
+| `frontend/app/register/page.tsx`      | Mejoras WCAG en mensajes, errores y controles |
+
 
 ---
 
@@ -256,3 +251,4 @@ Lo que falta para cerrar completamente la entrega ya no es de definicion tecnica
 2. recolectar evidencias WCAG automatizadas/manuales,
 3. aplicar SUS con participantes,
 4. consolidar capturas y dashboards en el informe final.
+
