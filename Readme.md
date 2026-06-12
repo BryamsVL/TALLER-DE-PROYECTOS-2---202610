@@ -223,6 +223,14 @@ docker-compose up --build
 
 ---
 
+## 🎓 Entregables Académicos (TP2)
+
+| Entregable / Tema | Documento de Evidencia | Descripción |
+|---|---|---|
+| **Estrategias de Testing y Aseguramiento de Calidad** | [📄 TP2-testing.md](./docs/consignas/TP2-testing.md) | Plan de pruebas automatizadas (unitarias, componentes, integración, aceptación y E2E) y análisis de cobertura de código. |
+| **Desarrollo Web Responsable y Sostenibilidad** | [📄 TP2-sostenibilidad.md](./docs/consignas/TP2-sostenibilidad.md) | Análisis de impacto ambiental, reducción de CO₂ y aplicación de principios de **Green Software** en la base de datos, API y solver. |
+---
+
 ## 👥 Equipo de Desarrollo
 
 | Rol | Integrante | Responsabilidad Clave |

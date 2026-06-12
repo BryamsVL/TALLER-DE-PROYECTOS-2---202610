@@ -28,6 +28,7 @@ Control del proyecto, presupuestos y riesgos.
 - [Costos por Sprint](./gestion/costos-por-sprint.md)
 - [Costo Acumulado (Curva S)](./gestion/costo-acumulado.md)
 - [Análisis de Sostenibilidad y Complejidad (Green Software)](./gestion/analisis-sostenibilidad.md)
+- [Reporte de Optimización Green Software (Detallado)](./gestion/green-software.md)
 
 ### 4. [Arquitectura Técnica (`/arquitectura`)](./arquitectura)
 Documentación para el equipo de desarrollo.
@@ -41,6 +42,7 @@ Histórico y trabajo en curso dividido por iteraciones.
 - [Sprint 2 (Motor CSP)](./sprints/sprint-2) — En curso
 - [Sprint 3 (PMV)](./sprints/sprint-3) — Planificado
 
+<<<<<<< HEAD
 ### 6. [Calidad (`/calidad`)](./calidad)
 Artefactos de aseguramiento de calidad y evidencias para la consigna TP2.
 - [README](./calidad/README.md)
@@ -48,3 +50,9 @@ Artefactos de aseguramiento de calidad y evidencias para la consigna TP2.
 - [OWASP Top 10 2025](./calidad/owasp-top10-2025.md)
 - [Auditoria WCAG](./calidad/wcag-auditoria.md)
 - [SUS](./calidad/sus.md)
+=======
+### 6. Entregables Académicos (TP2)
+- [Entregable TP2 — Sostenibilidad y Desarrollo Web Responsable](./consignas/TP2-sostenibilidad.md)
+- [Entregable TP2 — Estrategias de Testing y Aseguramiento de Calidad](./consignas/TP2-testing.md)
+- [Reporte Técnico de Optimización Green Software](./gestion/green-software.md)
+>>>>>>> 7fa3faa5bd6a8083b53a3bac94bd8cc06c833b5f
