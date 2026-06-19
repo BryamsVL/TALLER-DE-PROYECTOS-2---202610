@@ -1,22 +1,22 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { 
-  Users, 
-  GraduationCap, 
-  Calendar, 
-  Clock, 
-  FileEdit, 
-  Trash2, 
-  Power, 
-  Search, 
-  BookOpen, 
-  Sparkles, 
-  X, 
+import {
+  Users,
+  GraduationCap,
+  Calendar,
+  Clock,
+  FileEdit,
+  Trash2,
+  Power,
+  Search,
+  BookOpen,
+  Sparkles,
+  X,
   Info,
   UserPlus
 } from "lucide-react";
-import { Card, CardContent} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -77,7 +77,7 @@ const AVATAR_GRADIENTS = [
 function getAvatarColor(id: string) {
   let hash = 0;
   for (let i = 0; i < id.length; i++) {
-    hash = (hash * 31 + id.charCodeAt(i)) | 0;
+    hash = hash * 31 + id.charCodeAt(i);
   }
   const index = Math.abs(hash) % AVATAR_GRADIENTS.length;
   return AVATAR_GRADIENTS[index];
@@ -98,19 +98,19 @@ export function TeacherGridClient({
   todosLosSlots = [],
 }: TeacherGridClientProps) {
   const [searchTerm, setSearchTerm] = useState("");
-  
+
   // Corregido: Se elimina '<any>' usando una firma de objeto controlada para mitigar Code Smells
   const [selectedTeacher, setSelectedTeacher] = useState<Record<string, any> | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
-  
+
   // States inside edit modal
   const [editNombre, setEditNombre] = useState("");
   const [editSpecialty, setEditSpecialty] = useState("");
   const [editAppointment, setEditAppointment] = useState<"NOMBRADO" | "CONTRATADO">("CONTRATADO");
   const [selectedCourseIds, setSelectedCourseIds] = useState<string[]>([]);
   const [selectedSlotIds, setSelectedSlotIds] = useState<string[]>([]);
-  
+
   const [isPending, startTransition] = useTransition();
 
   // Corregido: Filtrado plano con encadenamiento opcional puro para corregir la nota B
@@ -170,7 +170,7 @@ export function TeacherGridClient({
     const matchingSlotIds = todosLosSlots
       .filter((s) => blocks.includes(s.slotOrder))
       .map((s) => s.id);
-    
+
     setSelectedSlotIds((prev) => {
       const filtered = prev.filter((id) => !matchingSlotIds.includes(id));
       return [...filtered, ...matchingSlotIds];
@@ -255,8 +255,8 @@ export function TeacherGridClient({
             const prefDaysCount = new Set(profesor.availability?.map((av: any) => av.timeSlot?.dayOfWeek) ?? []).size;
 
             return (
-              <Card 
-                key={profesor.id} 
+              <Card
+                key={profesor.id}
                 className="group border-gray-100 dark:border-gray-900 hover:border-blue-100 dark:hover:border-blue-950 hover:shadow-md transition-all duration-300 overflow-hidden bg-white dark:bg-gray-950 flex flex-col justify-between"
               >
                 <div className="h-1.5 w-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -304,17 +304,17 @@ export function TeacherGridClient({
                     ) : (
                       <div className="flex flex-wrap gap-1.5">
                         {profesor.teacherCourses?.slice(0, 3).map((tc: any) => (
-                          <Badge 
-                            key={tc.id} 
-                            variant="secondary" 
+                          <Badge
+                            key={tc.id}
+                            variant="secondary"
                             className="bg-blue-50/75 text-blue-700 dark:bg-blue-950/20 dark:text-blue-300 border-none text-[11px] font-medium"
                           >
                             {tc.course?.code}
                           </Badge>
                         ))}
                         {coursesCount > 3 && (
-                          <Badge 
-                            variant="outline" 
+                          <Badge
+                            variant="outline"
                             className="text-[11px] font-medium text-gray-500 border-gray-200 dark:border-gray-800"
                           >
                             +{coursesCount - 3} más
@@ -336,8 +336,8 @@ export function TeacherGridClient({
                     ) : (
                       <div className="flex items-center gap-1 flex-wrap">
                         {Array.from(new Set(profesor.availability?.map((av: any) => av.timeSlot?.dayOfWeek) || [])).map((day: any) => (
-                          <span 
-                            key={day} 
+                          <span
+                            key={day}
                             className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-700 dark:bg-amber-950/20 dark:text-amber-300 border border-amber-100/50 dark:border-amber-900/30"
                           >
                             {DAYS_MAP[day]?.substring(0, 3)}
@@ -353,9 +353,9 @@ export function TeacherGridClient({
 
                 {/* Footer Actions Area */}
                 <div className="bg-gray-50/50 dark:bg-gray-900/20 border-t border-gray-100 dark:border-gray-900 px-5 py-3.5 flex items-center justify-between">
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => openEditModal(profesor)}
                     className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-xs font-semibold flex items-center gap-1.5"
                   >
@@ -367,10 +367,10 @@ export function TeacherGridClient({
                     <form action={toggleActivoProfesor}>
                       <input type="hidden" name="id" value={profesor.id} />
                       <input type="hidden" name="activo" value={String(profesor.isActive)} />
-                      <Button 
-                        type="submit" 
-                        variant="ghost" 
-                        size="icon" 
+                      <Button
+                        type="submit"
+                        variant="ghost"
+                        size="icon"
                         title={profesor.isActive ? "Suspender profesor" : "Activar profesor"}
                         className={`h-8 w-8 rounded-lg ${profesor.isActive ? 'text-gray-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950/30' : 'text-gray-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-950/30'}`}
                       >
@@ -380,10 +380,10 @@ export function TeacherGridClient({
 
                     <form action={eliminarProfesor}>
                       <input type="hidden" name="id" value={profesor.id} />
-                      <Button 
-                        type="submit" 
-                        variant="ghost" 
-                        size="icon" 
+                      <Button
+                        type="submit"
+                        variant="ghost"
+                        size="icon"
                         title="Eliminar registro"
                         className="h-8 w-8 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
                       >
@@ -432,9 +432,9 @@ export function TeacherGridClient({
               <TabsContent value="basic" className="space-y-5 m-0 focus-visible:ring-0 focus-visible:outline-none">
                 <div className="space-y-2">
                   <Label htmlFor="edit-name" className="text-xs font-bold text-gray-500 uppercase tracking-wider">Nombre Completo del Profesor</Label>
-                  <Input 
-                    id="edit-name" 
-                    value={editNombre} 
+                  <Input
+                    id="edit-name"
+                    value={editNombre}
                     onChange={(e) => setEditNombre(e.target.value)}
                     placeholder="Ej. Maria Lopez"
                     className="h-10 border-gray-200 dark:border-gray-800 focus-visible:ring-blue-500"
@@ -510,7 +510,7 @@ export function TeacherGridClient({
                   {todosLosCursos.map((curso) => {
                     const isChecked = selectedCourseIds.includes(curso.id);
                     return (
-                      <div 
+                      <div
                         key={curso.id}
                         onClick={() => {
                           setSelectedCourseIds((prev) =>
@@ -520,9 +520,9 @@ export function TeacherGridClient({
                         className={`p-3 rounded-lg border flex items-center justify-between cursor-pointer transition-all ${isChecked ? 'border-blue-200 bg-blue-50/30 dark:border-blue-950/40 dark:bg-blue-950/10' : 'border-gray-100 bg-white dark:border-gray-900 dark:bg-gray-950 hover:bg-gray-50/50'}`}
                       >
                         <div className="flex items-center gap-3">
-                          <Checkbox 
+                          <Checkbox
                             checked={isChecked}
-                            onCheckedChange={() => {}} 
+                            onCheckedChange={() => { }}
                           />
                           <div>
                             <p className="text-xs font-bold text-gray-900 dark:text-white leading-none">{curso.name}</p>
@@ -581,7 +581,7 @@ export function TeacherGridClient({
                     <tbody className="divide-y divide-gray-100 dark:divide-gray-900">
                       {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((blockNum) => {
                         let blockLabel = "";
-                        switch(blockNum) {
+                        switch (blockNum) {
                           case 1: blockLabel = "07:00-08:30"; break;
                           case 2: blockLabel = "08:40-10:10"; break;
                           case 3: blockLabel = "10:20-11:50"; break;
@@ -611,8 +611,8 @@ export function TeacherGridClient({
 
                               const isSelected = selectedSlotIds.includes(slot.id);
                               return (
-                                <td 
-                                  key={day} 
+                                <td
+                                  key={day}
                                   className="px-1 py-1"
                                 >
                                   <button
@@ -633,7 +633,7 @@ export function TeacherGridClient({
                 </div>
               </TabsContent>
             </div>
-            
+
             <DialogFooter className="p-6 bg-gray-50 dark:bg-gray-900/40 border-t border-gray-100 dark:border-gray-900">
               <Button variant="outline" onClick={() => setIsEditOpen(false)} disabled={isPending} className="h-10 text-xs font-bold">
                 Cancelar
