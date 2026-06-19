@@ -247,3 +247,7 @@ docker-compose up --build
   <b>Desarrollado bajo licencia MIT</b><br>
   <sub>Taller de Proyectos 2 — Universidad Continental — Huancayo, Perú — 2026</sub>
 </div>
+
+
+## 📹 Video demostrativo
+https://drive.google.com/drive/folders/15qlIri_tMPyqookqu787A4BDNjsRaAHM?usp=sharing
