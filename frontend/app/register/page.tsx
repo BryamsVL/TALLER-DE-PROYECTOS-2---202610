@@ -8,18 +8,27 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signUp } from "@/app/actions/auth";
 
+function getConfirmBorderClass(confirmTouched: boolean, passwordsMatch: boolean) {
+  if (!confirmTouched) return "border-input focus-within:ring-ring";
+  return passwordsMatch
+    ? "border-green-500 focus-within:ring-green-500"
+    : "border-destructive focus-within:ring-destructive";
+}
+
+function getErrorId(field: string, hasError: boolean) {
+  return hasError ? `register-${field}-error` : undefined;
+}
+
 export default function RegisterPage() {
   const [state, action, pending] = useActionState(signUp, undefined);
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const nombreErrorId = state?.errors?.nombre ? "register-nombre-error" : undefined;
-  const emailErrorId = state?.errors?.email ? "register-email-error" : undefined;
-  const passwordErrorId = state?.errors?.password
-    ? "register-password-error"
-    : undefined;
-  const formErrorId = state?.message ? "register-form-error" : undefined;
+  const nombreErrorId = getErrorId("nombre", !!state?.errors?.nombre);
+  const emailErrorId = getErrorId("email", !!state?.errors?.email);
+  const passwordErrorId = getErrorId("password", !!state?.errors?.password);
+  const formErrorId = getErrorId("form", !!state?.message);
 
   const confirmTouched = confirm.length > 0;
   const passwordsMatch = password === confirm;
@@ -170,8 +179,8 @@ export default function RegisterPage() {
                   id={passwordErrorId}
                   className="text-xs text-destructive space-y-0.5"
                 >
-                  {state.errors.password.map((e, i) => (
-                    <li key={i}>{e}</li>
+                  {state.errors.password.map((e) => (
+                    <li key={e}>{e}</li>
                   ))}
                 </ul>
               )}
@@ -185,13 +194,10 @@ export default function RegisterPage() {
                 Confirmar contrasena
               </Label>
               <div
-                className={`flex items-center gap-2 rounded-xl border bg-background px-3 focus-within:ring-1 ${
-                  confirmTouched
-                    ? passwordsMatch
-                      ? "border-green-500 focus-within:ring-green-500"
-                      : "border-destructive focus-within:ring-destructive"
-                    : "border-input focus-within:ring-ring"
-                }`}
+                className={`flex items-center gap-2 rounded-xl border bg-background px-3 focus-within:ring-1 ${getConfirmBorderClass(
+                  confirmTouched,
+                  passwordsMatch
+                )}`}
               >
                 <Lock className="h-4 w-4 text-muted-foreground" />
                 <Input
@@ -223,9 +229,8 @@ export default function RegisterPage() {
               </div>
               {confirmTouched && (
                 <p
-                  className={`flex items-center gap-1 text-xs ${
-                    passwordsMatch ? "text-green-600" : "text-destructive"
-                  }`}
+                  className={`flex items-center gap-1 text-xs ${passwordsMatch ? "text-green-600" : "text-destructive"
+                    }`}
                 >
                   {passwordsMatch ? (
                     <>
