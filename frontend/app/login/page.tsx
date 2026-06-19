@@ -8,16 +8,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signIn } from "@/app/actions/auth";
 
+function getErrorId(field: string, hasError: boolean) {
+  return hasError ? `login-${field}-error` : undefined;
+}
+
 export default function LoginPage() {
   const [state, action, pending] = useActionState(signIn, undefined);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const emailErrorId = state?.errors?.email ? "login-email-error" : undefined;
-  const passwordErrorId = state?.errors?.password
-    ? "login-password-error"
-    : undefined;
-  const formErrorId = state?.message ? "login-form-error" : undefined;
+  const emailErrorId = getErrorId("email", !!state?.errors?.email);
+  const passwordErrorId = getErrorId("password", !!state?.errors?.password);
+  const formErrorId = getErrorId("form", !!state?.message);
 
   // Credenciales invalidas: borrar solo la contrasena, mantener el correo.
   useEffect(() => {
