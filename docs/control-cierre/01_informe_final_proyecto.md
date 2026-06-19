@@ -16,71 +16,82 @@ El proyecto **cumple sus cinco objetivos específicos** y 6 de 7 requerimientos 
 
 ## 2. Producto y arquitectura final
 
-| Componente | Tecnología |
-|------------|------------|
-| Aplicación web (SPA) | Next.js |
-| Base de datos / Auth | Supabase (Postgres + RLS) |
-| Motor CSP (solver) | Microservicio FastAPI + OR-Tools (CP-SAT) |
-| Capa de autenticación backend | Node/Express (`backend/src`) |
-| Calidad / CI | GitHub Actions + SonarCloud |
+
+| Componente                    | Tecnología                                |
+| ----------------------------- | ----------------------------------------- |
+| Aplicación web (SPA)          | Next.js                                   |
+| Base de datos / Auth          | Supabase (Postgres + RLS)                 |
+| Motor CSP (solver)            | Microservicio FastAPI + OR-Tools (CP-SAT) |
+| Capa de autenticación backend | Node/Express (`backend/src`)              |
+| Calidad / CI                  | GitHub Actions + SonarCloud               |
+
 
 ## 3. Resumen de desempeño
 
 ### 3.1 Alcance
 
-| Objetivo | Criterio de cierre | Cumplimiento |
-|----------|--------------------|--------------|
-| MVP de generación de horarios admin/docente | Generación CSP + ajuste + vista + exportación | ✅ Cumplido |
-| Módulo Estudiante (EP-06) | — | ❌ Cerrado fuera de alcance (decisión 03/06) |
+
+| Objetivo                                    | Criterio de cierre                            | Cumplimiento                                |
+| ------------------------------------------- | --------------------------------------------- | ------------------------------------------- |
+| MVP de generación de horarios admin/docente | Generación CSP + ajuste + vista + exportación | ✅ Cumplido                                  |
+| Módulo Estudiante (EP-06)                   | —                                             | ❌ Cerrado fuera de alcance (decisión 03/06) |
+
 
 Restricciones duras D1–D9 y blandas B1–B5 implementadas; optimización de huecos con prioridad a docentes nombrados (HU-27).
 
 ### 3.2 Calidad
 
-| Métrica | Resultado | Objetivo | Estado |
-|---------|-----------|----------|--------|
-| Cobertura backend | 93.5 % | ≥ 85 % crítico | ✅ |
-| Cobertura frontend | 81.81 % | ≥ 70 % global | ✅ |
-| Quality Gate SonarCloud | Passed | Passed | ✅ |
-| Reliability (bugs) | B — 23 issues | — | ⚠️ backlog |
-| Maintainability | A — 277 issues | — | ✅ |
-| Security | C — 2 issues Medium | A | ⚠️ |
-| Security Hotspots | E — 4 *to review* | — | ⚠️ |
-| Duplicación | 3.1 % | < 5 % | ✅ |
-| Auditorías | OWASP Top 10 2025, WCAG (3 defectos corregidos) | — | ✅ |
+
+| Métrica                 | Resultado                                       | Objetivo       | Estado |
+| ----------------------- | ----------------------------------------------- | -------------- | ------ |
+| Cobertura backend       | 93.5 %                                          | ≥ 85 % crítico | ✅      |
+| Cobertura frontend      | 81.81 %                                         | ≥ 70 % global  | ✅      |
+| Quality Gate SonarCloud | Passed                                          | Passed         | ✅      |
+| Reliability (bugs)      | B — 23 issues                                   | —              | ✅      |
+| Maintainability         | A — 267 issues                                  | —              | ✅      |
+| Security                | A                                               | —              | ✅      |
+| Security Hotspots       | A                                               | —              | ✅      |
+| Duplicación             | 3.1 %                                           | < 5 %          | ✅      |
+| Auditorías              | OWASP Top 10 2025, WCAG (3 defectos corregidos) | —              | ✅      |
+
 
 > Nota: la cobertura global que reporta SonarCloud (12.2 %) se mide sobre **todo el repositorio** (incluye archivos sin pruebas); las cifras 93.5 % / 81.81 % corresponden a la cobertura de los módulos bajo prueba (Vitest backend / Jest frontend).
 
 ### 3.3 Cronograma — plan vs ejecución
 
-| Sprint | Plan | Real | Puntos |
-|--------|------|------|--------|
-| Sprint 1 | 2 sem | 3 sem | 35 pts (100 %) |
-| Sprint 2 | 2 sem | 3 sem | 34 pts |
-| Sprint 3 | 2 sem | 3 sem | 42 pts (EP-06 cerrada) |
-| Entrega MVP | 17/06 | 22–28/06 | — |
+
+| Sprint      | Plan  | Real     | Puntos                 |
+| ----------- | ----- | -------- | ---------------------- |
+| Sprint 1    | 2 sem | 3 sem    | 35 pts (100 %)         |
+| Sprint 2    | 2 sem | 3 sem    | 34 pts                 |
+| Sprint 3    | 2 sem | 3 sem    | 42 pts (EP-06 cerrada) |
+| Entrega MVP | 17/06 | 22–28/06 | —                      |
+
 
 **Variación de cronograma:** +1 semana por sprint (capacidad real del equipo, S8). Ruta crítica: HU-01..10 → HU-11 → HU-12 → HU-13 → HU-16/17 → HU-23 → HU-24/25.
 
 ### 3.4 Costos
 
-| Concepto | Total (S/) |
-|----------|------------|
-| Recursos humanos | 7,350 |
-| Infraestructura | 10 |
-| Indirectos | 1,208 |
-| **Total** | **8,568** |
+
+| Concepto         | Total (S/) |
+| ---------------- | ---------- |
+| Recursos humanos | 7,350      |
+| Infraestructura  | 10         |
+| Indirectos       | 1,208      |
+| **Total**        | **8,568**  |
+
 
 Distribución por sprint: S1 2,625 · S2 2,926 · S3 3,017. Sin desviación monetaria (todo free tier); el incremento progresivo refleja la curva de complejidad (CRUDs → CSP → grillas/exportación). El sobrecosto real fue en **horas-persona**, no en dinero.
 
 ## 4. Variaciones (plan vs resultado)
 
-| Dimensión | Resultado final | Variación | Comentario |
-|-----------|-----------------|-----------|------------|
-| Alcance | MVP admin/docente | Módulo Estudiante excluido | Decisión 03/06; causa S8 |
-| Tiempo | Entrega 22–28/06 | +~6 semanas sobre plan de 2 sem/sprint | Sprints reales de 3 semanas |
-| Costo | S/ 8,568 | Sin desviación monetaria | Sobrecosto en horas |
-| Calidad | Cobertura superada; seguridad C | Brecha en seguridad | RAN-05 parcial |
+
+| Dimensión | Resultado final   | Variación                              | Comentario                  |
+| --------- | ----------------- | -------------------------------------- | --------------------------- |
+| Alcance   | MVP admin/docente | Módulo Estudiante excluido             | Decisión 03/06; causa S8    |
+| Tiempo    | Entrega 22–28/06  | +~6 semanas sobre plan de 2 sem/sprint | Sprints reales de 3 semanas |
+| Costo     | S/ 8,568          | Sin desviación monetaria               | Sobrecosto en horas         |
+
 
 ## 5. Resumen de riesgos e incidentes
 
@@ -111,4 +122,4 @@ Detalle en `03_registro_riesgos.md`, `04_registro_incidentes.md`, `05_registro_i
 - Manual y demo: `README.md` (+ video demostrativo).
 
 > Coherencia: este informe es consistente con el Acta revisada (`08`), las lecciones aprendidas (`02`) y los cinco registros base (`03`–`07`). Toda métrica proviene de evidencia real del proyecto.
-</content>
+
