@@ -22,7 +22,7 @@
 5. [🔌 API REST y Contratos](#-api-rest-y-contratos)
 6. [⚙️ Instalación y Despliegue](#️-instalación-y-despliegue)
 7. [📚 Documentación Académica (Rúbrica)](#-documentación-académica-rúbrica)
-8. [👥 Equipo de Desarrollo](#-equipo-de-desarrollo)
+8. [👥 Integrantes del equipo](#-equipo-de-desarrollo)
 
 ---
 
