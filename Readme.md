@@ -248,6 +248,10 @@ docker-compose up --build
   <sub>Taller de Proyectos 2 — Universidad Continental — Huancayo, Perú — 2026</sub>
 </div>
 
+## Foto grupal
+<img width="1600" height="1200" alt="WhatsApp Image 2026-07-03 at 13 47 48" src="https://github.com/user-attachments/assets/03f634c4-ae40-4c91-912b-655562304026" />
+
 
 ## 📹 Video demostrativo
 https://drive.google.com/drive/folders/15qlIri_tMPyqookqu787A4BDNjsRaAHM?usp=sharing
+
