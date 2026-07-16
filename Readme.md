@@ -1,6 +1,3 @@
-<img width="1600" height="1200" alt="WhatsApp Image 2026-07-02 at 18 32 37" src="https://github.com/user-attachments/assets/e82710e1-1b12-4499-8fc7-ec5b000e0d90" />
-<div align="center">
-
 # 📅 SGOHA
 **Sistema de Generación Óptima de Horarios Académicos**
 
@@ -250,7 +247,6 @@ docker-compose up --build
 </div>
 
 ## Foto grupal
-<img width="1600" height="1200" alt="WhatsApp Image 2026-07-03 at 13 47 48" src="https://github.com/user-attachments/assets/03f634c4-ae40-4c91-912b-655562304026" />
 <img width="1600" height="1200" alt="WhatsApp Image 2026-07-02 at 18 32 37" src="https://github.com/user-attachments/assets/67794721-0a26-4991-b124-7ddf9e1b30fe" />
 
 
